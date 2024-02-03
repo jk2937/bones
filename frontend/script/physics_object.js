@@ -1,3 +1,6 @@
+engine = Matter.Engine.create();
+world = engine.world;
+
 class physics_object {
 	constructor(shape="square", shape_data, anchored=false) {
 		this.shape = shape;

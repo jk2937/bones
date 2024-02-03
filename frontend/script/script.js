@@ -370,16 +370,7 @@ function launch_loop() {
 function calculate_fps() {
     fps = fps_frame_counter
     fps_frame_counter = 0
-    if (fps > 60) {
-        reset_setInterval();
-    }
-    if (fps < 60) {
-        reset_setInterval();
-    }
 }
-
-engine = Matter.Engine.create();
-world = engine.world;
 
 test_block = new physics_object("square", {x:400, y:200, w:80, h:80})
 test_block2 = new physics_object("square", {x:450, y:50, w:80, h:20})

@@ -24,7 +24,7 @@ player_gravity = 0.25
 player_facing_right = true
 player_on_ground = false
 player_jump_lock = false
-
+player_physics_object = new physics_object("square", {x:player_x, y:player_y, w:150, h:150}, anchored=true)
 // player_body = Matter.Bodies.rectangle();
 // Matter.World.add(world, this.body);
 
@@ -134,6 +134,8 @@ function move_player() {
         player_y_vel = 0
         player_on_ground = true
     }
+
+	Matter.Body.setPosition(player_physics_object.body, {x:player_x + 150 / 2, y:player_y + 150 / 2}, updateVelocity=true)
 }
 
 function draw_player() {
