@@ -222,25 +222,20 @@ function main_exec_loop() {
     move_right = control_right || control_right_this_frame;
     move_jump = control_jump || control_jump_this_frame;
 
-    /* if(move_left) {
-    	player_x -= 5 * delta_time * timescale;
-    }
-    if(move_right) {
-    	player_x += 5 * delta_time * timescale;
-    } */
-
     control_player(control_left, control_right, control_jump)
     move_player()
-//    move_player()
 
 	Matter.Engine.update(engine, delta=delta_time)
+
 
     // Ball physics
 
     rect_x += rect_x_vel * delta_time * timescale
     rect_y += rect_y_vel * delta_time * timescale
-    // rect_y_vel = rect_y_vel / 2;
-    // rect_x_vel = rect_x_vel / 2;
+
+	/* For top down mode:
+    rect_y_vel = rect_y_vel / 2;
+    rect_x_vel = rect_x_vel / 2; */
 
     if (rect_x < 0 - rect_w) {
         rect_x = canvas_width;
@@ -279,6 +274,9 @@ function main_exec_loop() {
     ctx.drawImage(ball, rect_x, rect_y, rect_w, rect_h)
 
 	test_block.draw()
+	// test_block2.draw()
+	// ground.draw()
+
     draw_player()
 
 
@@ -366,10 +364,24 @@ function calculate_fps() {
 
 engine = Matter.Engine.create();
 world = engine.world;
+
 test_block = new physics_object()
-test_block.w = 10;
-test_block.h = 10;
-Composite.add(engine.world, test_block.body);
+test_block.x = 400;
+test_block.y = 200;
+test_block.w = 80;
+test_block.h = 80;
+
+/* test_block2 = new physics_object()
+test_block2.x = 450;
+test_block2.y = 50;
+test_block2.w = 80;
+test_block2.h = 80;
+
+ground = new physics_object(anchored=true)
+ground.x = 400;
+ground.y = 610;
+ground.w = 810;
+ground.h = 60; */
 
 window.onload = function() {
 	

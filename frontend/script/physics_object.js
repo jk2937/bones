@@ -1,21 +1,22 @@
 class physics_object {
-	constructor() {
-		this.x = 0;
-		this.y = 0
+	constructor(anchored=false) {
+		this.x = 0
+		this.y = 0 
 
 		this.angle = 0;
 
-		this.w = 0;
-		this.h = 0;
+		this.w = 80
+		this.h = 80
 
 		this.r = 0;
 
 		this.shape = "square";
 
-		this.anchored = false;
+		this.anchored = anchored;
 
 		if (this.shape == "square") {
-			this.body = Matter.Bodies.rectangle(this.x, this.y, this.w, this.h)
+			this.body = Matter.Bodies.rectangle(this.x, this.y, this.w, this.h, {isStatic: this.anchored})
+			Matter.Composite.add(engine.world, [this.body]);
 		}
 		if (this.shape == "circle") {
 
