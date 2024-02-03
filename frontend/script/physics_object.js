@@ -33,11 +33,12 @@ class physics_object {
 		this.x = this.pos.x;
 		this.y = this.pos.y;
 		ctx.save()
-		ctx.translate(this.x, this.y);
-		ctx.rotate(this.angle);
 		ctx.fillStyle = "white";
 		if (this.shape == "square") {
-			ctx.fillRect(0, 0, this.w, this.h);
+			ctx.translate(this.x, this.y);
+			ctx.rotate(this.angle);
+
+			ctx.fillRect(0 - this.w / 2, 0 - this.h / 2, this.w, this.h);
 		}
 		if (this.shape == "circle") {
 

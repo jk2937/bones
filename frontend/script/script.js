@@ -94,6 +94,7 @@ document.addEventListener("keyup", function(event) {
 display_debug_info = true
 
 debug_simulate_lag = false
+debug_wireframe = true 
 
 // debug_display = ["fps", "control_left", "control_right", "control_jump"]
 debug_display = ["fps", "total_lag_frames", "debug_simulate_lag", "", "control_left", "control_right", "control_jump", "", "control_left_this_frame", "control_right_this_frame", "control_jump_this_frame", "", "player_on_ground"]
@@ -270,15 +271,38 @@ function main_exec_loop() {
     // ctx.fillStyle = "Gray";
     // ctx.fillRect(rect_x, rect_y, rect_w, rect_h);
 
-
-    ctx.drawImage(ball, rect_x, rect_y, rect_w, rect_h)
-
 	test_block.draw()
 	test_block2.draw()
 	ground.draw()
 
-    draw_player()
+	if (debug_wireframe == true) {
+		var bodies = Matter.Composite.allBodies(engine.world)
 
+		ctx.save()
+
+		ctx.beginPath();
+
+		for (var i = 0; i < bodies.length; i++) {
+			var vertices = bodies[i].vertices;
+
+			ctx.moveTo(vertices[0].x, vertices[0].y);
+
+			for (var j = 1; j < vertices.length; j += 1) {
+				ctx.lineTo(vertices[j].x, vertices[j].y);
+			}
+
+			ctx.lineTo(vertices[0].x, vertices[0].y);
+		}
+
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = '#999';
+		ctx.stroke();
+
+		ctx.restore()
+	}
+
+    draw_player()
+    ctx.drawImage(ball, rect_x, rect_y, rect_w, rect_h)
 
     if (display_debug_info == true) {
         ctx.font = "14px Arial";
@@ -324,14 +348,8 @@ function main_exec_loop() {
 
 // Loop launcher
 
-function reset_setInterval() {
-    // clearInterval(main_loop_setInt);
-    // main_loop_setInt = setInterval("launch_loop()", main_loop_sleep)
-}
-
 function launch_loop() {
     if (main_exec_lock == true) {
-        // main_loop_sleep++;
         total_lag_frames++;
         reset_setInterval();
         return false;
@@ -353,11 +371,9 @@ function calculate_fps() {
     fps = fps_frame_counter
     fps_frame_counter = 0
     if (fps > 60) {
-        // main_loop_sleep++;
         reset_setInterval();
     }
     if (fps < 60) {
-        // main_loop_sleep--;
         reset_setInterval();
     }
 }
@@ -366,24 +382,10 @@ engine = Matter.Engine.create();
 world = engine.world;
 
 test_block = new physics_object("square", {x:400, y:200, w:80, h:80})
-test_block2 = new physics_object("square", {x:450, y:50, w:80, h:80})
+test_block2 = new physics_object("square", {x:450, y:50, w:80, h:20})
 ground = new physics_object("square", {x:400, y:610, w:810, h:60}, anchored=true)
 
-/* test_block2 = new physics_object()
-test_block2.x = 450;
-test_block2.y = 50;
-test_block2.w = 80;
-test_block2.h = 80;
-
-ground = new physics_object(anchored=true)
-ground.x = 400;
-ground.y = 610;
-ground.w = 810;
-ground.h = 60; */
-
 window.onload = function() {
-	
-    // main_loop_setInt = setInterval("launch_loop()", main_loop_sleep)
     launch_loop()
     setInterval(calculate_fps, 1000)
 }
