@@ -274,8 +274,8 @@ function main_exec_loop() {
     ctx.drawImage(ball, rect_x, rect_y, rect_w, rect_h)
 
 	test_block.draw()
-	// test_block2.draw()
-	// ground.draw()
+	test_block2.draw()
+	ground.draw()
 
     draw_player()
 
@@ -365,11 +365,9 @@ function calculate_fps() {
 engine = Matter.Engine.create();
 world = engine.world;
 
-test_block = new physics_object()
-test_block.x = 400;
-test_block.y = 200;
-test_block.w = 80;
-test_block.h = 80;
+test_block = new physics_object("square", {x:400, y:200, w:80, h:80})
+test_block2 = new physics_object("square", {x:450, y:50, w:80, h:80})
+ground = new physics_object("square", {x:400, y:610, w:810, h:60}, anchored=true)
 
 /* test_block2 = new physics_object()
 test_block2.x = 450;

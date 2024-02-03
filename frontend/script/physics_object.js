@@ -1,16 +1,19 @@
 class physics_object {
-	constructor(anchored=false) {
-		this.x = 0
-		this.y = 0 
+	constructor(shape="square", shape_data, anchored=false) {
+		this.shape = shape;
 
-		this.angle = 0;
+		this.x = shape_data.x 
+		this.y = shape_data.y 
 
-		this.w = 80
-		this.h = 80
+		this.angle = shape_data.angle;
 
-		this.r = 0;
-
-		this.shape = "square";
+		if (this.shape == "square") {
+			this.w = shape_data.w
+			this.h = shape_data.h
+		}
+		if (this.shape == "circle") {
+			this.r = shape_data.r;
+		}
 
 		this.anchored = anchored;
 
