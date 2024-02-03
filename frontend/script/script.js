@@ -93,8 +93,10 @@ document.addEventListener("keyup", function(event) {
 
 display_debug_info = true
 
+debug_simulate_lag = false
+
 // debug_display = ["fps", "control_left", "control_right", "control_jump"]
-debug_display = ["fps", "total_lag_frames", "", "control_left", "control_right", "control_jump", "", "control_left_this_frame", "control_right_this_frame", "control_jump_this_frame", "", "player_on_ground"]
+debug_display = ["fps", "total_lag_frames", "debug_simulate_lag", "", "control_left", "control_right", "control_jump", "", "control_left_this_frame", "control_right_this_frame", "control_jump_this_frame", "", "player_on_ground"]
 
 main_exec_lock = false;
 main_loop_sleep = 0;
@@ -229,7 +231,9 @@ function main_exec_loop() {
 
     control_player(control_left, control_right, control_jump)
     move_player()
-    move_player()
+//    move_player()
+
+	Matter.Engine.update(engine, delta=delta_time)
 
     // Ball physics
 
@@ -274,6 +278,7 @@ function main_exec_loop() {
 
     ctx.drawImage(ball, rect_x, rect_y, rect_w, rect_h)
 
+	test_block.draw()
     draw_player()
 
 
@@ -336,7 +341,13 @@ function launch_loop() {
     main_exec_lock = true;
     main_exec_loop();
     main_exec_lock = false;
-    requestAnimationFrame(launch_loop)
+
+	if (debug_simulate_lag == false) {
+    	requestAnimationFrame(launch_loop)
+	}
+	if (debug_simulate_lag == true) {
+		setTimeout(launch_loop, Math.floor(Math.random() * 100) + 2)
+	}
     return true;
 }
 
@@ -353,7 +364,15 @@ function calculate_fps() {
     }
 }
 
+engine = Matter.Engine.create();
+world = engine.world;
+test_block = new physics_object()
+test_block.w = 10;
+test_block.h = 10;
+Composite.add(engine.world, test_block.body);
+
 window.onload = function() {
+	
     // main_loop_setInt = setInterval("launch_loop()", main_loop_sleep)
     launch_loop()
     setInterval(calculate_fps, 1000)

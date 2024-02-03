@@ -8,20 +8,25 @@
 const player = new Image();
 player.src = "../assets/asset2.png"
 
+
+player_movement_speed = 1;
 player_x = 25;
 player_y = 0;
 player_x_vel = 0;
 player_y_vel = 0;
-player_max_x_vel = 7;
-player_max_y_vel = 70;
-player_x_acc = 0.5;
-player_y_acc = 10;
+player_max_x_vel = 7
+player_max_y_vel = 70 
+player_x_acc = 0.5
+player_y_acc = 10
 player_ground_friction = 0.15
-player_air_friction = 0.25
+player_air_friction = 0.05
 player_gravity = 0.25
 player_facing_right = true
 player_on_ground = false
 player_jump_lock = false
+
+// player_body = Matter.Bodies.rectangle();
+// Matter.World.add(world, this.body);
 
 function control_player(control_left, control_right, control_jump) {
 
@@ -52,18 +57,36 @@ function move_player() {
 
     if (!control_left && !control_right) {
         if (player_x_vel > 0) {
-            if (player_x_vel < player_ground_friction * delta_time * timescale) {
-                player_x_vel = player_ground_friction * delta_time * timescale;
-            } else {
-                player_x_vel -= player_ground_friction * delta_time * timescale;
-            }
+				if (player_on_ground == true) {	
+					if (player_x_vel < player_ground_friction * delta_time * timescale) {
+						player_x_vel = player_ground_friction * delta_time * timescale;
+					} else {
+						player_x_vel -= player_ground_friction * delta_time * timescale;
+					}
+				}
+				if (player_on_ground == false) {
+					if (player_x_vel < player_air_friction * delta_time * timescale) {
+						player_x_vel = player_air_friction * delta_time * timescale;
+					} else {
+						player_x_vel -= player_air_friction * delta_time * timescale;
+					}
+				}
         }
         if (player_x_vel < 0) {
-            if (player_x_vel > -player_ground_friction * delta_time * timescale) {
-                player_x_vel = -player_ground_friction * delta_time * timescale
-            } else {
-                player_x_vel += player_ground_friction * delta_time * timescale
-            }
+			if (player_on_ground == true) {
+				if (player_x_vel > -player_ground_friction * delta_time * timescale) {
+					player_x_vel = -player_ground_friction * delta_time * timescale
+				} else {
+					player_x_vel += player_ground_friction * delta_time * timescale
+				}
+			}
+			if (player_on_ground == false) {
+				if (player_x_vel > -player_air_friction * delta_time * timescale) {
+					player_x_vel = -player_air_friction * delta_time * timescale
+				} else {
+					player_x_vel += player_air_friction * delta_time * timescale
+				}
+			}
         }
     }
 
