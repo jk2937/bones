@@ -94,7 +94,10 @@ document.addEventListener("keyup", function(event) {
 display_debug_info = true
 
 debug_simulate_lag = false
+debug_simulated_lag_range = 150
 debug_wireframe = true 
+
+debug_simple_player_movement = false
 
 // debug_display = ["fps", "control_left", "control_right", "control_jump"]
 debug_display = ["fps", "total_lag_frames", "debug_simulate_lag", "", "control_left", "control_right", "control_jump", "", "control_left_this_frame", "control_right_this_frame", "control_jump_this_frame", "", "player_on_ground"]
@@ -160,7 +163,7 @@ function main_exec_loop() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "Gray";
     ctx.textAlign = "center";
-    ctx.fillText("Welcome to Bones \"Alpha\" v0.0.2!", canvas_width / 2, 20)
+    ctx.fillText("Welcome to Bones \"Alpha\" v0.0.3!", canvas_width / 2, 20)
 
     for (let i = 0; i < touch_events_history.length; i++) {
         let event_ = touch_events_history[i]
@@ -216,15 +219,25 @@ function main_exec_loop() {
         }
     }
 
-
-    // Player physics
-
     move_left = control_left || control_left_this_frame;
     move_right = control_right || control_right_this_frame;
     move_jump = control_jump || control_jump_this_frame;
 
-    control_player(control_left, control_right, control_jump)
-    move_player()
+
+    // Player physics
+	
+	if (debug_simple_player_movement == false) {
+		control_player(move_left, move_right, move_jump)
+		move_player()
+	}
+	if (debug_simple_player_movement == true) {
+		if (move_right) {
+			player_x += 5 * delta_time * timescale
+		}
+		if (move_left) {
+			player_x -= 5 * delta_time * timescale
+		}
+	}
 
 	Matter.Engine.update(engine, delta=delta_time)
 
@@ -362,7 +375,7 @@ function launch_loop() {
     	requestAnimationFrame(launch_loop)
 	}
 	if (debug_simulate_lag == true) {
-		setTimeout(launch_loop, Math.floor(Math.random() * 100) + 2)
+		setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range) + 2)
 	}
     return true;
 }

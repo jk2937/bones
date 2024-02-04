@@ -51,15 +51,15 @@ function move_player() {
 
     // Gravity
 
-    player_y_vel += player_gravity
+    player_y_vel += player_gravity * delta_time * timescale
 
     // Friction
 
     if (!control_left && !control_right) {
         if (player_x_vel > 0) {
 				if (player_on_ground == true) {	
-					if (player_x_vel < player_ground_friction * delta_time * timescale) {
-						player_x_vel = player_ground_friction * delta_time * timescale;
+					if (player_x_vel <= player_ground_friction * delta_time * timescale) {
+						player_x_vel = 0; // player_ground_friction;
 					} else {
 						player_x_vel -= player_ground_friction * delta_time * timescale;
 					}
@@ -74,10 +74,10 @@ function move_player() {
         }
         if (player_x_vel < 0) {
 			if (player_on_ground == true) {
-				if (player_x_vel > -player_ground_friction * delta_time * timescale) {
-					player_x_vel = -player_ground_friction * delta_time * timescale
+				if (player_x_vel >= -player_ground_friction * delta_time * timescale) {
+					player_x_vel = 0; // -player_ground_friction
 				} else {
-					player_x_vel += player_ground_friction * delta_time * timescale
+					player_x_vel += player_ground_friction * delta_time * timescale;
 				}
 			}
 			if (player_on_ground == false) {
