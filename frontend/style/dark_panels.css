@@ -1,0 +1,72 @@
+/*
+ * Copyright 2024 Jonathan Kaschak
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+:root {
+	--bg-dark: #121212;
+	--bg-light: #1e1e1e;
+
+	--text-dark: #969696;
+	--text-light: #e1e1e1;
+
+	--color1: #c38fff;
+	--color2: #03dac6;
+	--color3: #f05684;
+}
+body {
+	background-color: var(--bg-dark);
+	color: var(--text-light);
+	font-family: Monospace;
+	font-size: 1.125rem;
+}
+div {
+	background-color: var(--bg-light);
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 1em;
+}
+h1 {
+	text-align: center;
+	font-size: 3.5rem;
+}
+h2, h3, h4, h5, h6 {
+	color: var(--text-dark);
+}
+h2 {
+	font-size: 3rem;
+}
+h3 {
+	font-size: 2.375rem;
+}
+h4 {
+	font-size: 1.75rem;
+}
+h5 {
+	font-size: 1.5rem;
+}
+h6 {
+	font-size: 1.125rem;
+}
+@media (min-width: 1000px) {
+	div {
+		width: 80.9%;
+	}
+}
+a:link {
+	color: var(--color2);
+}
+a:visited {
+	color: var(--color1);
+}
+a:hover {
+	color: var(--color3);
+}
+a:active {
+	color: var(--text-dark);
+}
+img {
+	width: 15em;
+	height: 15em;
