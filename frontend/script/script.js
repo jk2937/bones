@@ -93,8 +93,10 @@ document.addEventListener("keyup", function(event) {
 
 display_debug_info = true
 
+debug_lag_frames = false
+
 debug_simulate_lag = false
-debug_simulated_lag_range = 150
+debug_simulated_lag_range = 500
 debug_wireframe = true 
 
 debug_simple_player_movement = false
@@ -139,6 +141,14 @@ function main_exec_loop() {
     delta_time = Date.now() - start_time
     start_time = now
 
+	if (debug_lag_frames == true) {
+		console.log("delta_time: " + delta_time);
+	}
+	if (delta_time > 100) {
+		total_lag_frames++;
+		delta_time = 100;
+	}
+
     if (canvas_fullscreen_dynamic_res) {
         // canvas_width = window.screen.availWidth;
         // canvas_height = window.screen.availHeight;
@@ -163,7 +173,7 @@ function main_exec_loop() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "Gray";
     ctx.textAlign = "center";
-    ctx.fillText("Welcome to Bones \"Alpha\" v0.0.3!", canvas_width / 2, 20)
+    ctx.fillText("Welcome to Bones \"Alpha\" v0.0.4!", canvas_width / 2, 20)
 
     for (let i = 0; i < touch_events_history.length; i++) {
         let event_ = touch_events_history[i]
@@ -375,7 +385,7 @@ function launch_loop() {
     	requestAnimationFrame(launch_loop)
 	}
 	if (debug_simulate_lag == true) {
-		setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range) + 2)
+		setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range))
 	}
     return true;
 }
