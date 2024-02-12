@@ -5,70 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-engine = Matter.Engine.create();
-world = engine.world;
+// BEGIN WORLD INIT CODE
 
-class physics_object {
-	constructor(shape="square", shape_data, anchored=false) {
-		this.shape = shape;
-
-		this.x = shape_data.x 
-		this.y = shape_data.y 
-
-		this.angle = shape_data.angle;
-
-		if (this.shape == "square") {
-			this.w = shape_data.w
-			this.h = shape_data.h
-		}
-		if (this.shape == "circle") {
-			this.r = shape_data.r;
-		}
-
-		this.anchored = anchored;
-
-		if (this.shape == "square") {
-			this.body = Matter.Bodies.rectangle(this.x, this.y, this.w, this.h, {isStatic: this.anchored})
-			Matter.Composite.add(engine.world, [this.body]);
-		}
-		if (this.shape == "circle") {
-
-		}
-	}
-	move(delta_time) {
-	}
-	draw() {
-		this.pos = this.body.position;
-		this.angle = this.body.angle;
-		this.x = this.pos.x;
-		this.y = this.pos.y;
-		ctx.save()
-		ctx.fillStyle = "white";
-		if (this.shape == "square") {
-			ctx.translate(this.x, this.y);
-			ctx.rotate(this.angle);
-
-			ctx.fillRect(0 - this.w / 2, 0 - this.h / 2, this.w, this.h);
-		}
-		if (this.shape == "circle") {
-
-		}
-		ctx.restore()
-		//ctx.fillRect(this.x, this.y, this.w, this.h);
-		//console.log([this.x, this.y, this.w, this.h])
-	}
-}
-/*
- * Copyright 2024 Jonathan Kaschak
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- */
-
-const player = new Image();
-player.src = "../assets/asset2.png"
-
-
+function WorldInit() {
+    engine = Matter.Engine.create();
+    world = engine.world;
 player_movement_speed = 1;
 player_x = 25;
 player_y = 0;
@@ -85,8 +26,36 @@ player_facing_right = true
 player_on_ground = false
 player_jump_lock = false
 player_physics_object = new physics_object("square", {x:player_x, y:player_y, w:150, h:150}, anchored=true)
-// player_body = Matter.Bodies.rectangle();
-// Matter.World.add(world, this.body);
+// Main variables
+
+display_debug_info = true
+
+debug_lag_frames = false
+
+debug_simulate_lag = false
+debug_simulated_lag_range = 500
+debug_wireframe = true 
+
+debug_simple_player_movement = false
+
+// debug_display = ["fps", "control_left", "control_right", "control_jump"]
+debug_display = ["fps", "total_lag_frames", "debug_simulate_lag", "", "control_left", "control_right", "control_jump", "", "control_left_this_frame", "control_right_this_frame", "control_jump_this_frame", "", "player_on_ground"]
+stress_test = false;
+stress_loops = 999999;
+stress_random = false;
+
+rect_x = 0;
+rect_y = 0;
+
+rect_h = 100;
+rect_w = 100;
+
+rect_x_vel = 0;
+rect_y_vel = 0;
+test_block = new physics_object("square", {x:400, y:200, w:80, h:80})
+test_block2 = new physics_object("square", {x:450, y:50, w:80, h:20})
+ground = new physics_object("square", {x:400, y:610, w:810, h:60}, anchored=true)
+} // END WorldInit
 
 function control_player(control_left, control_right, control_jump) {
 
@@ -203,176 +172,11 @@ function draw_player() {
     ctx.drawImage(player, player_x, player_y, 150, 150)
 
 }
-/*
- * Copyright 2024 Jonathan Kaschak
- * This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- */
 
-// Canvas properties
-
-const canvas = document.getElementById("myCanvas");
-const ctx = canvas.getContext("2d");
-
-const ball = new Image();
-ball.src = "../assets/asset1.png"
-
-canvas_width = 500;
-canvas_height = 500;
-
-canvas_fullscreen = false;
-canvas_fullscreen_dynamic_res = true;
-
-canvas.width = canvas_width;
-canvas.height = canvas_height;
-
-if (canvas_fullscreen_dynamic_res) {
-    // canvas.style.width = '100%';
-    // canvas.style.height = '100%';
-    canvas.style.position = "absolute";
-    canvas.style.left = "0px";
-    canvas.style.top = "0px";
-    canvas.style.border = "none";
-}
-
-
-// Touch events
-
-let cursor_activated = false;
-let cursor_x = 0;
-let cursor_y = 0;
-let cursor_old_x = 0;
-let cursor_old_y = 0;
-let touch_events_buffer = [];
-
-canvas.addEventListener("touchstart", function(e) {
-    e.preventDefault()
-    console.log(e)
-    touch_events_buffer.push(e)
-    // cursor_activated = true;
-    // update_mouse_pos(e.touches[0]);
-}, false);
-
-canvas.addEventListener("touchend", function(e) {
-    e.preventDefault()
-    console.log(e)
-    touch_events_buffer.push(e)
-    // cursor_activated = false;
-}, false);
-
-canvas.addEventListener("touchmove", function(e) {
-    e.preventDefault()
-    console.log(e)
-    touch_events_buffer.push(e)
-    // update_mouse_pos(e.touches[0])
-}, false);
-
-window.addEventListener("touchstart", ev => {
-    ev.preventDefault();
-    ev.stopImmediatePropagation();
-}, {
-    passive: false
-});
-
-/* function update_mouse_pos(e) {
-    let rect = canvas.getBoundingClientRect();
-    cursor_x = e.clientX - rect.left;
-    cursor_y = e.clientY - rect.top;
-    touch_events_buffer.push([cursor_x, cursor_y])
-} */
-
-
-// Keyboard Events
-
-let key_event_buffer = [];
-document.addEventListener("keydown", function(event) {
-    key_event_buffer.push(event)
-});
-
-document.addEventListener("keyup", function(event) {
-    key_event_buffer.push(event)
-});
-
-// Main variables
-
-display_debug_info = true
-
-debug_lag_frames = false
-
-debug_simulate_lag = false
-debug_simulated_lag_range = 500
-debug_wireframe = true 
-
-debug_simple_player_movement = false
-
-// debug_display = ["fps", "control_left", "control_right", "control_jump"]
-debug_display = ["fps", "total_lag_frames", "debug_simulate_lag", "", "control_left", "control_right", "control_jump", "", "control_left_this_frame", "control_right_this_frame", "control_jump_this_frame", "", "player_on_ground"]
-
-main_exec_lock = false;
-main_loop_sleep = 0;
-total_lag_frames = 0;
-fps_frame_counter = 0;
-fps = 0;
-
-start_time = Date.now();
-timescale = 60 / 1000
-
-stress_test = false;
-stress_loops = 999999;
-stress_random = false;
-
-control_left = false;
-control_right = false;
-control_jump = false;
-
-rect_x = 0;
-rect_y = 0;
-
-rect_h = 100;
-rect_w = 100;
-
-rect_x_vel = 0;
-rect_y_vel = 0;
-
-touch_events_history = []
-key_event_history = []
-
-
-// Main loop
-
-function main_exec_loop() {
-    let now = Date.now()
-    delta_time = Date.now() - start_time
-    start_time = now
-
+function WorldRefresh() {
 	if (debug_lag_frames == true) {
 		console.log("delta_time: " + delta_time);
 	}
-	if (delta_time > 100) {
-		total_lag_frames++;
-		delta_time = 100;
-	}
-
-    if (canvas_fullscreen_dynamic_res) {
-        // canvas_width = window.screen.availWidth;
-        // canvas_height = window.screen.availHeight;
-
-        canvas_width = window.innerWidth;
-        canvas_height = window.innerHeight;
-
-        canvas.width = canvas_width;
-        canvas.height = canvas_height;
-    }
-
-    ctx.fillStyle = "LightGray";
-    ctx.fillRect(0, 0, canvas_width, canvas_height);
-
-
-    touch_events_history = touch_events_history.concat(touch_events_buffer)
-    key_event_history = key_event_history.concat(key_event_buffer)
-
-
     // Process touch_events_buffer
 
     ctx.font = "16px Arial";
@@ -390,57 +194,7 @@ function main_exec_loop() {
             ctx.fillText(event_.type + "\n" + touch.identifier, touch_x, touch_y)
         }
     }
-
-
-    // Process key events
-
-    // control_left = false;
-    // control_right = false;
-    // control_jump = false;
-
-    control_left_this_frame = false
-    control_right_this_frame = false
-    control_jump_this_frame = false
-
-    for (let i = 0; i < key_event_buffer.length; i++) {
-        let event_ = key_event_buffer[i]
-        if (event_.type = "keydown") {
-            if (event_.key == "a") {
-                control_left = true;
-                control_left_this_frame = true;
-            }
-            if (event_.key == "d") {
-                control_right = true;
-                control_right_this_frame = true;
-            }
-            if (event_.key == " ") {
-                console.log("press space")
-                control_jump = true;
-                control_jump_this_frame = true;
-            }
-        }
-        if (event_.type == "keyup") {
-            if (event_.key == "a") {
-                control_left = false;
-            }
-            if (event_.key == "d") {
-                control_right = false;
-            }
-            if (event_.key == " ") {
-                control_jump = false;
-                console.log(event_)
-                console.log("release space")
-            }
-        }
-    }
-
-    move_left = control_left || control_left_this_frame;
-    move_right = control_right || control_right_this_frame;
-    move_jump = control_jump || control_jump_this_frame;
-
-
     // Player physics
-	
 	if (debug_simple_player_movement == false) {
 		control_player(move_left, move_right, move_jump)
 		move_player()
@@ -461,11 +215,9 @@ function main_exec_loop() {
 
     rect_x += rect_x_vel * delta_time * timescale
     rect_y += rect_y_vel * delta_time * timescale
-
 	/* For top down mode:
     rect_y_vel = rect_y_vel / 2;
     rect_x_vel = rect_x_vel / 2; */
-
     if (rect_x < 0 - rect_w) {
         rect_x = canvas_width;
     }
@@ -548,7 +300,6 @@ function main_exec_loop() {
 
         ctx.fillText("fps", 10, 140)
         ctx.fillText(fps, 175, 140) */
-
         for (let i = 0; i < debug_display.length; i++) {
             if (debug_display[i] != "") {
                 ctx.fillText(debug_display[i], 10, 50 + i * 15)
@@ -566,6 +317,251 @@ function main_exec_loop() {
             ctx.fillText("", 0, 0)
         }
     }
+
+} // END WorldRefresh
+
+class physics_object {
+	constructor(shape="square", shape_data, anchored=false) {
+		this.shape = shape;
+
+		this.x = shape_data.x 
+		this.y = shape_data.y 
+
+		this.angle = shape_data.angle;
+
+		if (this.shape == "square") {
+			this.w = shape_data.w
+			this.h = shape_data.h
+		}
+		if (this.shape == "circle") {
+			this.r = shape_data.r;
+		}
+
+		this.anchored = anchored;
+
+		if (this.shape == "square") {
+			this.body = Matter.Bodies.rectangle(this.x, this.y, this.w, this.h, {isStatic: this.anchored})
+			Matter.Composite.add(engine.world, [this.body]);
+		}
+		if (this.shape == "circle") {
+
+		}
+	}
+	move(delta_time) {
+	}
+	draw() {
+		this.pos = this.body.position;
+		this.angle = this.body.angle;
+		this.x = this.pos.x;
+		this.y = this.pos.y;
+		ctx.save()
+		ctx.fillStyle = "white";
+		if (this.shape == "square") {
+			ctx.translate(this.x, this.y);
+			ctx.rotate(this.angle);
+
+			ctx.fillRect(0 - this.w / 2, 0 - this.h / 2, this.w, this.h);
+		}
+		if (this.shape == "circle") {
+
+		}
+		ctx.restore()
+	}
+}
+/*
+ * Copyright 2024 Jonathan Kaschak
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+const player = new Image();
+player.src = "../assets/asset2.png"
+
+/*
+ * Copyright 2024 Jonathan Kaschak
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+// Canvas properties
+
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+const ball = new Image();
+ball.src = "../assets/asset1.png"
+
+canvas_width = 500;
+canvas_height = 500;
+
+canvas_fullscreen = false;
+canvas_fullscreen_dynamic_res = true;
+
+canvas.width = canvas_width;
+canvas.height = canvas_height;
+
+if (canvas_fullscreen_dynamic_res) {
+    // canvas.style.width = '100%';
+    // canvas.style.height = '100%';
+    canvas.style.position = "absolute";
+    canvas.style.left = "0px";
+    canvas.style.top = "0px";
+    canvas.style.border = "none";
+}
+
+
+// Touch events
+
+let cursor_activated = false;
+let cursor_x = 0;
+let cursor_y = 0;
+let cursor_old_x = 0;
+let cursor_old_y = 0;
+let touch_events_buffer = [];
+
+canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault()
+    console.log(e)
+    touch_events_buffer.push(e)
+}, false);
+
+canvas.addEventListener("touchend", function(e) {
+    e.preventDefault()
+    console.log(e)
+    touch_events_buffer.push(e)
+    // cursor_activated = false;
+}, false);
+
+canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault()
+    console.log(e)
+    touch_events_buffer.push(e)
+    // update_mouse_pos(e.touches[0])
+}, false);
+
+window.addEventListener("touchstart", ev => {
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+}, {
+    passive: false
+});
+
+/* function update_mouse_pos(e) {
+    let rect = canvas.getBoundingClientRect();
+    cursor_x = e.clientX - rect.left;
+    cursor_y = e.clientY - rect.top;
+    touch_events_buffer.push([cursor_x, cursor_y])
+} */
+
+
+// Keyboard Events
+
+let key_event_buffer = [];
+document.addEventListener("keydown", function(event) {
+    key_event_buffer.push(event)
+});
+
+document.addEventListener("keyup", function(event) {
+    key_event_buffer.push(event)
+});
+main_exec_lock = false;
+main_loop_sleep = 0;
+total_lag_frames = 0;
+fps_frame_counter = 0;
+fps = 0;
+
+start_time = Date.now();
+timescale = 60 / 1000
+stress_test = false;
+stress_loops = 999999;
+stress_random = false;
+
+control_left = false;
+control_right = false;
+control_jump = false;
+
+touch_events_history = []
+key_event_history = []
+
+
+// Main loop
+
+function main_exec_loop() {
+    let now = Date.now()
+    delta_time = Date.now() - start_time
+    start_time = now
+	if (delta_time > 100) {
+		total_lag_frames++;
+		delta_time = 100;
+	}
+
+    if (canvas_fullscreen_dynamic_res) {
+        // canvas_width = window.screen.availWidth;
+        // canvas_height = window.screen.availHeight;
+
+        canvas_width = window.innerWidth;
+        canvas_height = window.innerHeight;
+
+        canvas.width = canvas_width;
+        canvas.height = canvas_height;
+    }
+
+    ctx.fillStyle = "LightGray";
+    ctx.fillRect(0, 0, canvas_width, canvas_height);
+
+
+    touch_events_history = touch_events_history.concat(touch_events_buffer)
+    key_event_history = key_event_history.concat(key_event_buffer)
+
+    // Process key events
+
+    // control_left = false;
+    // control_right = false;
+    // control_jump = false;
+
+    control_left_this_frame = false
+    control_right_this_frame = false
+    control_jump_this_frame = false
+
+    for (let i = 0; i < key_event_buffer.length; i++) {
+        let event_ = key_event_buffer[i]
+        if (event_.type = "keydown") {
+            if (event_.key == "a") {
+                control_left = true;
+                control_left_this_frame = true;
+            }
+            if (event_.key == "d") {
+                control_right = true;
+                control_right_this_frame = true;
+            }
+            if (event_.key == " ") {
+                console.log("press space")
+                control_jump = true;
+                control_jump_this_frame = true;
+            }
+        }
+        if (event_.type == "keyup") {
+            if (event_.key == "a") {
+                control_left = false;
+            }
+            if (event_.key == "d") {
+                control_right = false;
+            }
+            if (event_.key == " ") {
+                control_jump = false;
+                console.log(event_)
+                console.log("release space")
+            }
+        }
+    }
+
+    move_left = control_left || control_left_this_frame;
+    move_right = control_right || control_right_this_frame;
+    move_jump = control_jump || control_jump_this_frame;
+
+    WorldRefresh()
 
     touch_events_buffer = []
     key_event_buffer = []
@@ -585,13 +581,14 @@ function launch_loop() {
     main_exec_lock = true;
     main_exec_loop();
     main_exec_lock = false;
-
-	if (debug_simulate_lag == false) {
+/* BEGIN ENGINE 
+	if (debug_simulate_lag == false) { i*/
     	requestAnimationFrame(launch_loop)
+/* BEGIN ENGINE
 	}
 	if (debug_simulate_lag == true) {
 		setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range))
-	}
+	} */
     return true;
 }
 
@@ -599,12 +596,14 @@ function calculate_fps() {
     fps = fps_frame_counter
     fps_frame_counter = 0
 }
-
-test_block = new physics_object("square", {x:400, y:200, w:80, h:80})
-test_block2 = new physics_object("square", {x:450, y:50, w:80, h:20})
-ground = new physics_object("square", {x:400, y:610, w:810, h:60}, anchored=true)
-
 window.onload = function() {
+    WorldInit()
     launch_loop()
     setInterval(calculate_fps, 1000)
 }
+/*
+Engine = new Bones.Engine()
+World = new Bones.World(debug_world=true)
+Engine.LoadWorld(World)
+Engine.LaunchLoop()
+*/
