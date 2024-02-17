@@ -182,7 +182,7 @@ function WorldRefresh() {
     ctx.font = "16px Arial";
     ctx.fillStyle = "Gray";
     ctx.textAlign = "center";
-    ctx.fillText("Welcome to Bones \"Alpha\" v0.0.4!", canvas_width / 2, 20)
+    ctx.fillText("Welcome to Bones \"Alpha\" v0.0.5!", canvas_width / 2, 20)
 
     for (let i = 0; i < touch_events_history.length; i++) {
         let event_ = touch_events_history[i]
