@@ -1,18 +1,13 @@
-class Engine {
-    constructor(auto_init=true) {
-        if (auto_init) {
-            this.init()
-        }
-    }
-    init() {
+const Engine = {
+	canvas: document.getElementById("myCanvas"),
+	ctx: this.canvas.getContext("2d"),
+	init: function() {
         // todo: create resource pack object
         this.gfx_player = new Image();
         this.gfx_player.src = "../assets/asset2.png"
         // Canvas properties
 
         // todo: create renderer object
-        this.canvas = document.getElementById("myCanvas");
-        this.ctx = canvas.getContext("2d");
 
         this.gfx_ball = new Image();
         this.gfx_ball.src = "../assets/asset1.png"
@@ -26,7 +21,7 @@ class Engine {
         this.canvas.width = this.renderer_width;
         this.canvas.height = this.renderer_height;
 
-        if (renderer_fullscreen_dynamic_res) {
+        if (this.renderer_fullscreen_dynamic_res) {
             // this.canvas.style.width = '100%';
             // this.canvas.style.height = '100%';
             this.canvas.style.position = "absolute";
@@ -35,7 +30,7 @@ class Engine {
             this.canvas.style.border = "none";
         }
 
-
+		
         // Touch events
 
         this.cursor_activated = false;
@@ -44,34 +39,7 @@ class Engine {
         this.cursor_old_x = 0;
         this.cursor_old_y = 0;
         this.touch_events_buffer = [];
-
-        this.canvas.addEventListener("touchstart", function(e) {
-            e.preventDefault()
-            console.log(e)
-            touch_events_buffer.push(e)
-        }, false);
-
-        this.canvas.addEventListener("touchend", function(e) {
-            e.preventDefault()
-            console.log(e)
-            touch_events_buffer.push(e)
-            // cursor_activated = false;
-        }, false);
-
-        this.canvas.addEventListener("touchmove", function(e) {
-            e.preventDefault()
-            console.log(e)
-            touch_events_buffer.push(e)
-            // update_mouse_pos(e.touches[0])
-        }, false);
-
-        window.addEventListener("touchstart", ev => {
-            ev.preventDefault();
-            ev.stopImmediatePropagation();
-        }, {
-            passive: false
-        });
-
+		this.key_event_buffer = [];
         /* function update_mouse_pos(e) {
             let rect = canvas.getBoundingClientRect();
             cursor_x = e.clientX - rect.left;
@@ -79,17 +47,6 @@ class Engine {
             touch_events_buffer.push([cursor_x, cursor_y])
         } */
 
-
-        // Keyboard Events
-
-        this.key_event_buffer = [];
-        document.addEventListener("keydown", function(event) {
-            key_event_buffer.push(event)
-        });
-
-        document.addEventListener("keyup", function(event) {
-            key_event_buffer.push(event)
-        });
         this.main_exec_lock = false;
         this.main_loop_sleep = 0;
         this.total_lag_frames = 0;
@@ -108,16 +65,15 @@ class Engine {
 
 
 
-        import * as world from "world.js";
         this.world1 = new World()
 
         this.start()
-    } // END FUNCTION init
-    function start() {
+	},
+	start: function() {
         setInterval(this.calculate_fps, 1000)
         this.run()
-    }
-    function run() {
+    },
+    run: function() {
         // BEGIN execution lock code 
         if (this.main_exec_lock == true) {
             this.total_lag_frames++;
@@ -148,8 +104,9 @@ class Engine {
         }
 
         // clear canvas
+		console.log(this.ctx)
         this.ctx.fillStyle = "LightGray";
-        this.ctx.fillRect(0, 0, renderer_width, renderer_height);
+        this.ctx.fillRect(0, 0, this.renderer_width, this.renderer_height);
 
         // add events to history objects
         this.touch_events_history = this.touch_events_history.concat(this.touch_events_buffer)
@@ -157,7 +114,7 @@ class Engine {
 
         // todo: move control code to player object
         // tick world
-        this.world1.tick();
+        this.world1.tick(this.ctx, this.canvas_width, this.delta_time, this.timescale);
 
         // empty event pools
         this.touch_events_buffer = []
@@ -174,9 +131,48 @@ class Engine {
             if (debug_simulate_lag == true) {
                 setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range))
             } */
-    } // END FUNCTION run
-    function calculate_fps() {
+    }, // END FUNCTION run
+    calculate_fps: function() {
         this.fps = this.fps_frame_counter
         this.fps_frame_counter = 0
     }
-}
+
+}; 
+
+Engine.canvas.addEventListener("touchstart", function(e) {
+	e.preventDefault()
+	console.log(e)
+	Engine.touch_events_buffer.push(e)
+}, false);
+
+Engine.canvas.addEventListener("touchend", function(e) {
+	e.preventDefault()
+	console.log(e)
+	Engine.touch_events_buffer.push(e)
+	// cursor_activated = false;
+}, false);
+
+Engine.canvas.addEventListener("touchmove", function(e) {
+	e.preventDefault()
+	console.log(e)
+	Engine.touch_events_buffer.push(e)
+	// update_mouse_pos(e.touches[0])
+}, false);
+
+window.addEventListener("touchstart", ev => {
+	ev.preventDefault();
+	ev.stopImmediatePropagation();
+}, {
+	passive: false
+});
+
+
+// Keyboard Events
+document.addEventListener("keydown", function(event) {
+	Engine.key_event_buffer.push(event)
+});
+
+document.addEventListener("keyup", function(event) {
+	Engine.key_event_buffer.push(event)
+}); 
+

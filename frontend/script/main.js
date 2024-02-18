@@ -22,6 +22,5 @@
 // } // END WorldRefresh
 // BEGIN MOVE TO engine.js
 window.onload = function() {
-	import * as engine from "engine.js";
-	bones = new engine.Engine()
+    Engine.init()
 }

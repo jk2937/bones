@@ -1,5 +1,5 @@
 class PhysicsProp {
-    constructor(shape = "square", shape_data, anchored = false) {
+    constructor(shape, shape_data, anchored, matterjs_world) {
         this.shape = shape;
 
         this.x = shape_data.x
@@ -21,14 +21,14 @@ class PhysicsProp {
             this.body = Matter.Bodies.rectangle(this.x, this.y, this.w, this.h, {
                 isStatic: this.anchored
             })
-            Matter.Composite.add(engine.world, [this.body]);
+            Matter.Composite.add(matterjs_world, [this.body]);
         }
         if (this.shape == "circle") {
 
         }
     }
     move(delta_time) {}
-    draw() {
+    draw(ctx) {
         this.pos = this.body.position;
         this.angle = this.body.angle;
         this.x = this.pos.x;

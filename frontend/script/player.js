@@ -1,5 +1,5 @@
 class Player {
-    constructor() {
+    constructor(matterjs_world) {
 
         //player init
 
@@ -29,12 +29,12 @@ class Player {
 
         this.on_ground = false
         this.jump_lock = false
-        this.physics_object = new physics_object("square", {
+        this.physics_prop = new PhysicsProp("square", {
             x: this.x,
             y: this.y,
             w: 150,
             h: 150
-        }, anchored = true)
+        }, true, matterjs_world)
     } 
 	read_keyboard_controls(key_event_buffer) {
         // process key events
@@ -182,12 +182,12 @@ class Player {
 			this.on_ground = true
 		}
 
-		Matter.Body.setPosition(this.physics_object.body, {
+		Matter.Body.setPosition(this.physics_prop.body, {
 			x: this.x + 150 / 2,
 			y: this.y + 150 / 2
 		}, updateVelocity = true)
 	}
-	render() {
-    	ctx.drawImage(gfx_player, this.x, this.y, 150, 150)
+	render(ctx) {
+        ctx.drawImage(Engine.gfx_player, this.x, this.y, 150, 150)
 	}
 }
