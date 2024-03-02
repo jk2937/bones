@@ -1,45 +1,44 @@
-class Engine {
-	constructor() {
-	    this.canvas = document.getElementById("myCanvas"),
-	    this.ctx = this.canvas.getContext("2d")
-        // todo: create resource pack object
-        this.gfx_player = new Image();
-        this.gfx_player.src = "../assets/asset2.png"
-        // Canvas properties
+Engine = new Object()
+Engine.canvas = document.getElementById("myCanvas"),
+Engine.ctx = Engine.canvas.getContext("2d")
+// todo: create resource pack object
+Engine.gfx_player = new Image();
+Engine.gfx_player.src = "../assets/asset2.png"
+// Canvas properties
 
-        // todo: create renderer object
+// todo: create renderer object
 
-        this.gfx_ball = new Image();
-        this.gfx_ball.src = "../assets/asset1.png"
+Engine.gfx_ball = new Image();
+Engine.gfx_ball.src = "../assets/asset1.png"
 
-        this.renderer_width = 500;
-        this.renderer_height = 500;
+Engine.renderer_width = 500;
+Engine.renderer_height = 500;
 
-        this.renderer_fullscreen = false;
-        this.renderer_fullscreen_dynamic_res = true;
+Engine.renderer_fullscreen = false;
+Engine.renderer_fullscreen_dynamic_res = true;
 
-        this.canvas.width = this.renderer_width;
-        this.canvas.height = this.renderer_height;
+Engine.canvas.width = Engine.renderer_width;
+Engine.canvas.height = Engine.renderer_height;
 
-        if (this.renderer_fullscreen_dynamic_res) {
-            // this.canvas.style.width = '100%';
-            // this.canvas.style.height = '100%';
-            this.canvas.style.position = "absolute";
-            this.canvas.style.left = "0px";
-            this.canvas.style.top = "0px";
-            this.canvas.style.border = "none";
+        if (Engine.renderer_fullscreen_dynamic_res) {
+            // Engine.canvas.style.width = '100%';
+            // Engine.canvas.style.height = '100%';
+            Engine.canvas.style.position = "absolute";
+            Engine.canvas.style.left = "0px";
+            Engine.canvas.style.top = "0px";
+            Engine.canvas.style.border = "none";
         }
 
 		
         // Touch events
 
-        this.cursor_activated = false;
-        this.cursor_x = 0;
-        this.cursor_y = 0;
-        this.cursor_old_x = 0;
-        this.cursor_old_y = 0;
-        this.touch_events_buffer = [];
-		this.key_event_buffer = [];
+        Engine.cursor_activated = false;
+        Engine.cursor_x = 0;
+        Engine.cursor_y = 0;
+        Engine.cursor_old_x = 0;
+        Engine.cursor_old_y = 0;
+        Engine.touch_events_buffer = [];
+		Engine.key_event_buffer = [];
         /* function update_mouse_pos(e) {
             let rect = canvas.getBoundingClientRect();
             cursor_x = e.clientX - rect.left;
@@ -47,113 +46,109 @@ class Engine {
             touch_events_buffer.push([cursor_x, cursor_y])
         } */
 
-        this.main_exec_lock = false;
-        this.main_loop_sleep = 0;
-        this.total_lag_frames = 0;
-        this.fps_frame_counter = 0;
-        this.fps = 0;
+        Engine.main_exec_lock = false;
+        Engine.main_loop_sleep = 0;
+        Engine.total_lag_frames = 0;
+        Engine.fps_frame_counter = 0;
+        Engine.fps = 0;
 
-        this.start_time = Date.now();
-        this.timescale = 60 / 1000
+        Engine.start_time = Date.now();
+        Engine.timescale = 60 / 1000
 
-        this.local_control_left = false;
-        this.local_control_right = false;
-        this.local_control_jump = false;
+        Engine.local_control_left = false;
+        Engine.local_control_right = false;
+        Engine.local_control_jump = false;
 
-        this.touch_events_history = []
-        this.key_event_history = []
+        Engine.touch_events_history = []
+        Engine.key_event_history = []
 
 
 
-        this.world1 = new World()
+        Engine.world1 = new World()
 
-        //this.start()
-	}
-	start() {
-        setInterval(this.calculate_fps, 1000)
-        this.run.call(this)
+        //Engine.start()
+	Engine.start = function() {
+        setInterval(Engine.calculate_fps, 1000)
+        Engine.run()
     }
-    run() {
+    Engine.run = function() {
         // BEGIN execution lock code 
-        if (this.main_exec_lock == true) {
-            this.total_lag_frames++;
+        if (Engine.main_exec_lock == true) {
+            Engine.total_lag_frames++;
             return false;
         }
-        this.main_exec_lock = true;
+        Engine.main_exec_lock = true;
         // END executio lock code
         // update delta_time
         // todo: remove unneeded variable
-        this.now = Date.now()
-        this.delta_time = Date.now() - this.start_time
-        this.start_time = this.now
-        if (this.delta_time > 100) {
-            this.total_lag_frames++;
-            this.delta_time = 100;
+        Engine.now = Date.now()
+        Engine.delta_time = Date.now() - Engine.start_time
+        Engine.start_time = Engine.now
+        if (Engine.delta_time > 100) {
+            Engine.total_lag_frames++;
+            Engine.delta_time = 100;
         }
 
         // update canvas resolution
-        if (this.renderer_fullscreen_dynamic_res) {
+        if (Engine.renderer_fullscreen_dynamic_res) {
             // canvas_width = window.screen.availWidth;
             // canvas_height = window.screen.availHeight;
 
-            this.renderer_width = window.innerWidth;
-            this.renderer_height = window.innerHeight;
+            Engine.renderer_width = window.innerWidth;
+            Engine.renderer_height = window.innerHeight;
 
-            this.canvas.width = this.renderer_width;
-            this.canvas.height = this.renderer_height;
+            Engine.canvas.width = Engine.renderer_width;
+            Engine.canvas.height = Engine.renderer_height;
         }
 
         // clear canvas
-        this.ctx.fillStyle = "LightGray";
-        this.ctx.fillRect(0, 0, this.renderer_width, this.renderer_height);
+        Engine.ctx.fillStyle = "LightGray";
+        Engine.ctx.fillRect(0, 0, Engine.renderer_width, Engine.renderer_height);
 
         // add events to history objects
-        this.touch_events_history = this.touch_events_history.concat(this.touch_events_buffer)
-        this.key_event_history = this.key_event_history.concat(this.key_event_buffer)
+        Engine.touch_events_history = Engine.touch_events_history.concat(Engine.touch_events_buffer)
+        Engine.key_event_history = Engine.key_event_history.concat(Engine.key_event_buffer)
 
         // todo: move control code to player object
         // tick world
-        this.world1.tick(this.ctx, this.canvas_width, this.delta_time, this.timescale);
+        Engine.world1.tick(Engine.ctx, Engine.canvas_width, Engine.delta_time, Engine.timescale);
 
         // empty event pools
-        this.touch_events_buffer = []
-        this.key_event_buffer = []
+        Engine.touch_events_buffer = []
+        Engine.key_event_buffer = []
 
-        this.fps_frame_counter++;
+        Engine.fps_frame_counter++;
 
-        this.main_exec_lock = false;
+        Engine.main_exec_lock = false;
         /* BEGIN ENGINE 
             if (debug_simulate_lag == false) { i*/
-        //requestAnimationFrame(this.run.call(this));
+        requestAnimationFrame(Engine.run);
         /* BEGIN ENGINE
             }
             if (debug_simulate_lag == true) {
                 setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range))
             } */
     } // END FUNCTION run
-    calculate_fps() {
-        this.fps = this.fps_frame_counter
-        this.fps_frame_counter = 0
+    Engine.calculate_fps = function() {
+        Engine.fps = Engine.fps_frame_counter
+        Engine.fps_frame_counter = 0
     }
 
-}; 
 
-global_engine_instance = new Engine()
-
-global_engine_instance.canvas.addEventListener("touchstart", function(e) {
+Engine.canvas.addEventListener("touchstart", function(e) {
 	e.preventDefault()
 	console.log(e)
 	Engine.touch_events_buffer.push(e)
 }, false);
 
-global_engine_instance.canvas.addEventListener("touchend", function(e) {
+Engine.canvas.addEventListener("touchend", function(e) {
 	e.preventDefault()
 	console.log(e)
 	Engine.touch_events_buffer.push(e)
 	// cursor_activated = false;
 }, false);
 
-global_engine_instance.canvas.addEventListener("touchmove", function(e) {
+Engine.canvas.addEventListener("touchmove", function(e) {
 	e.preventDefault()
 	console.log(e)
 	Engine.touch_events_buffer.push(e)

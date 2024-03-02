@@ -188,6 +188,6 @@ class Player {
 		}, updateVelocity = true)
 	}
 	render(ctx) {
-        ctx.drawImage(global_engine_instance.gfx_player, this.x, this.y, 150, 150)
+        ctx.drawImage(Engine.gfx_player, this.x, this.y, 150, 150)
 	}
 }
