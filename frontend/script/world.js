@@ -38,16 +38,17 @@ class World {
         }, true, this.matterjs_world)
 
     }
-    tick(ctx, canvas_width, delta_time, timescale) {
+    tick() {
         if (this.debug_display1.debug_lag_frames == true) {
             console.log("delta_time: " + delta_time);
         }
         // Process touch_events_buffer
 
-        ctx.font = "16px Arial";
-        ctx.fillStyle = "Gray";
-        ctx.textAlign = "center";
-        ctx.fillText("Welcome to Bones \"Alpha\" v0.0.5!", canvas_width / 2, 20)
+        
+        Bones.Renderer.context.font = "16px Arial";
+        Bones.Renderer.context.fillStyle = "Gray";
+        Bones.Renderer.context.textAlign = "center";
+        Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.5!", Bones.Renderer.canvas.width / 2, 20)
     
         if (this.debug_display1.debug_simple_player_movement == false) {
             this.player1.tick()
@@ -61,7 +62,7 @@ class World {
             }
         }
 
-        Matter.Engine.update(this.matterjs_engine, delta_time)
+        Matter.Engine.update(this.matterjs_engine, Bones.delta_time)
 
 
         // Ball physics
@@ -104,46 +105,46 @@ class World {
         }
         rect_y_vel++;
 	*/
-        // ctx.fillStyle = "Gray";
-        // ctx.fillRect(rect_x, rect_y, rect_w, rect_h);
+        // Bones.Renderer.context.fillStyle = "Gray";
+        // Bones.Renderer.context.fillRect(rect_x, rect_y, rect_w, rect_h);
 
-        this.test_prop1.draw(ctx)
-        this.test_prop2.draw(ctx)
-        this.ground1.draw(ctx)
+        this.test_prop1.draw(Bones.Renderer.context)
+        this.test_prop2.draw(Bones.Renderer.context)
+        this.ground1.draw(Bones.Renderer.context)
 
         if (this.debug_display1.debug_wireframe == true) {
             var bodies = Matter.Composite.allBodies(engine.world)
 
-            this.ctx.save()
+            Bones.Renderer.context.save()
 
-            this.ctx.beginPath();
+            Bones.Renderer.context.beginPath();
 
             for (var i = 0; i < bodies.length; i++) {
                 var vertices = bodies[i].vertices;
 
-                this.ctx.moveTo(vertices[0].x, vertices[0].y);
+                Bones.Renderer.context.moveTo(vertices[0].x, vertices[0].y);
 
                 for (var j = 1; j < vertices.length; j += 1) {
-                    this.ctx.lineTo(vertices[j].x, vertices[j].y);
+                    Bones.Renderer.context.lineTo(vertices[j].x, vertices[j].y);
                 }
 
-                this.ctx.lineTo(vertices[0].x, vertices[0].y);
+                Bones.Renderer.context.lineTo(vertices[0].x, vertices[0].y);
             }
 
-            this.ctx.lineWidth = 1;
-            this.ctx.strokeStyle = '#999';
-            this.ctx.stroke();
+            Bones.Renderer.context.lineWidth = 1;
+            Bones.Renderer.context.strokeStyle = '#999';
+            Bones.Renderer.context.stroke();
 
-            this.ctx.restore()
+            Bones.Renderer.context.restore()
         }
 
-        this.player1.render(ctx)
-        // temrporary ctx.drawImage(Engine.gfx_ball, rect_x, rect_y, rect_w, rect_h)
+        this.player1.render()
+        // temrporary ctx.drawImage(Bones.gfx_ball, rect_x, rect_y, rect_w, rect_h)
 
         if (this.debug_display1.display_debug_info == true) {
-            this.ctx.font = "14px Arial";
-            this.ctx.fillStyle = "Gray"
-            this.ctx.textAlign = "left";
+            Bones.Renderer.context.font = "14px Arial";
+            Bones.Renderer.context.fillStyle = "Gray"
+            Bones.Renderer.context.textAlign = "left";
             /* ctx.fillText("canvas_width", 10, 50)
             ctx.fillText(canvas_width, 175, 50)
             ctx.fillText("canvas_height", 10, 65)
@@ -158,8 +159,8 @@ class World {
             ctx.fillText(fps, 175, 140) */
             for (let i = 0; i < debug_display.length; i++) {
                 if (debug_display[i] != "") {
-                    this.ctx.fillText(debug_display[i], 10, 50 + i * 15)
-                    this.ctx.fillText(eval(debug_display[i]), 175, 50 + i * 15)
+                    Bones.Renderer.context.fillText(debug_display[i], 10, 50 + i * 15)
+                    Bones.Renderer.context.fillText(eval(debug_display[i]), 175, 50 + i * 15)
                 }
             }
         }
@@ -170,7 +171,7 @@ class World {
                 rand = Math.random() * this.debug_display1.stress_loops;
             }
             for (i = 0; i < this.debug_display1.stress_loops * rand; i++) {
-                this.ctx.fillText("", 0, 0)
+                Bones.Renderer.context.fillText("", 0, 0)
             }
         }
     }

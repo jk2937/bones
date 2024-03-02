@@ -187,7 +187,8 @@ class Player {
 			y: this.y + 150 / 2
 		}, updateVelocity = true)
 	}
-	render(ctx) {
-        ctx.drawImage(Engine.gfx_player, this.x, this.y, 150, 150)
+	render() {
+        // This class could possibly contain an internal reference to the Engine object, or access the Engine object directly
+        Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, this.x, this.y, 150, 150)
 	}
 }

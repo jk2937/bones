@@ -6,3 +6,5 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 js-beautify -r ../frontend/script/*
+
+# Todo: make js-beutify turn tabs into spaces
