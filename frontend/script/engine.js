@@ -1,7 +1,7 @@
-const Engine = {
-	canvas: document.getElementById("myCanvas"),
-	ctx: this.canvas.getContext("2d"),
-	init: function() {
+class Engine {
+	constructor() {
+	    this.canvas = document.getElementById("myCanvas"),
+	    this.ctx = this.canvas.getContext("2d")
         // todo: create resource pack object
         this.gfx_player = new Image();
         this.gfx_player.src = "../assets/asset2.png"
@@ -67,13 +67,13 @@ const Engine = {
 
         this.world1 = new World()
 
-        this.start()
-	},
-	start: function() {
+        //this.start()
+	}
+	start() {
         setInterval(this.calculate_fps, 1000)
-        this.run()
-    },
-    run: function() {
+        this.run.call(this)
+    }
+    run() {
         // BEGIN execution lock code 
         if (this.main_exec_lock == true) {
             this.total_lag_frames++;
@@ -104,7 +104,6 @@ const Engine = {
         }
 
         // clear canvas
-		console.log(this.ctx)
         this.ctx.fillStyle = "LightGray";
         this.ctx.fillRect(0, 0, this.renderer_width, this.renderer_height);
 
@@ -125,34 +124,36 @@ const Engine = {
         this.main_exec_lock = false;
         /* BEGIN ENGINE 
             if (debug_simulate_lag == false) { i*/
-        requestAnimationFrame(this.run)
+        //requestAnimationFrame(this.run.call(this));
         /* BEGIN ENGINE
             }
             if (debug_simulate_lag == true) {
                 setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range))
             } */
-    }, // END FUNCTION run
-    calculate_fps: function() {
+    } // END FUNCTION run
+    calculate_fps() {
         this.fps = this.fps_frame_counter
         this.fps_frame_counter = 0
     }
 
 }; 
 
-Engine.canvas.addEventListener("touchstart", function(e) {
+global_engine_instance = new Engine()
+
+global_engine_instance.canvas.addEventListener("touchstart", function(e) {
 	e.preventDefault()
 	console.log(e)
 	Engine.touch_events_buffer.push(e)
 }, false);
 
-Engine.canvas.addEventListener("touchend", function(e) {
+global_engine_instance.canvas.addEventListener("touchend", function(e) {
 	e.preventDefault()
 	console.log(e)
 	Engine.touch_events_buffer.push(e)
 	// cursor_activated = false;
 }, false);
 
-Engine.canvas.addEventListener("touchmove", function(e) {
+global_engine_instance.canvas.addEventListener("touchmove", function(e) {
 	e.preventDefault()
 	console.log(e)
 	Engine.touch_events_buffer.push(e)

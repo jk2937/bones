@@ -22,5 +22,5 @@
 // } // END WorldRefresh
 // BEGIN MOVE TO engine.js
 window.onload = function() {
-    Engine.init()
+    global_engine_instance.start()
 }
