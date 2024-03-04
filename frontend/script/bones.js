@@ -53,7 +53,7 @@ Bones.Input.touch_events_buffer = [];
 Bones.Input.key_events_buffer = [];
 
 Bones.Input.touch_events_history = []
-Bones.Input.key_event_history = []
+Bones.Input.key_events_history = []
 
 // Todo: implement a key mapper
 
@@ -107,7 +107,6 @@ Bones.run = function() {
     }
 
     if (Bones.Renderer.display_mode = "fullscreen_dynamic") {
-        console.log("debug")
         Bones.Renderer.width = window.innerWidth;
         Bones.Renderer.height = window.innerHeight;
 
@@ -120,12 +119,12 @@ Bones.run = function() {
 
     // Todo: Add this to Bones.Input.tick() perhaps
     Bones.Input.touch_events_history = Bones.Input.touch_events_history.concat(Bones.Input.touch_events_buffer)
-    Bones.Input.key_event_history = Bones.Input.key_event_history.concat(Bones.Input.key_event_buffer)
+    Bones.Input.key_events_history = Bones.Input.key_events_history.concat(Bones.Input.key_events_buffer)
 
     Bones.demo_world1.tick(Bones.Renderer.context, Bones.Renderer.width, Bones.delta_time, Bones.timescale);
 
     Bones.Input.touch_events_buffer = []
-    Bones.Input.key_event_buffer = []
+    Bones.Input.key_events_buffer = []
 
     Bones.previous_frame_start_time = Bones.frame_start_time
 
@@ -172,9 +171,9 @@ window.addEventListener("touchstart", _event => {
 });
 
 document.addEventListener("keydown", function(_event) {
-	Bones.Input.key_event_buffer.push(_event)
+	Bones.Input.key_events_buffer.push(_event)
 });
 
 document.addEventListener("keyup", function(_event) {
-	Bones.Input.key_event_buffer.push(_event)
+	Bones.Input.key_events_buffer.push(_event)
 }); 

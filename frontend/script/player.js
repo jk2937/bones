@@ -36,15 +36,15 @@ class Player {
             h: 150
         }, true, matterjs_world)
     } 
-	read_keyboard_controls(key_event_buffer) {
+	read_keyboard_controls(key_events_buffer) {
         // process key events
         this.control_left_this_frame = false
         this.control_right_this_frame = false
         this.control_jump_this_frame = false
 
-        for (let i = 0; i < key_event_buffer.length; i++) {
-            let event_ = key_event_buffer[i]
-            if (event_.type = "keydown") {
+        for (let i = 0; i < key_events_buffer.length; i++) {
+            let event_ = key_events_buffer[i]
+            if (event_.type == "keydown") {
                 if (event_.key == "a") {
                     this.control_left = true;
                     this.control_left_this_frame = true;
@@ -54,7 +54,6 @@ class Player {
                     this.control_right_this_frame = true;
                 }
                 if (event_.key == " ") {
-                    console.log("press space")
                     this.control_jump = true;
                     this.control_jump_this_frame = true;
                 }
@@ -68,8 +67,6 @@ class Player {
                 }
                 if (event_.key == " ") {
                     this.control_jump = false;
-                    console.log(event_)
-                    console.log("release space")
                 }
             }
         }
@@ -82,10 +79,10 @@ class Player {
 		// Control
 
 		if (this.move_left) {
-			this.x_vel -= this.x_acc * delta_time * timescale;
+			this.x_vel -= this.x_acc * Bones.delta_time * Bones.timescale;
 		}
 		if (this.move_right) {
-			this.x_vel += this.x_acc * delta_time * timescale;
+			this.x_vel += this.x_acc * Bones.delta_time * Bones.timescale;
 		}
 		if (this.move_jump && !this.jump_lock && this.on_ground) {
 			this.y_vel -= this.y_acc
@@ -98,40 +95,40 @@ class Player {
 
 		// Gravity
 
-		this.y_vel += this.gravity * delta_time * timescale
+		this.y_vel += this.gravity * Bones.delta_time * Bones.timescale
 
 		// Friction
 
 		if (!this.move_left && !this.move_right) {
 			if (this.x_vel > 0) {
 				if (this.on_ground == true) {
-					if (this.x_vel <= this.ground_friction * delta_time * timescale) {
+					if (this.x_vel <= this.ground_friction * Bones.delta_time * Bones.timescale) {
 						this.x_vel = 0; // player_ground_friction;
 					} else {
-						this.x_vel -= this.ground_friction * delta_time * timescale;
+						this.x_vel -= this.ground_friction * Bones.delta_time * Bones.timescale;
 					}
 				}
 				if (this.on_ground == false) {
-					if (this.x_vel < this.air_friction * delta_time * timescale) {
-						this.x_vel = this.air_friction * delta_time * timescale;
+					if (this.x_vel < this.air_friction * Bones.delta_time * Bones.timescale) {
+						this.x_vel = this.air_friction * Bones.delta_time * Bones.timescale;
 					} else {
-						this.x_vel -= this.air_friction * delta_time * timescale;
+						this.x_vel -= this.air_friction * Bones.delta_time * Bones.timescale;
 					}
 				}
 			}
 			if (this.x_vel < 0) {
 				if (this.on_ground == true) {
-					if (this.x_vel >= -this.ground_friction * delta_time * timescale) {
+					if (this.x_vel >= -this.ground_friction * Bones.delta_time * Bones.timescale) {
 						this.x_vel = 0; // -player_ground_friction
 					} else {
-						this.x_vel += this.ground_friction * delta_time * timescale;
+						this.x_vel += this.ground_friction * Bones.delta_time * Bones.timescale;
 					}
 				}
 				if (this.on_ground == false) {
-					if (this.x_vel > -this.air_friction * delta_time * timescale) {
-						this.x_vel = -this.air_friction * delta_time * timescale
+					if (this.x_vel > -this.air_friction * Bones.delta_time * Bones.timescale) {
+						this.x_vel = -this.air_friction * Bones.delta_time * Bones.timescale
 					} else {
-						this.x_vel += this.air_friction * delta_time * timescale
+						this.x_vel += this.air_friction * Bones.delta_time * Bones.timescale
 					}
 				}
 			}
@@ -155,8 +152,8 @@ class Player {
 
 		// Commit x and y Velocities
 
-		this.x += this.x_vel * delta_time * timescale;
-		this.y += this.y_vel * delta_time * timescale;
+		this.x += this.x_vel * Bones.delta_time * Bones.timescale;
+		this.y += this.y_vel * Bones.delta_time * Bones.timescale;
 
 
 		// Movement Bounderies
@@ -165,8 +162,8 @@ class Player {
 			this.x = 0
 			this.x_vel = 0
 		}
-		if (this.x > canvas_width - 150) {
-			this.x = canvas_width - 150
+		if (this.x > Bones.Renderer.width - 150) {
+			this.x = Bones.Renderer.width - 150
 			this.x_vel = 0
 		}
 		if (this.y < 0) {
@@ -176,8 +173,8 @@ class Player {
 				this.y_vel = 0
 			}
 		}
-		if (this.y > canvas_height - 150) {
-			this.y = canvas_height - 150
+		if (this.y > Bones.Renderer.height - 150) {
+			this.y = Bones.Renderer.height - 150
 			this.y_vel = 0
 			this.on_ground = true
 		}
@@ -185,7 +182,7 @@ class Player {
 		Matter.Body.setPosition(this.physics_prop.body, {
 			x: this.x + 150 / 2,
 			y: this.y + 150 / 2
-		}, updateVelocity = true)
+		}, true)
 	}
 	render() {
         // This class could possibly contain an internal reference to the Engine object, or access the Engine object directly

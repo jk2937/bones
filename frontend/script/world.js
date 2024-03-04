@@ -50,9 +50,6 @@ class World {
         Bones.Renderer.context.textAlign = "center";
         Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.5!", Bones.Renderer.canvas.width / 2, 20)
     
-        if (this.debug_display1.debug_simple_player_movement == false) {
-            this.player1.tick()
-        }
         if (this.debug_display1.debug_simple_player_movement == true) {
             if (move_right) {
                 this.player1.x += 5 * delta_time * timescale
@@ -61,59 +58,21 @@ class World {
                 this.player1.x -= 5 * delta_time * timescale
             }
         }
+        else {
+            this.player1.read_keyboard_controls(Bones.Input.key_events_buffer)
+            this.player1.tick()
+        }
+
+        this.npc1.tick()
 
         Matter.Engine.update(this.matterjs_engine, Bones.delta_time)
-
-
-        // Ball physics
-
-        /* disabled npc
-	rect_x += rect_x_vel * delta_time * timescale
-        rect_y += rect_y_vel * delta_time * timescale
-	*/
-        /* For top down mode:
-        rect_y_vel = rect_y_vel / 2;
-        rect_x_vel = rect_x_vel / 2; */
-        /* disabled npc
-	if (rect_x < 0 - rect_w) {
-            rect_x = canvas_width;
-        }
-        if (rect_y < 0) {
-            rect_y = 0
-            rect_y_vel = 0 - rect_y_vel
-            if (rect_y_vel > 0) {
-                rect_y_vel = 0;
-            }
-        }
-        if (rect_x > canvas_width) {
-            rect_x = -25;
-        }
-        if (rect_y > canvas_height - rect_h) {
-            rect_x_vel = rect_x_vel * 0.7
-            rect_y = canvas_height - rect_h;
-            rect_y_vel = 0 - rect_y_vel * 0.7
-            if (rect_y_vel > 0) {
-                rect_y_vel = 0;
-            }
-        }
-
-
-        if (rect_y_vel <= 1 && rect_y_vel >= -1 &&
-            rect_x_vel <= 1 && rect_x_vel >= -1) {
-            rect_y_vel = Math.floor(Math.random() * 100) - 50
-            rect_x_vel = Math.floor(Math.random() * 100) - 50
-        }
-        rect_y_vel++;
-	*/
-        // Bones.Renderer.context.fillStyle = "Gray";
-        // Bones.Renderer.context.fillRect(rect_x, rect_y, rect_w, rect_h);
 
         this.test_prop1.draw(Bones.Renderer.context)
         this.test_prop2.draw(Bones.Renderer.context)
         this.ground1.draw(Bones.Renderer.context)
 
-        if (this.debug_display1.debug_wireframe == true) {
-            var bodies = Matter.Composite.allBodies(engine.world)
+        if (this.debug_display1.physics_wireframe == true) {
+            var bodies = Matter.Composite.allBodies(this.matterjs_engine.world)
 
             Bones.Renderer.context.save()
 
@@ -139,9 +98,9 @@ class World {
         }
 
         this.player1.render()
-        // temrporary ctx.drawImage(Bones.gfx_ball, rect_x, rect_y, rect_w, rect_h)
+        this.npc1.render()
 
-        if (this.debug_display1.display_debug_info == true) {
+        if (this.debug_display1.visible == true) {
             Bones.Renderer.context.font = "14px Arial";
             Bones.Renderer.context.fillStyle = "Gray"
             Bones.Renderer.context.textAlign = "left";
@@ -157,10 +116,10 @@ class World {
 
             ctx.fillText("fps", 10, 140)
             ctx.fillText(fps, 175, 140) */
-            for (let i = 0; i < debug_display.length; i++) {
-                if (debug_display[i] != "") {
-                    Bones.Renderer.context.fillText(debug_display[i], 10, 50 + i * 15)
-                    Bones.Renderer.context.fillText(eval(debug_display[i]), 175, 50 + i * 15)
+            for (let i = 0; i < this.debug_display1.variables.length; i++) {
+                if (this.debug_display1.variables[i] != "") {
+                    Bones.Renderer.context.fillText(this.debug_display1.variables[i], 10, 50 + i * 15)
+                    Bones.Renderer.context.fillText(eval(this.debug_display1.variables[i]), 400, 50 + i * 15)
                 }
             }
         }
