@@ -8,10 +8,6 @@ class World {
 
         this.player1 = new Player(this.matterjs_world)
 
-        //debug init
-        
-        this.debug_display1 = new DebugDisplay()
-
         //npc init
 
         this.npc1 = new NPC()
@@ -39,23 +35,17 @@ class World {
 
     }
     tick() {
-        if (this.debug_display1.debug_lag_frames == true) {
-            console.log("delta_time: " + delta_time);
-        }
-        // Process touch_events_buffer
-
-        
-        Bones.Renderer.context.font = "16px Arial";
+        Bones.Renderer.context.font = "18px Monospace";
         Bones.Renderer.context.fillStyle = "Gray";
         Bones.Renderer.context.textAlign = "center";
         Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.5!", Bones.Renderer.canvas.width / 2, 20)
     
-        if (this.debug_display1.debug_simple_player_movement == true) {
+        if (Bones.Debugger.debug_simple_player_movement == true) {
             if (move_right) {
-                this.player1.x += 5 * delta_time * timescale
+                this.player1.x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
             if (move_left) {
-                this.player1.x -= 5 * delta_time * timescale
+                this.player1.x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
         }
         else {
@@ -65,13 +55,13 @@ class World {
 
         this.npc1.tick()
 
-        Matter.Engine.update(this.matterjs_engine, Bones.delta_time)
+        Matter.Engine.update(this.matterjs_engine, Bones.Timer.delta_time)
 
-        this.test_prop1.draw(Bones.Renderer.context)
-        this.test_prop2.draw(Bones.Renderer.context)
-        this.ground1.draw(Bones.Renderer.context)
+        this.test_prop1.render()
+        this.test_prop2.render()
+        this.ground1.render()
 
-        if (this.debug_display1.physics_wireframe == true) {
+        if (Bones.Debugger.physics_wireframe == true) {
             var bodies = Matter.Composite.allBodies(this.matterjs_engine.world)
 
             Bones.Renderer.context.save()
@@ -100,36 +90,14 @@ class World {
         this.player1.render()
         this.npc1.render()
 
-        if (this.debug_display1.visible == true) {
-            Bones.Renderer.context.font = "14px Arial";
-            Bones.Renderer.context.fillStyle = "Gray"
-            Bones.Renderer.context.textAlign = "left";
-            /* ctx.fillText("canvas_width", 10, 50)
-            ctx.fillText(canvas_width, 175, 50)
-            ctx.fillText("canvas_height", 10, 65)
-            ctx.fillText(canvas_height, 175, 65)
+        Bones.Debugger.render()
 
-            ctx.fillText("main_loop_sleep", 10, 95)
-            ctx.fillText(main_loop_sleep, 175, 95)
-            ctx.fillText("total_lag_frames", 10, 110)
-            ctx.fillText(total_lag_frames, 175, 110)
-
-            ctx.fillText("fps", 10, 140)
-            ctx.fillText(fps, 175, 140) */
-            for (let i = 0; i < this.debug_display1.variables.length; i++) {
-                if (this.debug_display1.variables[i] != "") {
-                    Bones.Renderer.context.fillText(this.debug_display1.variables[i], 10, 50 + i * 15)
-                    Bones.Renderer.context.fillText(eval(this.debug_display1.variables[i]), 400, 50 + i * 15)
-                }
-            }
-        }
-
-        if (this.debug_display1.stress_test == true) {
+        if (Bones.Debugger.stress_test == true) {
             rand = 1
-            if (this.debug_display1.stress_random) {
-                rand = Math.random() * this.debug_display1.stress_loops;
+            if (Bones.Debugger.stress_random) {
+                rand = Math.random() * Bones.Debugger.stress_loops;
             }
-            for (i = 0; i < this.debug_display1.stress_loops * rand; i++) {
+            for (i = 0; i < Bones.Debugger.stress_loops * rand; i++) {
                 Bones.Renderer.context.fillText("", 0, 0)
             }
         }

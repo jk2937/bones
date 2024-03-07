@@ -23,7 +23,7 @@ Bones.Renderer.display_to_absolute_position = function() {
     Bones.Renderer.canvas.style.top = "0px";
 }
 
-Bones.Renderer.update_fullscreen_dynamic_display = function() {
+Bones.Renderer.update_dynamic_fullscreen_display = function() {
     Bones.Renderer.width = window.innerWidth;
     Bones.Renderer.height = window.innerHeight;
     Bones.Renderer.canvas.width = Bones.Renderer.width;
@@ -36,6 +36,8 @@ Bones.Renderer.set_display_mode = function(mode=Bones.Renderer.display_mode, wid
         return false;
     }
 
+    Bones.Renderer.display_mode = mode
+
     Bones.Renderer.width = width;
     Bones.Renderer.height = height;
 
@@ -47,7 +49,7 @@ Bones.Renderer.set_display_mode = function(mode=Bones.Renderer.display_mode, wid
     }
 
     if (mode == "dynamic_fullscreen") {
-        Bones.Renderer.update_fullscreen_dynamic_display()
+        Bones.Renderer.update_dynamic_fullscreen_display()
         Bones.Renderer.display_to_absolute_position()
     }
 
@@ -144,11 +146,7 @@ Bones.run = function() {
     }
 
     if (Bones.Renderer.display_mode == "dynamic_fullscreen") {
-        Bones.Renderer.width = window.innerWidth;
-        Bones.Renderer.height = window.innerHeight;
-
-        Bones.Renderer.canvas.width = Bones.Renderer.width;
-        Bones.Renderer.canvas.height = Bones.Renderer.height;
+        Bones.Renderer.update_dynamic_fullscreen_display()
     }
 
     Bones.Renderer.context.fillStyle = "LightGray";

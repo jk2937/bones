@@ -1,20 +1,31 @@
-class DebugDisplay {
-    constructor() {
-        this.visible = true
+Bones.Debugger = new Object();
+Bones.Debugger.simulated_lag = false;
+Bones.Debugger.simulated_lag_intensity = 500;
 
-        this.show_lag_frames = false
+Bones.Debugger.visible = true
 
-        this.simulated_lag = false
-        this.simulated_lag_range = 500
-        this.physics_wireframe = true
+Bones.Debugger.show_lag_frames = false
 
-        this.test_simple_player_movement = false
+Bones.Debugger.physics_wireframe = true
 
-        this.variables = ["Bones.fps", "", "Bones.demo_world1.player1.control_left", "Bones.demo_world1.player1.control_right", "Bones.demo_world1.player1.control_jump", "", "Bones.demo_world1.player1.control_left_this_frame", "Bones.demo_world1.player1.control_right_this_frame", "Bones.demo_world1.player1.control_jump_this_frame"]
-        //this.variables = ["fps", "total_lag_frames", "debug_simulate_lag", "", "control_left", "control_right", "control_jump", "", "control_left_this_frame", "control_right_this_frame", "control_jump_this_frame", "", "player_on_ground"]
-        //this.variables2 = ["fps", "control_left", "control_right", "control_jump"]
-        this.stress_test = false;
-        this.stress_loops = 999999;
-        this.stress_random = false;
+Bones.Debugger.test_simple_player_movement = false
+
+Bones.Debugger.variables = ["Bones.Timer.fps", "", "Bones.demo_world1.player1.control_left", "Bones.demo_world1.player1.control_right", "Bones.demo_world1.player1.control_jump", "", "Bones.demo_world1.player1.control_left_this_frame", "Bones.demo_world1.player1.control_right_this_frame", "Bones.demo_world1.player1.control_jump_this_frame"]
+Bones.Debugger.stress_test = false;
+Bones.Debugger.stress_loops = 999999;
+Bones.Debugger.stress_random = false;
+
+Bones.Debugger.render = function() {
+    if (Bones.Debugger.visible == true) {
+        Bones.Renderer.context.font = "12px Monospace";
+        Bones.Renderer.context.fillStyle = "Gray"
+        Bones.Renderer.context.textAlign = "left";
+
+        for (let i = 0; i < Bones.Debugger.variables.length; i++) {
+            if (Bones.Debugger.variables[i] != "") {
+                Bones.Renderer.context.fillText(Bones.Debugger.variables[i], 10, 50 + i * 15)
+                Bones.Renderer.context.fillText(eval(Bones.Debugger.variables[i]), 400, 50 + i * 15)
+            }
+        }
     }
 }

@@ -10,9 +10,9 @@ class Player {
         this.y_vel = 0;
         this.max_x_vel = 7
         this.max_y_vel = 70
-        this.x_acc = 0.5
-        this.y_acc = 10
-        this.ground_friction = 0.15
+        this.x_acc = 1
+        this.y_acc = 10 // Todo: air acceleration, air max vel, run speed
+        this.ground_friction = 0.55
         this.air_friction = 0.05
         this.gravity = 0.25
         this.facing_right = true
@@ -75,6 +75,10 @@ class Player {
         this.move_left = this.control_left || this.control_left_this_frame;
         this.move_right = this.control_right || this.control_right_this_frame;
         this.move_jump = this.control_jump || this.control_jump_this_frame;
+        if (this.move_left == true && this.move_right == true) {
+            this.move_left = false;
+            this.move_right = false;
+        }
 	}
 	tick() {
 		// Control
@@ -186,7 +190,6 @@ class Player {
 		}, true)
 	}
 	render() {
-        // This class could possibly contain an internal reference to the Engine object, or access the Engine object directly
         Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, this.x, this.y, 150, 150)
 	}
 }

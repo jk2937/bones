@@ -27,23 +27,22 @@ class PhysicsProp {
 
         }
     }
-    move(delta_time) {}
-    draw(ctx) {
+    render() {
         this.pos = this.body.position;
         this.angle = this.body.angle;
         this.x = this.pos.x;
         this.y = this.pos.y;
-        ctx.save()
-        ctx.fillStyle = "white";
+        Bones.Renderer.context.save()
+        Bones.Renderer.context.fillStyle = "white";
         if (this.shape == "square") {
-            ctx.translate(this.x, this.y);
-            ctx.rotate(this.angle);
+            Bones.Renderer.context.translate(this.x, this.y);
+            Bones.Renderer.context.rotate(this.angle);
 
-            ctx.fillRect(0 - this.w / 2, 0 - this.h / 2, this.w, this.h);
+            Bones.Renderer.context.fillRect(0 - this.w / 2, 0 - this.h / 2, this.w, this.h);
         }
         if (this.shape == "circle") {
 
         }
-        ctx.restore()
+        Bones.Renderer.context.restore()
     }
 }
