@@ -12,8 +12,8 @@ class NPC {
         this.y_vel = 0;
     }
     tick() {
-        this.x += this.x_vel * Bones.delta_time * Bones.timescale
-        this.y += this.y_vel * Bones.delta_time * Bones.timescale
+        this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale
+        this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale
 
         /* For top down mode:
         this.y_vel = this.y_vel / 2;

@@ -29,12 +29,13 @@ class Player {
 
         this.on_ground = false
         this.jump_lock = false
+        this.matterjs_world = matterjs_world
         this.physics_prop = new PhysicsProp("square", {
             x: this.x,
             y: this.y,
             w: 150,
             h: 150
-        }, true, matterjs_world)
+        }, true, this.matterjs_world)
     } 
 	read_keyboard_controls(key_events_buffer) {
         // process key events
@@ -79,10 +80,10 @@ class Player {
 		// Control
 
 		if (this.move_left) {
-			this.x_vel -= this.x_acc * Bones.delta_time * Bones.timescale;
+			this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
 		}
 		if (this.move_right) {
-			this.x_vel += this.x_acc * Bones.delta_time * Bones.timescale;
+			this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
 		}
 		if (this.move_jump && !this.jump_lock && this.on_ground) {
 			this.y_vel -= this.y_acc
@@ -95,40 +96,40 @@ class Player {
 
 		// Gravity
 
-		this.y_vel += this.gravity * Bones.delta_time * Bones.timescale
+		this.y_vel += this.gravity * Bones.Timer.delta_time * Bones.Timer.timescale
 
 		// Friction
 
 		if (!this.move_left && !this.move_right) {
 			if (this.x_vel > 0) {
 				if (this.on_ground == true) {
-					if (this.x_vel <= this.ground_friction * Bones.delta_time * Bones.timescale) {
+					if (this.x_vel <= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
 						this.x_vel = 0; // player_ground_friction;
 					} else {
-						this.x_vel -= this.ground_friction * Bones.delta_time * Bones.timescale;
+						this.x_vel -= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 					}
 				}
 				if (this.on_ground == false) {
-					if (this.x_vel < this.air_friction * Bones.delta_time * Bones.timescale) {
-						this.x_vel = this.air_friction * Bones.delta_time * Bones.timescale;
+					if (this.x_vel < this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+						this.x_vel = this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 					} else {
-						this.x_vel -= this.air_friction * Bones.delta_time * Bones.timescale;
+						this.x_vel -= this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 					}
 				}
 			}
 			if (this.x_vel < 0) {
 				if (this.on_ground == true) {
-					if (this.x_vel >= -this.ground_friction * Bones.delta_time * Bones.timescale) {
+					if (this.x_vel >= -this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
 						this.x_vel = 0; // -player_ground_friction
 					} else {
-						this.x_vel += this.ground_friction * Bones.delta_time * Bones.timescale;
+						this.x_vel += this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 					}
 				}
 				if (this.on_ground == false) {
-					if (this.x_vel > -this.air_friction * Bones.delta_time * Bones.timescale) {
-						this.x_vel = -this.air_friction * Bones.delta_time * Bones.timescale
+					if (this.x_vel > -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+						this.x_vel = -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
 					} else {
-						this.x_vel += this.air_friction * Bones.delta_time * Bones.timescale
+						this.x_vel += this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
 					}
 				}
 			}
@@ -152,8 +153,8 @@ class Player {
 
 		// Commit x and y Velocities
 
-		this.x += this.x_vel * Bones.delta_time * Bones.timescale;
-		this.y += this.y_vel * Bones.delta_time * Bones.timescale;
+		this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
+		this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
 
 
 		// Movement Bounderies
