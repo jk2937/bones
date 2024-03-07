@@ -3,6 +3,7 @@ Bones.Debugger.simulated_lag = false;
 Bones.Debugger.simulated_lag_intensity = 500;
 
 Bones.Debugger.visible = true
+Bones.Debugger.touch_data = true
 
 Bones.Debugger.show_lag_frames = false
 
@@ -27,5 +28,17 @@ Bones.Debugger.render = function() {
                 Bones.Renderer.context.fillText(eval(Bones.Debugger.variables[i]), 400, 50 + i * 15)
             }
         }
+    }
+    if (Bones.Debugger.touch_data == true) {
+        for (let i = 0; i < Bones.Input.touch_events_history.length; i++) {
+            let event_ = Bones.Input.touch_events_history[i]
+            for (let j = 0; j < event_.touches.length; j++) {
+                let touch = event_.touches[j]
+                let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
+                let touch_x = touch.clientX - canvas_position.left;
+                let touch_y = touch.clientY - canvas_position.top;
+                Bones.Renderer.context.fillText(event_.type + "\n" + touch.identifier, touch_x, touch_y)
+            }
+        }  
     }
 }

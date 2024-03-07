@@ -11,7 +11,7 @@ class Player {
         this.max_x_vel = 7
         this.max_y_vel = 70
         this.x_acc = 1
-        this.y_acc = 10 // Todo: air acceleration, air max vel, run speed
+        this.y_acc = 10 // Todo: air acceleration, air max vel, run speed, bunny hopping
         this.ground_friction = 0.55
         this.air_friction = 0.05
         this.gravity = 0.25
