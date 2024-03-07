@@ -6,44 +6,60 @@ Bones.Renderer = new Object();
 Bones.Renderer.canvas = document.getElementById("myCanvas");
 Bones.Renderer.context = Bones.Renderer.canvas.getContext("2d");
 
+Bones.Renderer.canvas.style.border = "none";
+
 Bones.Renderer.width = 500;
 Bones.Renderer.height = 500;
 
-// Todo: implement other display modes (fullscreen_stretched, embedded)
+Bones.Renderer.display_mode = null; 
 
-// canvas_width = window.screen.availWidth;
-// canvas_height = window.screen.availHeight;
-
-Bones.Renderer.display_mode = "fullscreen_stretched"; 
-/*
-Bones.Renderer.set_display_mode = function(mode=Bones.Renderer.display_mode) {
-
-}
-*/
-if (Bones.Renderer.display_mode == "embedded" || Bones.Renderer.display_mode == "fullscreen_stretched") {
-    Bones.Renderer.canvas.width = Bones.Renderer.width;
-    Bones.Renderer.canvas.height = Bones.Renderer.height;
+Bones.Renderer.display_to_relative_position = function() {
+    Bones.Renderer.canvas.style.position = "relative";
 }
 
 Bones.Renderer.display_to_absolute_position = function() {
     Bones.Renderer.canvas.style.position = "absolute";
     Bones.Renderer.canvas.style.left = "0px";
     Bones.Renderer.canvas.style.top = "0px";
-    Bones.Renderer.canvas.style.border = "none";
 }
 
-if (Bones.Renderer.display_mode == "fullscreen_dynamic") {
+Bones.Renderer.update_fullscreen_dynamic_display = function() {
+    Bones.Renderer.width = window.innerWidth;
+    Bones.Renderer.height = window.innerHeight;
     Bones.Renderer.canvas.width = Bones.Renderer.width;
     Bones.Renderer.canvas.height = Bones.Renderer.height   
-    Bones.Renderer.display_to_absolute_position()
 }
 
-if (Bones.Renderer.display_mode == "fullscreen_stretched") {
-    Bones.Renderer.canvas.style.width = '100%';
-    Bones.Renderer.canvas.style.height = '100%';
-    Bones.Renderer.display_to_absolute_position()
+Bones.Renderer.set_display_mode = function(mode=Bones.Renderer.display_mode, width=Bones.Renderer.width, height=Bones.Renderer.height) {
+    if (mode != "embedded" && mode != "dynamic_fullscreen" && mode != "stretched_fullscreen") {
+        console.log("Warning: No such screen mode: \"" + mode + "\". Please use \"embedded\", \"stretched_fullscreen\", or \"dynamic_fullscreen\".");
+        return false;
+    }
+
+    Bones.Renderer.width = width;
+    Bones.Renderer.height = height;
+
+    if (mode == "embedded" || mode == "stretched_fullscreen") {
+        Bones.Renderer.canvas.style.width = '';
+        Bones.Renderer.canvas.style.height = '';
+        Bones.Renderer.canvas.width = Bones.Renderer.width;
+        Bones.Renderer.canvas.height = Bones.Renderer.height;
+    }
+
+    if (mode == "dynamic_fullscreen") {
+        Bones.Renderer.update_fullscreen_dynamic_display()
+        Bones.Renderer.display_to_absolute_position()
+    }
+
+    if (mode == "stretched_fullscreen") {
+        Bones.Renderer.canvas.style.width = '100%';
+        Bones.Renderer.canvas.style.height = '100%';
+        Bones.Renderer.display_to_absolute_position()
+    }
+    return true;
 }
 
+Bones.Renderer.set_display_mode("dynamic_fullscreen")
 
 Bones.Assets = new Object();
 
@@ -57,13 +73,6 @@ Bones.Assets.gfx_ball.src = "../assets/asset1.png";
 Bones.Input = new Object();
 
 Bones.Input.source = "mouse_and_keyboard";
-
-// Simple input
-/* Bones.Input.cursor_activated = false;
-Bones.Input.cursor_x = 0;
-Bones.Input.cursor_y = 0;
-Bones.Input.cursor_old_x = 0;
-Bones.Input.cursor_old_y = 0; */
 
 Bones.Input.touch_events_buffer = [];
 Bones.Input.key_events_buffer = [];
@@ -84,45 +93,57 @@ Bones.Input.control_jump = false;
     touch_events_buffer.push([cursor_x, cursor_y])
 } */
 
-// Todo: create timer object
+Bones.Timer = new Object()
 
-Bones.frame_lock = false;
+Bones.Timer.frame_lock = false;
 // Bones.main_loop_sleep = 0;
-Bones.total_lag_frames = 0;
-Bones.fps_frame_counter = 0;
-Bones.fps = 0;
+Bones.Timer.total_lag_frames = 0;
+Bones.Timer.fps_frame_counter = 0;
+Bones.Timer.fps = 0;
 
-Bones.frame_start_time = Date.now();
-Bones.previous_frame_start_time = Date.now();
+Bones.Timer.current_frame_start_time = Date.now();
+Bones.Timer.previous_frame_start_time = Date.now();
 
-Bones.timescale = 60 / 1000;
+Bones.Timer.delta_time = 0;
+
+Bones.Timer.timescale = 60 / 1000;
+Bones.Timer.physics_timescale = 1;
+
+Bones.Timer.calculate_fps = function() {
+    Bones.Timer.fps = Bones.Timer.fps_frame_counter
+    Bones.Timer.fps_frame_counter = 0
+}
+
+Bones.Debugger = new Object();
+Bones.Debugger.simulated_lag = false;
+Bones.Debugger.simulated_lag_intensity = 500;
+
 
 Bones.demo_world1 = new World();
 
+
 Bones.start = function() {
-    setInterval(Bones.calculate_fps, 1000);
+    setInterval(Bones.Timer.calculate_fps, 1000);
     Bones.run();
 }
 
 Bones.run = function() {
-    // Begin execution lock
-    // Todo: test this
-    if (Bones.main_execution_lock == true) {
-        Bones.total_lag_frames++;
+    if (Bones.Timer.frame_lock == true) {
+        Bones.Timer.total_lag_frames++;
+        console.log("Warning: frame locked")
         return false;
     }
-    Bones.main_execution_lock = true;
-    // End execution lock
+    Bones.Timer.frame_lock = true;
 
-    Bones.frame_start_time = Date.now()
-    Bones.delta_time = Bones.frame_start_time - Bones.previous_frame_start_time
-    if (Bones.delta_time > 100) {
+    Bones.Timer.current_frame_start_time = Date.now()
+    Bones.Timer.delta_time = Bones.Timer.current_frame_start_time - Bones.Timer.previous_frame_start_time
+    if (Bones.Timer.delta_time > 100) {
         // Cap delta_time to prevent odd physics engine behaviour
-        Bones.total_lag_frames++;
-        Bones.delta_time = 100;
+        Bones.Timer.total_lag_frames++;
+        Bones.Timer.delta_time = 100;
     }
 
-    if (Bones.Renderer.display_mode == "fullscreen_dynamic") {
+    if (Bones.Renderer.display_mode == "dynamic_fullscreen") {
         Bones.Renderer.width = window.innerWidth;
         Bones.Renderer.height = window.innerHeight;
 
@@ -142,30 +163,23 @@ Bones.run = function() {
     Bones.Input.touch_events_buffer = []
     Bones.Input.key_events_buffer = []
 
-    Bones.previous_frame_start_time = Bones.frame_start_time
+    Bones.Timer.previous_frame_start_time = Bones.Timer.current_frame_start_time
 
-    Bones.fps_frame_counter++;
+    Bones.Timer.fps_frame_counter++;
 
-    Bones.main_execution_lock = false;
-    // Todo: Re-implement simulated lag
-    /* 
-        if (debug_simulate_lag == false) { i*/
-    requestAnimationFrame(Bones.run);
-    /* 
-        }
-        if (debug_simulate_lag == true) {
-            setTimeout(launch_loop, Math.floor(Math.random() * debug_simulated_lag_range))
-        } */
+    Bones.Timer.frame_lock = false;
+
+    if (Bones.Debugger.simulated_lag != true) { 
+        requestAnimationFrame(Bones.run);
+    }
+    if (Bones.Debugger.simulated_lag == true) {
+        setTimeout(Bones.run, Math.floor(Math.random() * Bones.Debugger.simulated_lag_intensity))
+    }
 } 
-
-Bones.calculate_fps = function() {
-    Bones.fps = Bones.fps_frame_counter
-    Bones.fps_frame_counter = 0
-}
 
 Bones.Renderer.canvas.addEventListener("touchstart", function(_event) {
 	_event.preventDefault()
-	Bones.touch_events_buffer.push(_event)
+	Bones.Input.touch_events_buffer.push(_event)
 }, false);
 
 Bones.Renderer.canvas.addEventListener("touchend", function(_event) {
@@ -179,12 +193,16 @@ Bones.Renderer.canvas.addEventListener("touchmove", function(_event) {
 	Bones.Input.touch_events_buffer.push(_event)
 }, false);
 
-window.addEventListener("touchstart", _event => {
+
+// Prevent screen movement
+
+window.addEventListener("touchstart", function(_event) {
 	_event.preventDefault();
 	_event.stopImmediatePropagation();
 }, {
 	passive: false
 });
+
 
 document.addEventListener("keydown", function(_event) {
 	Bones.Input.key_events_buffer.push(_event)
