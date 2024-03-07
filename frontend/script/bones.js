@@ -9,23 +9,39 @@ Bones.Renderer.context = Bones.Renderer.canvas.getContext("2d");
 Bones.Renderer.width = 500;
 Bones.Renderer.height = 500;
 
-// Todo: implement other display modes (fullscreen_stretch, embedded)
+// Todo: implement other display modes (fullscreen_stretched, embedded)
 
 // canvas_width = window.screen.availWidth;
 // canvas_height = window.screen.availHeight;
 
-Bones.Renderer.display_mode = "fullscreen_dynamic"; 
+Bones.Renderer.display_mode = "fullscreen_stretched"; 
+/*
+Bones.Renderer.set_display_mode = function(mode=Bones.Renderer.display_mode) {
 
-Bones.Renderer.canvas.width = Bones.Renderer.width;
-Bones.Renderer.canvas.height = Bones.Renderer.height;
+}
+*/
+if (Bones.Renderer.display_mode == "embedded" || Bones.Renderer.display_mode == "fullscreen_stretched") {
+    Bones.Renderer.canvas.width = Bones.Renderer.width;
+    Bones.Renderer.canvas.height = Bones.Renderer.height;
+}
 
-if (Bones.Renderer.display_mode == "fullscreen_dynamic") {
-    // Bones.canvas.style.width = '100%';
-    // Bones.canvas.style.height = '100%';
+Bones.Renderer.display_to_absolute_position = function() {
     Bones.Renderer.canvas.style.position = "absolute";
     Bones.Renderer.canvas.style.left = "0px";
     Bones.Renderer.canvas.style.top = "0px";
     Bones.Renderer.canvas.style.border = "none";
+}
+
+if (Bones.Renderer.display_mode == "fullscreen_dynamic") {
+    Bones.Renderer.canvas.width = Bones.Renderer.width;
+    Bones.Renderer.canvas.height = Bones.Renderer.height   
+    Bones.Renderer.display_to_absolute_position()
+}
+
+if (Bones.Renderer.display_mode == "fullscreen_stretched") {
+    Bones.Renderer.canvas.style.width = '100%';
+    Bones.Renderer.canvas.style.height = '100%';
+    Bones.Renderer.display_to_absolute_position()
 }
 
 
@@ -106,7 +122,7 @@ Bones.run = function() {
         Bones.delta_time = 100;
     }
 
-    if (Bones.Renderer.display_mode = "fullscreen_dynamic") {
+    if (Bones.Renderer.display_mode == "fullscreen_dynamic") {
         Bones.Renderer.width = window.innerWidth;
         Bones.Renderer.height = window.innerHeight;
 
