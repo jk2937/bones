@@ -46,6 +46,7 @@ class World {
         Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.7!", Bones.Renderer.canvas.width / 2, 20)
 
         Bones.Input.mouse_read_controls()
+        Bones.Input.touch_read_controls()
 
         if (Bones.Debugger.debug_simple_player_movement == true) {
             if (move_right) {

@@ -265,10 +265,38 @@ Bones.Input.mouse_read_controls = function(){
             Bones.Input.mouse_click = true;
             Bones.Input.mouse_click_this_frame = true;
             Bones.Input.mouse_events_history = []
+            Bones.Input.touch_events_history = []
         }
         if (_event.type == "mouseup") {
             Bones.Input.mouse_click = false;
+            Bones.Input.mouse_events_history = []
+            Bones.Input.touch_events_history = []
         }
+    }
+}
+
+Bones.Input.touch_read_controls = function(){
+    Bones.Input.mouse_click_this_frame = false;
+    if (Bones.Input.touch_events_buffer.length > 0) {
+        let _event = Bones.Input.touch_events_buffer[Bones.Input.touch_events_buffer.length - 1];
+        if (_event.touches.length > 0) {
+            Bones.Input.mouse_x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
+            Bones.Input.mouse_y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
+            }
+    }
+    for (let i = 0; i < Bones.Input.touch_events_buffer.length; i++) {
+        let _event = Bones.Input.touch_events_buffer[i]
+        if (_event.type == "touchstart") {
+            Bones.Input.mouse_click = true;
+            Bones.Input.mouse_click_this_frame = true;
+            Bones.Input.mouse_events_history = []
+            Bones.Input.touch_events_history = []
+        }
+        if (_event.type == "touchend") {
+            Bones.Input.mouse_click = false;
+            Bones.Input.mouse_events_history = []
+            Bones.Input.touch_events_history = []
+}
     }
 }
 
