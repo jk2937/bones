@@ -1,6 +1,7 @@
 Bones.Debugger = new Object();
 Bones.Debugger.simulated_lag = false;
-Bones.Debugger.simulated_lag_intensity = 500;
+Bones.Debugger.simulated_lag_intensity = 100;
+// The maximum amount of simulated lag you can use before getting lag frames is 100
 
 Bones.Debugger.visible = true
 Bones.Debugger.touch_data = true
@@ -12,7 +13,7 @@ Bones.Debugger.physics_wireframe = true
 
 Bones.Debugger.test_simple_player_movement = false
 
-Bones.Debugger.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.demo_world1.player1.control_left", "Bones.demo_world1.player1.control_right", "Bones.demo_world1.player1.control_jump", "", "Bones.demo_world1.player1.control_left_this_frame", "Bones.demo_world1.player1.control_right_this_frame", "Bones.demo_world1.player1.control_jump_this_frame", "", "Bones.Input.mouse_cursor_x", "Bones.Input.mouse_cursor_y", "", "Bones.Input.mouse_cursor_click", "Bones.Input.mouse_cursor_click_this_frame", "", "Bones.Input.touch_cursor_x", "Bones.Input.touch_cursor_y", "", "Bones.Input.touch_cursor_click", "Bones.Input.touch_cursor_click_this_frame"]
+Bones.Debugger.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.demo_world1.player1.control_left", "Bones.demo_world1.player1.control_right", "Bones.demo_world1.player1.control_jump", "", "Bones.demo_world1.player1.control_left_this_frame", "Bones.demo_world1.player1.control_right_this_frame", "Bones.demo_world1.player1.control_jump_this_frame", "", "Bones.Input.mouse_cursor_x", "Bones.Input.mouse_cursor_y", "", "Bones.Input.mouse_cursor_click", "Bones.Input.mouse_cursor_click_this_frame", "", "Bones.Input.touch_cursor_x", "Bones.Input.touch_cursor_y", "", "Bones.Input.touch_cursor_click", "Bones.Input.touch_cursor_click_this_frame", "", "Bones.demo_world1.npc1.stuck_time", "Bones.demo_world1.npc1.kicks_counter", "Bones.demo_world1.npc1.kicks_per_minute", "Bones.demo_world1.npc1.kick_timer / 60"]
 Bones.Debugger.stress_test = false;
 Bones.Debugger.stress_loops = 999999;
 Bones.Debugger.stress_random = false;
