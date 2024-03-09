@@ -8,6 +8,11 @@ class World {
 
         this.player1 = new Player(this.matterjs_world)
 
+        this.test_menu_item1 = new MenuItem(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {});
+        this.test_menu_item2 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 75, 250 - 10, 30, "Refresh", function() { Bones.demo_world1 = new World(); });
+
+
+
         //npc init
 
         this.npc1 = new NPC()
@@ -55,6 +60,8 @@ class World {
             this.player1.tick()
         }
 
+        this.test_menu_item1.read_input()
+        this.test_menu_item2.read_input()
 
         this.npc1.tick()
 
@@ -91,6 +98,17 @@ class World {
         }
 
         this.player1.render()
+        this.test_menu_item1.render()
+        this.test_menu_item2.render()
+
+
+        Bones.Renderer.context.font = "18px Monospace";
+        Bones.Renderer.context.fillStyle = "Gray";
+        Bones.Renderer.context.textAlign = "center";
+
+        Bones.Renderer.context.fillText("Controls:", Bones.Renderer.width - 280 + 125 + 5, 50 + 200)
+        Bones.Renderer.context.fillText("A, D ............ Move", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 30)
+        Bones.Renderer.context.fillText("SPACE ........... Jump", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 60)
         this.npc1.render()
 
         Bones.Debugger.render()

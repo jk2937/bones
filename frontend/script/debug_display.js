@@ -12,7 +12,7 @@ Bones.Debugger.physics_wireframe = true
 
 Bones.Debugger.test_simple_player_movement = false
 
-Bones.Debugger.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.demo_world1.player1.control_left", "Bones.demo_world1.player1.control_right", "Bones.demo_world1.player1.control_jump", "", "Bones.demo_world1.player1.control_left_this_frame", "Bones.demo_world1.player1.control_right_this_frame", "Bones.demo_world1.player1.control_jump_this_frame", "", "Bones.Input.mouse_cursor_x", "Bones.Input.mouse_cursor_y", "", "Bones.Input.mouse_click", "Bones.Input.mouse_click_this_frame"]
+Bones.Debugger.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.demo_world1.player1.control_left", "Bones.demo_world1.player1.control_right", "Bones.demo_world1.player1.control_jump", "", "Bones.demo_world1.player1.control_left_this_frame", "Bones.demo_world1.player1.control_right_this_frame", "Bones.demo_world1.player1.control_jump_this_frame", "", "Bones.Input.mouse_x", "Bones.Input.mouse_y", "", "Bones.Input.mouse_click", "Bones.Input.mouse_click_this_frame"]
 Bones.Debugger.stress_test = false;
 Bones.Debugger.stress_loops = 999999;
 Bones.Debugger.stress_random = false;
