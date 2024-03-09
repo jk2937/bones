@@ -35,8 +35,8 @@ Bones.Debugger.render = function() {
             for (let j = 0; j < event_.touches.length; j++) {
                 let touch = event_.touches[j]
                 let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
-                let touch_x = touch.clientX - canvas_position.left;
-                let touch_y = touch.clientY - canvas_position.top;
+                let touch_x = (touch.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
+                let touch_y = (touch.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
                 Bones.Renderer.context.fillText(event_.type + "\n" + touch.identifier, touch_x, touch_y)
             }
         }  
