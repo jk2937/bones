@@ -22,10 +22,19 @@ class MenuItem {
 
     }
     read_input() {
-        if (Bones.Input.mouse_click_this_frame == true 
-        && Bones.Input.mouse_x > this.x && Bones.Input.mouse_x < this.x + this.width
-        && Bones.Input.mouse_y > this.y && Bones.Input.mouse_y < this.y + this.height) {
-            this.on_activate_function()
+        if (
+                (
+                    Bones.Input.mouse_cursor_click_this_frame == true 
+                    && Bones.Input.mouse_cursor_x > this.x && Bones.Input.mouse_cursor_x < this.x + this.width
+                    && Bones.Input.mouse_cursor_y > this.y && Bones.Input.mouse_cursor_y < this.y + this.height
+                )
+                || (
+                    Bones.Input.touch_cursor_click_this_frame == true 
+                    && Bones.Input.touch_cursor_x > this.x && Bones.Input.touch_cursor_x < this.x + this.width
+                    && Bones.Input.touch_cursor_y > this.y && Bones.Input.touch_cursor_y < this.y + this.height
+                )
+            ) {
+        this.on_activate_function()
         }
     }
 }
