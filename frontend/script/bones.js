@@ -13,38 +13,6 @@ Bones.Renderer.display_mode = "stretched_fullscreen_ratio";
 Bones.Renderer.width = 1280
 Bones.Renderer.height = 720
 
-/*
-Bones.Renderer.display_to_absolute_position = function() {
-    Bones.Renderer.canvas.style.position = "absolute";
-    Bones.Renderer.canvas.style.left = "0px";
-    Bones.Renderer.canvas.style.top = "0px";
-}*/
-/*
-Bones.Renderer.update_dynamic_fullscreen_display = function() {
-    Bones.Renderer.width = window.innerWidth;
-    Bones.Renderer.height = window.innerHeight;
-    Bones.Renderer.canvas.width = Bones.Renderer.width;
-    Bones.Renderer.canvas.height = Bones.Renderer.height   
-}
-*/
-/*
-Bones.Renderer.update_stretched_fullscreen_ratio_display = function() {
-    if (window.innerWidth * Bones.Renderer.height > window.innerHeight * Bones.Renderer.width) {
-        Bones.Renderer.canvas.style.width = "";
-        Bones.Renderer.canvas.style.height = "100%";
-        Bones.Renderer.canvas.style.left = String(window.innerWidth / 2 - Bones.Renderer.canvas.offsetWidth / 2) + "px";
-        Bones.Renderer.canvas.style.top= "0px";
-    } 
-
-    if (window.innerHeight * Bones.Renderer.width > window.innerWidth * Bones.Renderer.height) {
-        Bones.Renderer.canvas.style.width = "100%";
-        Bones.Renderer.canvas.style.height = "";
-        Bones.Renderer.canvas.style.top = String(window.innerHeight / 2 - Bones.Renderer.canvas.offsetHeight / 2) + "px";
-        Bones.Renderer.canvas.style.left = "0px";
-        
-    }
-}
-*/
 Bones.Renderer.set_display_mode = function(mode=Bones.Renderer.display_mode, width=Bones.Renderer.width, height=Bones.Renderer.height) {
     if (mode != "embedded" && mode != "dynamic_fullscreen" && mode != "stretched_fullscreen" && mode != "stretched_fullscreen_ratio") {
         console.log("Warning: No such screen mode: \"" + mode + "\". Please use \"embedded\", \"stretched_fullscreen\", \"dynamic_fullscreen\", or \"stretched_fullscreen_ratio\".");
@@ -182,30 +150,6 @@ Bones.Assets.gfx_player.src = "../assets/asset2.png";
 Bones.Assets.gfx_ball = new Image();
 Bones.Assets.gfx_ball.src = "../assets/asset1.png";
 
-
-Bones.Input = new Object();
-
-Bones.Input.source = "mouse_and_keyboard";
-
-Bones.Input.touch_events_buffer = [];
-Bones.Input.key_events_buffer = [];
-
-Bones.Input.touch_events_history = []
-Bones.Input.key_events_history = []
-
-// Todo: implement a key mapper
-
-Bones.Input.control_left = false;
-Bones.Input.control_right = false;
-Bones.Input.control_jump = false;
-
-/* function update_mouse_pos(e) {
-    let rect = canvas.getBoundingClientRect();
-    cursor_x = e.clientX - rect.left;
-    cursor_y = e.clientY - rect.top;
-    touch_events_buffer.push([cursor_x, cursor_y])
-} */
-
 Bones.Timer = new Object()
 
 Bones.Timer.frame_lock = false;
@@ -263,11 +207,13 @@ Bones.run = function() {
 
     // Todo: Add this to Bones.Input.tick() perhaps
     Bones.Input.touch_events_history = Bones.Input.touch_events_history.concat(Bones.Input.touch_events_buffer)
+    Bones.Input.mouse_events_history = Bones.Input.mouse_events_history.concat(Bones.Input.mouse_events_buffer)
     Bones.Input.key_events_history = Bones.Input.key_events_history.concat(Bones.Input.key_events_buffer)
 
     Bones.demo_world1.tick(Bones.Renderer.context, Bones.Renderer.width, Bones.delta_time, Bones.timescale);
 
     Bones.Input.touch_events_buffer = []
+    Bones.Input.mouse_events_buffer = []
     Bones.Input.key_events_buffer = []
 
     Bones.Timer.previous_frame_start_time = Bones.Timer.current_frame_start_time
@@ -284,32 +230,93 @@ Bones.run = function() {
     }
 } 
 
+
+Bones.Input = new Object();
+
+Bones.Input.touch_events_buffer = [];
+Bones.Input.mouse_events_buffer = [];
+Bones.Input.key_events_buffer = [];
+
+Bones.Input.touch_events_history = []
+Bones.Input.mouse_events_history = []
+Bones.Input.key_events_history = []
+
+// Todo: implement a key mapper
+
+Bones.Input.control_left = false;
+Bones.Input.control_right = false;
+Bones.Input.control_jump = false;
+
+Bones.Input.mouse_click = false;
+Bones.Input.mouse_click_this_frame = false;
+Bones.Input.mouse_cursor_x = window.innerWidth / 2;
+Bones.Input.mouse_cursor_y = window.innerHeight / 2;
+
+Bones.Input.mouse_read_controls = function(){
+    Bones.Input.mouse_click_this_frame = false;
+    if (Bones.Input.mouse_events_buffer.length > 0) {
+        let _event = Bones.Input.mouse_events_buffer[Bones.Input.mouse_events_buffer.length - 1];
+        Bones.Input.mouse_cursor_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
+        Bones.Input.mouse_cursor_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
+    }
+    for (let i = 0; i < Bones.Input.mouse_events_buffer.length; i++) {
+        let _event = Bones.Input.mouse_events_buffer[i]
+        if (_event.type == "mousedown") {
+            Bones.Input.mouse_click = true;
+            Bones.Input.mouse_click_this_frame = true;
+            Bones.Input.mouse_events_history = []
+        }
+        if (_event.type == "mouseup") {
+            Bones.Input.mouse_click = false;
+        }
+    }
+}
+
+
+// Add touch events to buffer
+
 Bones.Renderer.canvas.addEventListener("touchstart", function(_event) {
-	_event.preventDefault()
 	Bones.Input.touch_events_buffer.push(_event)
-}, false);
+});
 
 Bones.Renderer.canvas.addEventListener("touchend", function(_event) {
-	_event.preventDefault()
 	Bones.Input.touch_events_buffer.push(_event)
-	Bones.Input.cursor_activated = false;
-}, false);
+});
 
 Bones.Renderer.canvas.addEventListener("touchmove", function(_event) {
-	_event.preventDefault()
 	Bones.Input.touch_events_buffer.push(_event)
-}, false);
+});
 
 
-// Prevent screen movement
+// Prevent default touch behaviour (https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#using_passive_listeners)
 
 window.addEventListener("touchstart", function(_event) {
 	_event.preventDefault();
 	_event.stopImmediatePropagation();
-}, {
-	passive: false
+}, { passive: false });
+
+window.addEventListener("touchmove", function(_event) {
+	_event.preventDefault();
+	_event.stopImmediatePropagation();
+}, { passive: false });
+
+
+// Add mouse events to buffer
+
+Bones.Renderer.canvas.addEventListener("mousedown", function(_event) {
+	Bones.Input.mouse_events_buffer.push(_event)
 });
 
+document.addEventListener("mouseup", function(_event) { // Note: Using "document" here to read mouseup outside of display
+	Bones.Input.mouse_events_buffer.push(_event)
+});
+
+Bones.Renderer.canvas.addEventListener("mousemove", function(_event) {
+	Bones.Input.mouse_events_buffer.push(_event)
+});
+
+
+// Add key events to buffer
 
 document.addEventListener("keydown", function(_event) {
 	Bones.Input.key_events_buffer.push(_event)

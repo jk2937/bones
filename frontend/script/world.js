@@ -39,7 +39,9 @@ class World {
         Bones.Renderer.context.fillStyle = "Gray";
         Bones.Renderer.context.textAlign = "center";
         Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.7!", Bones.Renderer.canvas.width / 2, 20)
-    
+
+        Bones.Input.mouse_read_controls()
+
         if (Bones.Debugger.debug_simple_player_movement == true) {
             if (move_right) {
                 this.player1.x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
@@ -52,6 +54,7 @@ class World {
             this.player1.read_keyboard_controls(Bones.Input.key_events_buffer)
             this.player1.tick()
         }
+
 
         this.npc1.tick()
 

@@ -44,29 +44,29 @@ class Player {
         this.control_jump_this_frame = false
 
         for (let i = 0; i < key_events_buffer.length; i++) {
-            let event_ = key_events_buffer[i]
-            if (event_.type == "keydown") {
-                if (event_.key == "a") {
+            let _event = key_events_buffer[i]
+            if (_event.type == "keydown") {
+                if (_event.key == "a") {
                     this.control_left = true;
                     this.control_left_this_frame = true;
                 }
-                if (event_.key == "d") {
+                if (_event.key == "d") {
                     this.control_right = true;
                     this.control_right_this_frame = true;
                 }
-                if (event_.key == " ") {
+                if (_event.key == " ") {
                     this.control_jump = true;
                     this.control_jump_this_frame = true;
                 }
             }
-            if (event_.type == "keyup") {
-                if (event_.key == "a") {
+            if (_event.type == "keyup") {
+                if (_event.key == "a") {
                     this.control_left = false;
                 }
-                if (event_.key == "d") {
+                if (_event.key == "d") {
                     this.control_right = false;
                 }
-                if (event_.key == " ") {
+                if (_event.key == " ") {
                     this.control_jump = false;
                 }
             }
