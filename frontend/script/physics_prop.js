@@ -35,7 +35,7 @@ class PhysicsProp {
         Bones.Renderer.context.save()
         Bones.Renderer.context.fillStyle = "white";
         if (this.shape == "square") {
-            Bones.Renderer.context.translate(this.x, this.y);
+            Bones.Renderer.context.translate(this.x - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y);
             Bones.Renderer.context.rotate(this.angle);
 
             Bones.Renderer.context.fillRect(0 - this.w / 2, 0 - this.h / 2, this.w, this.h);

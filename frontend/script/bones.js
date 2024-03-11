@@ -142,6 +142,14 @@ Bones.Renderer.refresh_display = function() {
 
 Bones.Renderer.set_display_mode()
 
+Bones.Renderer.camera_x = 0;
+Bones.Renderer.camera_y = 0;
+Bones.Renderer.zoom = 0;
+Bones.Renderer.camera_bounds_left;
+Bones.Renderer.camera_bounds_right
+Bones.Renderer.camera_bounds_top
+Bones.Renderer.camera_bounds_bottom
+
 Bones.Assets = new Object();
 
 Bones.Assets.gfx_player = new Image();
@@ -241,11 +249,38 @@ Bones.Input.touch_events_history = []
 Bones.Input.mouse_events_history = []
 Bones.Input.key_events_history = []
 
+// Bones.Input.keys
+
 // Todo: implement a key mapper
 
-Bones.Input.control_left = false;
-Bones.Input.control_right = false;
-Bones.Input.control_jump = false;
+Bones.Input.controls = {}
+
+Bones.Input.keymap = {
+    "up": "w",
+    "down": "s",
+    "left": "a",
+    "right": "d",
+    "jump": " ",
+    "sprint": "Shift",
+    "crouch": "Control"
+}
+
+let entries = Object.entries(Bones.Input.keymap)
+
+for (let i = 0; i < entries.length; i++) {
+    let entry = entries[i]
+    // out: entry = ["up", "w"]
+    Bones.Input.controls = Object.assign({ [entry[0]]: { key: entry[1], pressed: false, pressed_this_frame: false } }, Bones.Input.controls)
+}
+
+/*
+Bones.Input.control_jump_alt = false;
+Bones.Input.control_jump_alt = false;
+
+Bones.Input.control_run_alt = false;
+Bones.Input.control_run_alt = false;
+*/
+
 
 Bones.Input.mouse_cursor_click = false;
 Bones.Input.mouse_cursor_click_this_frame = false;
@@ -299,6 +334,36 @@ Bones.Input.touch_read_controls = function(){
             Bones.Input.touch_events_history = []
 }
     }
+}
+
+
+Bones.Input.keys_read_controls = function() {
+    // process key events
+    // Bones.Input.control_jump_this_frame = false
+
+    for (let i = 0; i < Object.entries(Bones.Input.controls).length; i++) {
+        Bones.Input.controls[Object.entries(Bones.Input.controls)[i][0]].pressed_this_frame = false
+    }
+
+    for (let i = 0; i < Bones.Input.key_events_buffer.length; i++) {
+        let _event = Bones.Input.key_events_buffer[i]
+        if (_event.type == "keydown") {
+           for (let i = 0; i < Object.entries(Bones.Input.controls).length; i++) {
+                if (_event.key == Bones.Input.controls[Object.entries(Bones.Input.controls)[i][0]].key) {
+                    Bones.Input.controls[Object.entries(Bones.Input.controls)[i][0]].pressed = true
+                    Bones.Input.controls[Object.entries(Bones.Input.controls)[i][0]].pressed_this_frame = true
+                }
+           }
+        }
+        if (_event.type == "keyup") {
+           for (let i = 0; i < Object.entries(Bones.Input.controls).length; i++) {
+                if (_event.key == Bones.Input.controls[Object.entries(Bones.Input.controls)[i][0]].key) {
+                    Bones.Input.controls[Object.entries(Bones.Input.controls)[i][0]].pressed = false
+                }
+           }
+        }
+    }
+
 }
 
 

@@ -17,12 +17,6 @@ class Player {
         this.gravity = 0.25
         this.facing_right = true
 
-		this.control_left = false;
-		this.control_right = false;
-		this.control_jump = false;
-		this.control_left_this_frame = false;
-		this.control_right_this_frame = false;
-		this.control_jump_this_frame = false;
 		this.move_left = false;
 		this.move_right = false;
 		this.move_jump = false;
@@ -37,44 +31,10 @@ class Player {
             h: 150
         }, true, this.matterjs_world)
     } 
-	read_keyboard_controls(key_events_buffer) {
-        // process key events
-        this.control_left_this_frame = false
-        this.control_right_this_frame = false
-        this.control_jump_this_frame = false
-
-        for (let i = 0; i < key_events_buffer.length; i++) {
-            let _event = key_events_buffer[i]
-            if (_event.type == "keydown") {
-                if (_event.key == "a") {
-                    this.control_left = true;
-                    this.control_left_this_frame = true;
-                }
-                if (_event.key == "d") {
-                    this.control_right = true;
-                    this.control_right_this_frame = true;
-                }
-                if (_event.key == " ") {
-                    this.control_jump = true;
-                    this.control_jump_this_frame = true;
-                }
-            }
-            if (_event.type == "keyup") {
-                if (_event.key == "a") {
-                    this.control_left = false;
-                }
-                if (_event.key == "d") {
-                    this.control_right = false;
-                }
-                if (_event.key == " ") {
-                    this.control_jump = false;
-                }
-            }
-        }
-
-        this.move_left = this.control_left || this.control_left_this_frame;
-        this.move_right = this.control_right || this.control_right_this_frame;
-        this.move_jump = this.control_jump || this.control_jump_this_frame;
+	read_keyboard_controls() {
+        this.move_left = Bones.Input.controls["left"].pressed || Bones.Input.controls["left"].pressed_this_frame;
+        this.move_right = Bones.Input.controls["right"].pressed || Bones.Input.controls["right"].pressed_this_frame;
+        this.move_jump = Bones.Input.controls["jump"].pressed || Bones.Input.controls["jump"].pressed_this_frame;
         if (this.move_left == true && this.move_right == true) {
             this.move_left = false;
             this.move_right = false;
@@ -190,6 +150,6 @@ class Player {
 		}, true)
 	}
 	render() {
-        Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, this.x, this.y, 150, 150)
+        Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, this.x - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y, 150, 150)
 	}
 }

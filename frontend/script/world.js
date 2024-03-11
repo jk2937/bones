@@ -47,6 +47,25 @@ class World {
 
         Bones.Input.mouse_read_controls()
         Bones.Input.touch_read_controls()
+        Bones.Input.keys_read_controls()
+
+        // Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
+
+        if (Bones.Debugger.test_camera == true) {
+            if (Bones.Input.controls["right"].pressed || Bones.Input.controls["right"].pressed_this_frame) {
+                Bones.Renderer.camera_x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+            }
+            if (Bones.Input.controls["left"].pressed || Bones.Input.controls["left"].pressed_this_frame) {
+                Bones.Renderer.camera_x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+            } 
+            if (Bones.Input.controls["up"].pressed || Bones.Input.controls["up"].pressed_this_frame) {
+                Bones.Renderer.camera_y -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+            }
+            if (Bones.Input.controls["down"].pressed || Bones.Input.controls["down"].pressed_this_frame) {
+                Bones.Renderer.camera_y += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+            } 
+            this.player1.tick()
+        }
 
         if (Bones.Debugger.debug_simple_player_movement == true) {
             if (move_right) {
@@ -56,8 +75,8 @@ class World {
                 this.player1.x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
         }
-        else {
-            this.player1.read_keyboard_controls(Bones.Input.key_events_buffer)
+        if (Bones.Debugger.test_simple_player_movement != true && Bones.Debugger.test_camera != true) {
+            this.player1.read_keyboard_controls()
             this.player1.tick()
         }
 
@@ -82,13 +101,13 @@ class World {
             for (var i = 0; i < bodies.length; i++) {
                 var vertices = bodies[i].vertices;
 
-                Bones.Renderer.context.moveTo(vertices[0].x, vertices[0].y);
+                Bones.Renderer.context.moveTo(vertices[0].x - Bones.Renderer.camera_x, vertices[0].y - Bones.Renderer.camera_y);
 
                 for (var j = 1; j < vertices.length; j += 1) {
-                    Bones.Renderer.context.lineTo(vertices[j].x, vertices[j].y);
+                    Bones.Renderer.context.lineTo(vertices[j].x - Bones.Renderer.camera_x, vertices[j].y - Bones.Renderer.camera_y);
                 }
 
-                Bones.Renderer.context.lineTo(vertices[0].x, vertices[0].y);
+                Bones.Renderer.context.lineTo(vertices[0].x - Bones.Renderer.camera_x, vertices[0].y - Bones.Renderer.camera_y);
             }
 
             Bones.Renderer.context.lineWidth = 1;

@@ -70,6 +70,6 @@ class NPC {
         this.y_vel += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
     }
     render() {
-        Bones.Renderer.context.drawImage(Bones.Assets.gfx_ball, this.x, this.y, this.w, this.h)
+        Bones.Renderer.context.drawImage(Bones.Assets.gfx_ball, this.x - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y, this.w, this.h)
     }
 }
