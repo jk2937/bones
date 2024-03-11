@@ -24,3 +24,5 @@
 window.onload = function() {
     Bones.start()
 }
+
+Bones.demo_world1 = new World();
