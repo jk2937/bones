@@ -1,35 +1,40 @@
 Bones.Input = {
     init: function() {
-        this.touch_events_buffer = [];
-        this.mouse_events_buffer = [];
-        this.key_events_buffer = [];
-
-        this.touch_events_history = []
-        this.mouse_events_history = []
-        this.key_events_history = []
+        this.Touch = {
+            frame_events_buffer = [],
+            gesture_events_buffer = []
+        }
+        this.Mouse = {
+            frame_events_buffer = [],
+            gesture_events_buffer = []
+        }
+        this.Keyboard = {
+            frame_events_buffer = [],
+            gesture_events_buffer = {}
+        }
 
         // this.keys
 
         // Todo: implement a key mapper
 
-        this.controls = {}
+        this.Controls = {}
 
-        this.keymap = {
-            "up": "w",
-            "down": "s",
-            "left": "a",
-            "right": "d",
-            "jump": " ",
-            "sprint": "Shift",
-            "crouch": "Control"
+        this.Keymap = {
+            "Up": "w",
+            "Down": "s",
+            "Left": "a",
+            "Right": "d",
+            "Jump": " ",
+            "Sprint": "Shift",
+            "Crouch": "Control"
         }
 
-        let entries = Object.entries(this.keymap)
+        let entries = Object.entries(this.Keymap)
 
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i]
             // out: entry = ["up", "w"]
-            this.controls = Object.assign({ [entry[0]]: { key: entry[1], pressed: false, pressed_this_frame: false } }, this.controls)
+            this.Controls = Object.assign({ [entry[0]]: { key: entry[1], activated: false, activated_this_frame: false } }, this.Controls)
         }
 
         /*
@@ -41,24 +46,25 @@ Bones.Input = {
         */
 
 
-        this.mouse_cursor_click = false;
-        this.mouse_cursor_click_this_frame = false;
-        this.mouse_cursor_x = window.innerWidth / 2;
-        this.mouse_cursor_y = window.innerHeight / 2;
+        this.Controls.mouse_cursor_click = false;
+        this.Controls.mouse_cursor_click_this_frame = false;
+        this.Controls.mouse_cursor_x = window.innerWidth / 2;
+        this.Controls.mouse_cursor_y = window.innerHeight / 2;
 
-        this.touch_cursor_click = false;
-        this.touch_cursor_click_this_frame = false;
-        this.touch_cursor_x = window.innerWidth / 2;
-        this.touch_cursor_y = window.innerHeight / 2;
+        this.Controls.touch_cursor_click = false;
+        this.Controls.touch_cursor_click_this_frame = false;
+        this.Controls.touch_cursor_x = window.innerWidth / 2;
+        this.Controls.touch_cursor_y = window.innerHeight / 2;
 
-        this.mouse_read_controls = function(){
+        this.Mouse.process_buffers = function(){
             this.mouse_cursor_click_this_frame = false;
             if (this.mouse_events_buffer.length > 0) {
+                // Get the mouse cursor position from the most recent event
                 let _event = this.mouse_events_buffer[this.mouse_events_buffer.length - 1];
                 this.mouse_cursor_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
                 this.mouse_cursor_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
             }
-            for (let i = 0; i < this.mouse_events_buffer.length; i++) {
+            for (let i = 0; i < this.Mouse.frame_buffer.length; i++) {
                 let _event = this.mouse_events_buffer[i]
                 if (_event.type == "mousedown") {
                     this.mouse_cursor_click = true;
