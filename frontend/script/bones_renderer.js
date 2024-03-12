@@ -5,12 +5,12 @@ Bones.Renderer = {
 
         this.canvas.style.border = "none";
 
-        this.display_mode = "stretched_fullscreen_ratio"; 
+        this.display_mode = "stretched_fullscreen_ratio";
 
         this.width = 1280
         this.height = 720
 
-        this.set_display_mode = function(mode=this.display_mode, width=this.width, height=this.height) {
+        this.set_display_mode = function(mode = this.display_mode, width = this.width, height = this.height) {
             if (mode != "embedded" && mode != "dynamic_fullscreen" && mode != "stretched_fullscreen" && mode != "stretched_fullscreen_ratio") {
                 console.log("Warning: No such screen mode: \"" + mode + "\". Please use \"embedded\", \"stretched_fullscreen\", \"dynamic_fullscreen\", or \"stretched_fullscreen_ratio\".");
                 return false;
@@ -34,10 +34,10 @@ Bones.Renderer = {
                 this.canvas.style.position = "relative";
                 this.canvas.style.left = "";
                 this.canvas.style.top = "";
-           }
+            }
 
             if (mode == "dynamic_fullscreen") {
-                 // Disable stretching
+                // Disable stretching
                 this.canvas.style.width = '';
                 this.canvas.style.height = '';
 
@@ -71,68 +71,68 @@ Bones.Renderer = {
             }
 
             if (mode == "stretched_fullscreen_ratio") {
-                  // Set the canvas resolution
+                // Set the canvas resolution
                 this.canvas.width = this.width;
                 this.canvas.height = this.height
 
-             if (window.innerWidth * this.height > window.innerHeight * this.width) {
-                // Disable horizontal stretching, stretch canvas vertically to 100% of window
-                this.canvas.style.width = "";
-                this.canvas.style.height = "100%";
+                if (window.innerWidth * this.height > window.innerHeight * this.width) {
+                    // Disable horizontal stretching, stretch canvas vertically to 100% of window
+                    this.canvas.style.width = "";
+                    this.canvas.style.height = "100%";
 
-                // Center canvas horizonally, set canvas vertical position to top of window
-                this.canvas.style.position = "absolute";
-                this.canvas.style.left = String(window.innerWidth / 2 - this.canvas.offsetWidth / 2) + "px";
-                this.canvas.style.top= "0px";
-            } 
+                    // Center canvas horizonally, set canvas vertical position to top of window
+                    this.canvas.style.position = "absolute";
+                    this.canvas.style.left = String(window.innerWidth / 2 - this.canvas.offsetWidth / 2) + "px";
+                    this.canvas.style.top = "0px";
+                }
 
-            if (window.innerHeight * this.width > window.innerWidth * this.height) {
-                // Strech canvas horizontally to 100% of window, disable vertical streching
-                this.canvas.style.width = "100%";
-                this.canvas.style.height = "";
+                if (window.innerHeight * this.width > window.innerWidth * this.height) {
+                    // Strech canvas horizontally to 100% of window, disable vertical streching
+                    this.canvas.style.width = "100%";
+                    this.canvas.style.height = "";
 
-                // Set canvas horizontal position to left of window, center canvas vertically
-                this.canvas.style.position = "absolute";
-                this.canvas.style.left = "0px";
-                this.canvas.style.top = String(window.innerHeight / 2 - this.canvas.offsetHeight / 2) + "px";
+                    // Set canvas horizontal position to left of window, center canvas vertically
+                    this.canvas.style.position = "absolute";
+                    this.canvas.style.left = "0px";
+                    this.canvas.style.top = String(window.innerHeight / 2 - this.canvas.offsetHeight / 2) + "px";
 
+                }
             }
-           }
-                
+
             return true;
         }
 
         this.refresh_display = function() {
             if (this.display_mode == "dynamic_fullscreen") {
-            // Update variables
-             this.width = window.innerWidth;
-            this.height = window.innerHeight;
+                // Update variables
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
 
-            // Update canvas resolution
-            this.canvas.width = this.width;
-            this.canvas.height = this.height   
+                // Update canvas resolution
+                this.canvas.width = this.width;
+                this.canvas.height = this.height
             }
             if (this.display_mode == "stretched_fullscreen_ratio") {
-             if (window.innerWidth * this.height > window.innerHeight * this.width) {
-                // Disable canvas horizontal stretching, set vertical stretching to 100% of window
-                this.canvas.style.width = "";
-                this.canvas.style.height = "100%";
+                if (window.innerWidth * this.height > window.innerHeight * this.width) {
+                    // Disable canvas horizontal stretching, set vertical stretching to 100% of window
+                    this.canvas.style.width = "";
+                    this.canvas.style.height = "100%";
 
-                // Center canvas horizontally, set vertical position to top of window
-                this.canvas.style.left = String(window.innerWidth / 2 - this.canvas.offsetWidth / 2) + "px";
-                this.canvas.style.top= "0px";
-            } 
+                    // Center canvas horizontally, set vertical position to top of window
+                    this.canvas.style.left = String(window.innerWidth / 2 - this.canvas.offsetWidth / 2) + "px";
+                    this.canvas.style.top = "0px";
+                }
 
-            if (window.innerHeight * this.width > window.innerWidth * this.height) {
-                // Set canvas horizontal stretching to 100% of window, disable vertical stretching
-                this.canvas.style.width = "100%";
-                this.canvas.style.height = "";
+                if (window.innerHeight * this.width > window.innerWidth * this.height) {
+                    // Set canvas horizontal stretching to 100% of window, disable vertical stretching
+                    this.canvas.style.width = "100%";
+                    this.canvas.style.height = "";
 
-                // Set canvas horizontal position to left of window, center vertically
-                this.canvas.style.left = "0px";
-                this.canvas.style.top = String(window.innerHeight / 2 - this.canvas.offsetHeight / 2) + "px";
-                
-            }
+                    // Set canvas horizontal position to left of window, center vertically
+                    this.canvas.style.left = "0px";
+                    this.canvas.style.top = String(window.innerHeight / 2 - this.canvas.offsetHeight / 2) + "px";
+
+                }
             }
 
         }

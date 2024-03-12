@@ -41,11 +41,10 @@ Bones.run = function() {
 
     Bones.Timer.frame_lock = false;
 
-    if (Bones.Debugger.simulated_lag != true) { 
+    if (Bones.Debugger.simulated_lag != true) {
         requestAnimationFrame(Bones.run);
     }
     if (Bones.Debugger.simulated_lag == true) {
         setTimeout(Bones.run, Math.floor(Math.random() * Bones.Debugger.simulated_lag_intensity))
     }
-} 
-
+}

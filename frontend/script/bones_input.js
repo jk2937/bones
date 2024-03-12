@@ -1,23 +1,41 @@
 Bones.Input = {
     init: function() {
-        this.Touch = {
-            frame_events_buffer = [],
-            gesture_events_buffer = []
-        }
-        this.Mouse = {
-            frame_events_buffer = [],
-            gesture_events_buffer = []
-        }
-        this.Keyboard = {
-            frame_events_buffer = [],
-            gesture_events_buffer = {}
+        // These buffers are populated by onmousemove and other similar events outside of the program loop and processed once per frame
+
+        this.Buffers = {
+            Touch: {
+                frame_events: [],
+                gesture_events: []
+            },
+            Mouse: {
+                frame_events: [],
+                gesture_events: []
+            },
+            Keyboard: {
+                frame_events: [],
+                gesture_events: []
+            }
         }
 
-        // this.keys
+        // Control states organize the data from the buffers. They are updated once per frame with the buffers
 
-        // Todo: implement a key mapper
+        this.ControlStates = {
+            Mouse: {
+                click: false,
+                click_this_frame: false,
+                x: window.innerwidth / 2,
+                y: window.innerheight / 2
+            }
+            Keyboard: {}
+        }
 
-        this.Controls = {}
+        // Write Buffer.Touch into ControlStates.Mouse
+
+        this.touch_mouse = true;
+
+        // Populate the ControlStates.Keyboard object using a keymap
+
+        // This may be turned into a let variable or made as part of a function to change the Keymap object if the object turns out to be useful enough to keep around
 
         this.Keymap = {
             "Up": "w",
@@ -33,76 +51,64 @@ Bones.Input = {
 
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i]
-            // out: entry = ["up", "w"]
-            this.Controls = Object.assign({ [entry[0]]: { key: entry[1], activated: false, activated_this_frame: false } }, this.Controls)
+            this.ControlStates = Object.assign({
+                [entry[0]]: {
+                    key: entry[1],
+                    activated: false,
+                    activated_this_frame: false
+                }
+            }, this.ControlStates)
         }
 
-        /*
-        this.control_jump_alt = false;
-        this.control_jump_alt = false;
+        this.process_buffers = function() {
+            // Update ControlStates with data from Buffers
 
-        this.control_run_alt = false;
-        this.control_run_alt = false;
-        */
+            // Begin with mouse
 
-
-        this.Controls.mouse_cursor_click = false;
-        this.Controls.mouse_cursor_click_this_frame = false;
-        this.Controls.mouse_cursor_x = window.innerWidth / 2;
-        this.Controls.mouse_cursor_y = window.innerHeight / 2;
-
-        this.Controls.touch_cursor_click = false;
-        this.Controls.touch_cursor_click_this_frame = false;
-        this.Controls.touch_cursor_x = window.innerWidth / 2;
-        this.Controls.touch_cursor_y = window.innerHeight / 2;
-
-        this.Mouse.process_buffers = function(){
-            this.mouse_cursor_click_this_frame = false;
-            if (this.mouse_events_buffer.length > 0) {
+            this.ControlStates.Mouse.activated_this_frame = false;
+            if (this.Buffers.Mouse.frame_events.lengt > 0) {
                 // Get the mouse cursor position from the most recent event
-                let _event = this.mouse_events_buffer[this.mouse_events_buffer.length - 1];
-                this.mouse_cursor_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
-                this.mouse_cursor_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
+
+                let _event = this.Buffers.Mouse.frame_events[this.Buffers.Mouse.frame_events.length - 1];
+                this.ControlStates.Mouse.x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
+                this.ControlStates.Mouse.y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
             }
+
             for (let i = 0; i < this.Mouse.frame_buffer.length; i++) {
-                let _event = this.mouse_events_buffer[i]
+                let _event = this.Buffers.Mouse.frame_events[i]
                 if (_event.type == "mousedown") {
-                    this.mouse_cursor_click = true;
-                    this.mouse_cursor_click_this_frame = true;
-                    this.mouse_events_history = []
+                    this.ControlStates.Mouse.click = true;
+                    this.ControlStates.Mouse.click_this_frame = true;
+                    this.Buffer.Mouse.gesture_events = []
                 }
                 if (_event.type == "mouseup") {
-                    this.mouse_cursor_click = false;
-                    this.mouse_events_history = []
+                    this.ControlStates.Mouse.click = false;
+                    this.Buffer.Mouse.gesture_events = []
                 }
             }
-        }
 
-        this.touch_read_controls = function(){
-            this.touch_cursor_click_this_frame = false;
-            if (this.touch_events_buffer.length > 0) {
-                let _event = this.touch_events_buffer[this.touch_events_buffer.length - 1];
+            this.ControlStates.Touch.touch_this_frame = false;
+            if (this.Buffers.Touch.frame_events.length > 0) {
+                let _event = this.Buffers.Touch.frame_events[this.Buffers.Touch.frame_events.length - 1];
                 if (_event.touches.length > 0) {
-                    this.touch_cursor_x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
-                    this.touch_cursor_y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
-                    }
+                    this.ControlStates.Touch.x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
+                    this.ControlStates.Touch.y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
+                }
             }
-            for (let i = 0; i < this.touch_events_buffer.length; i++) {
-                let _event = this.touch_events_buffer[i]
+            for (let i = 0; i < this.Buffers.Touch.frame_events.length; i++) {
+                let _event = this.Buffers.Touch.frame_events[i]
                 if (_event.type == "touchstart") {
-                    this.touch_cursor_click = true;
-                    this.touch_cursor_click_this_frame = true;
-                    this.touch_events_history = []
+                    this.ControlStates.Touch.click = true;
+                    this.ControlStates.Touch.click_this_frame = true;
+                    this.ControlStates.Touch.events_history = []
                 }
                 if (_event.type == "touchend") {
-                    this.touch_cursor_click = false;
-                    this.touch_events_history = []
-        }
+                    this.ControlStates.Touch.cursor_click = false;
+                    this.ControlStates.Touch.events_history = []
+                }
             }
-        }
 
 
-        this.keys_read_controls = function() {
             // process key events
             // this.control_jump_this_frame = false
 
@@ -113,24 +119,22 @@ Bones.Input = {
             for (let i = 0; i < this.key_events_buffer.length; i++) {
                 let _event = this.key_events_buffer[i]
                 if (_event.type == "keydown") {
-                   for (let i = 0; i < Object.entries(this.controls).length; i++) {
+                    for (let i = 0; i < Object.entries(this.controls).length; i++) {
                         if (_event.key == this.controls[Object.entries(this.controls)[i][0]].key) {
                             this.controls[Object.entries(this.controls)[i][0]].pressed = true
                             this.controls[Object.entries(this.controls)[i][0]].pressed_this_frame = true
                         }
-                   }
+                    }
                 }
                 if (_event.type == "keyup") {
-                   for (let i = 0; i < Object.entries(this.controls).length; i++) {
+                    for (let i = 0; i < Object.entries(this.controls).length; i++) {
                         if (_event.key == this.controls[Object.entries(this.controls)[i][0]].key) {
                             this.controls[Object.entries(this.controls)[i][0]].pressed = false
                         }
-                   }
+                    }
                 }
             }
-
         }
-
     }
 }
 Bones.Input.init()
@@ -156,12 +160,16 @@ Bones.Renderer.canvas.addEventListener("touchmove", function(_event) {
 window.addEventListener("touchstart", function(_event) {
     _event.preventDefault();
     _event.stopImmediatePropagation();
-}, { passive: false });
+}, {
+    passive: false
+});
 
 window.addEventListener("touchmove", function(_event) {
     _event.preventDefault();
     _event.stopImmediatePropagation();
-}, { passive: false });
+}, {
+    passive: false
+});
 
 
 // Add mouse events to buffer
@@ -187,4 +195,4 @@ document.addEventListener("keydown", function(_event) {
 
 document.addEventListener("keyup", function(_event) {
     Bones.Input.key_events_buffer.push(_event)
-}); 
+});

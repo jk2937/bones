@@ -1,6 +1,6 @@
 class World {
     constructor() {
-	// todo: wrap physics functions into class
+        // todo: wrap physics functions into class
         this.matterjs_engine = Matter.Engine.create();
         this.matterjs_world = this.matterjs_engine.world;
 
@@ -9,9 +9,15 @@ class World {
         this.player1 = new Player(this.matterjs_world)
 
         this.test_menu_item1 = new MenuItem(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {});
-        this.test_menu_item2 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.demo_world1 = new World(); });
+        this.test_menu_item2 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() {
+            Bones.demo_world1 = new World();
+        });
 
-        this.test_menu_item3 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Camera Mode", function() { Bones.Debugger.test_camera = true }, function() { Bones.Debugger.test_camera = false }, "toggle");
+        this.test_menu_item3 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Camera Mode", function() {
+            Bones.Debugger.test_camera = true
+        }, function() {
+            Bones.Debugger.test_camera = false
+        }, "toggle");
 
 
 
@@ -44,13 +50,13 @@ class World {
             }
             if (Bones.Input.controls["left"].pressed || Bones.Input.controls["left"].pressed_this_frame) {
                 Bones.Renderer.camera_x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            } 
+            }
             if (Bones.Input.controls["up"].pressed || Bones.Input.controls["up"].pressed_this_frame) {
                 Bones.Renderer.camera_y -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
             if (Bones.Input.controls["down"].pressed || Bones.Input.controls["down"].pressed_this_frame) {
                 Bones.Renderer.camera_y += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            } 
+            }
             this.player1.tick()
         }
 
