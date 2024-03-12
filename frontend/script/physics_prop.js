@@ -1,18 +1,18 @@
 class PhysicsProp {
-    constructor(shape, shape_data, anchored, matterjs_world) {
+    constructor(shape, box, angle, anchored, matterjs_world) {
         this.shape = shape;
 
-        this.x = shape_data.x
-        this.y = shape_data.y
+        this.x = box.x
+        this.y = box.y
 
-        this.angle = shape_data.angle;
+        this.angle = angle;
 
         if (this.shape == "square") {
-            this.w = shape_data.w
-            this.h = shape_data.h
+            this.w = box.width
+            this.h = box.height
         }
         if (this.shape == "circle") {
-            this.r = shape_data.r;
+            this.r = box.r;
         }
 
         this.anchored = anchored;

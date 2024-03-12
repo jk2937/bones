@@ -24,12 +24,7 @@ class Player {
         this.on_ground = false
         this.jump_lock = false
         this.matterjs_world = matterjs_world
-        this.physics_prop = new PhysicsProp("square", {
-            x: this.x,
-            y: this.y,
-            w: 150,
-            h: 150
-        }, true, this.matterjs_world)
+        this.physics_prop = new PhysicsProp("square", new Box(this.x, this.y, 150, 150), 0, true, this.matterjs_world)
     } 
 	read_keyboard_controls() {
         this.move_left = Bones.Input.controls["left"].pressed || Bones.Input.controls["left"].pressed_this_frame;
