@@ -25,9 +25,10 @@ Bones.run = function() {
     Bones.Renderer.context.fillRect(0, 0, Bones.Renderer.width, Bones.Renderer.height);
 
     // Todo: Add this to Bones.Input.tick() perhaps
-    Bones.Input.touch_events_history = Bones.Input.touch_events_history.concat(Bones.Input.touch_events_buffer)
+    /* Bones.Input.touch_events_history = Bones.Input.touch_events_history.concat(Bones.Input.touch_events_buffer)
     Bones.Input.mouse_events_history = Bones.Input.mouse_events_history.concat(Bones.Input.mouse_events_buffer)
-    Bones.Input.key_events_history = Bones.Input.key_events_history.concat(Bones.Input.key_events_buffer)
+    Bones.Input.key_events_history = Bones.Input.key_events_history.concat(Bones.Input.key_events_buffer) */
+    Bones.Input.tick()
 
     Bones.demo_world1.tick(Bones.Renderer.context, Bones.Renderer.width, Bones.delta_time, Bones.timescale);
 

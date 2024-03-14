@@ -38,9 +38,7 @@ class World {
         Bones.Renderer.context.textAlign = "center";
         Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.8!", Bones.Renderer.canvas.width / 2, 20)
 
-        Bones.Input.mouse_read_controls()
-        Bones.Input.touch_read_controls()
-        Bones.Input.keys_read_controls()
+        Bones.Input.process_buffers()
 
         // Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
 

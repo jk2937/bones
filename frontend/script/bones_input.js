@@ -25,7 +25,7 @@ Bones.Input = {
                 click_this_frame: false,
                 x: window.innerwidth / 2,
                 y: window.innerheight / 2
-            }
+            },
             Keyboard: {}
         }
 
@@ -51,90 +51,107 @@ Bones.Input = {
 
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i]
-            this.ControlStates = Object.assign({
+            this.ControlStates.Keyboard = Object.assign({
                 [entry[0]]: {
                     key: entry[1],
                     activated: false,
                     activated_this_frame: false
                 }
-            }, this.ControlStates)
+            }, this.ControlStates.Keyboard)
+        }
+    }, // END FUNCTION init
+
+    process_buffers: function() {
+        // Update ControlStates with data from Buffers
+
+        // Begin with mouse
+
+        let cs = this.ControlStates
+        let b = this.Buffers
+
+        cs.Mouse.activated_this_frame = false;
+        if (b.Mouse.frame_events.length > 0) {
+            // Get the mouse cursor position from the most recent event
+
+            let _event = b.Mouse.frame_events[b.Mouse.frame_events.length - 1];
+            cs.Mouse.x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
+            cs.Mouse.y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
         }
 
-        this.process_buffers = function() {
-            // Update ControlStates with data from Buffers
-
-            // Begin with mouse
-
-            this.ControlStates.Mouse.activated_this_frame = false;
-            if (this.Buffers.Mouse.frame_events.lengt > 0) {
-                // Get the mouse cursor position from the most recent event
-
-                let _event = this.Buffers.Mouse.frame_events[this.Buffers.Mouse.frame_events.length - 1];
-                this.ControlStates.Mouse.x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
-                this.ControlStates.Mouse.y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
+        for (let i = 0; i < b.Mouse.frame_events.length; i++) {
+            let _event = b.Mouse.frame_events[i]
+            if (_event.type == "mousedown") {
+                cs.Mouse.click = true;
+                cs.Mouse.click_this_frame = true;
+                cs.Mouse.gesture_events = []
             }
-
-            for (let i = 0; i < this.Mouse.frame_buffer.length; i++) {
-                let _event = this.Buffers.Mouse.frame_events[i]
-                if (_event.type == "mousedown") {
-                    this.ControlStates.Mouse.click = true;
-                    this.ControlStates.Mouse.click_this_frame = true;
-                    this.Buffer.Mouse.gesture_events = []
-                }
-                if (_event.type == "mouseup") {
-                    this.ControlStates.Mouse.click = false;
-                    this.Buffer.Mouse.gesture_events = []
-                }
+            if (_event.type == "mouseup") {
+                    cs.Mouse.click = false;
+                    b.Mouse.gesture_events = []
             }
+        }
 
-            this.ControlStates.Touch.touch_this_frame = false;
-            if (this.Buffers.Touch.frame_events.length > 0) {
-                let _event = this.Buffers.Touch.frame_events[this.Buffers.Touch.frame_events.length - 1];
-                if (_event.touches.length > 0) {
-                    this.ControlStates.Touch.x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
-                    this.ControlStates.Touch.y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
-                }
-            }
-            for (let i = 0; i < this.Buffers.Touch.frame_events.length; i++) {
-                let _event = this.Buffers.Touch.frame_events[i]
-                if (_event.type == "touchstart") {
-                    this.ControlStates.Touch.click = true;
-                    this.ControlStates.Touch.click_this_frame = true;
-                    this.ControlStates.Touch.events_history = []
-                }
-                if (_event.type == "touchend") {
-                    this.ControlStates.Touch.cursor_click = false;
-                    this.ControlStates.Touch.events_history = []
-                }
-            }
-
-
-            // process key events
-            // this.control_jump_this_frame = false
-
-            for (let i = 0; i < Object.entries(this.controls).length; i++) {
-                this.controls[Object.entries(this.controls)[i][0]].pressed_this_frame = false
-            }
-
-            for (let i = 0; i < this.key_events_buffer.length; i++) {
-                let _event = this.key_events_buffer[i]
-                if (_event.type == "keydown") {
-                    for (let i = 0; i < Object.entries(this.controls).length; i++) {
-                        if (_event.key == this.controls[Object.entries(this.controls)[i][0]].key) {
-                            this.controls[Object.entries(this.controls)[i][0]].pressed = true
-                            this.controls[Object.entries(this.controls)[i][0]].pressed_this_frame = true
-                        }
-                    }
-                }
-                if (_event.type == "keyup") {
-                    for (let i = 0; i < Object.entries(this.controls).length; i++) {
-                        if (_event.key == this.controls[Object.entries(this.controls)[i][0]].key) {
-                            this.controls[Object.entries(this.controls)[i][0]].pressed = false
-                        }
-                    }
+        // cs.Touch.touch_this_frame = false;
+        if (b.Touch.frame_events.length > 0) {
+            let _event = b.Touch.frame_events[b.Touch.frame_events.length - 1];
+            if (_event.touches.length > 0) {
+                if (this.touch_mouse == true) {
+                    cs.Mouse.x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
+                    cs.Mouse.y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
                 }
             }
         }
+        for (let i = 0; i < b.Touch.frame_events.length; i++) {
+            let _event = b.Touch.frame_events[i]
+            if (_event.type == "touchstart") {
+                if (this.touch_mouse == true) {
+                    cs.Mouse.click = true;
+                    cs.Mouse.click_this_frame = true;
+                    cs.Mouse.events_history = []
+                }
+            }
+            if (_event.type == "touchend") {
+                if (this.touch_mouse == true) {
+                    cs.Mouse.cursor_click = false;
+                    cs.Mouse.events_history = []
+                }
+            }
+        }
+
+        // process key events
+
+        for (let i = 0; i < Object.entries(cs.Keyboard).length; i++) {
+            cs.Keyboard[Object.entries(cs.Keyboard)[i][0]].pressed_this_frame = false
+        }
+
+        for (let i = 0; i < b.Keyboard.frame_events.length; i++) {
+            let _event = b.Keyboard.frame_events[i]
+            
+            if (_event.type == "keydown") {
+                for (let i = 0; i < Object.entries(cs.Keyboard).length; i++) {
+                    if (_event.key == cs.Keyboard[Object.entries(cs.Keyboard)[i][0]].key) {
+                        cs.Keyboard[Object.entries(cs.Keyboard)[i][0]].pressed = true
+                        cs.Keyboard[Object.entries(cs.Keyboard)[i][0]].pressed_this_frame = true
+                    }
+                }
+            }
+
+            if (_event.type == "keyup") {
+                for (let i = 0; i < Object.entries(cs.Keyboard).length; i++) {
+                    if (_event.key == cs.Keyboard[Object.entries(cs.Keyboard)[i][0]].key) {
+                        cs.Keyboard[Object.entries(cs.Keyboard)[i][0]].pressed = false
+                    }
+                }
+            }
+
+        }
+
+    }, // END FUNCTION process_buffers
+
+    tick: function() {
+        this.Buffers.Touch.gesture_events = this.Buffers.Touch.gesture_events.concat(this.Buffers.Touch.frame_events)
+        this.Buffers.Mouse.gesture_events = this.Buffers.Mouse.gesture_events.concat(this.Buffers.Mouse.frame_events)
+        this.Buffers.Keyboard.gesture_events = this.Buffers.Keyboard.gesture_events.concat(this.Buffers.Keyboard.frame_events)
     }
 }
 Bones.Input.init()
@@ -143,15 +160,15 @@ Bones.Input.init()
 // Add touch events to buffer
 
 Bones.Renderer.canvas.addEventListener("touchstart", function(_event) {
-    Bones.Input.touch_events_buffer.push(_event)
+    Bones.Input.Buffers.Touch.frame_events.push(_event)
 });
 
 Bones.Renderer.canvas.addEventListener("touchend", function(_event) {
-    Bones.Input.touch_events_buffer.push(_event)
+    Bones.Input.Buffers.Touch.frame_events.push(_event)
 });
 
 Bones.Renderer.canvas.addEventListener("touchmove", function(_event) {
-    Bones.Input.touch_events_buffer.push(_event)
+    Bones.Input.Buffers.Touch.frame_events.push(_event)
 });
 
 
@@ -175,24 +192,24 @@ window.addEventListener("touchmove", function(_event) {
 // Add mouse events to buffer
 
 Bones.Renderer.canvas.addEventListener("mousedown", function(_event) {
-    Bones.Input.mouse_events_buffer.push(_event)
+    Bones.Input.Buffers.Mouse.frame_events.push(_event)
 });
 
 document.addEventListener("mouseup", function(_event) { // Note: Using "document" here to read mouseup outside of display
-    Bones.Input.mouse_events_buffer.push(_event)
+    Bones.Input.Buffers.Mouse.frame_events.push(_event)
 });
 
 Bones.Renderer.canvas.addEventListener("mousemove", function(_event) {
-    Bones.Input.mouse_events_buffer.push(_event)
+    Bones.Input.Buffers.Mouse.frame_events.push(_event)
 });
 
 
 // Add key events to buffer
 
 document.addEventListener("keydown", function(_event) {
-    Bones.Input.key_events_buffer.push(_event)
+    Bones.Input.Buffers.Keyboard.frame_events.push(_event)
 });
 
 document.addEventListener("keyup", function(_event) {
-    Bones.Input.key_events_buffer.push(_event)
+    Bones.Input.Buffers.Keyboard.frame_events.push(_event)
 });
