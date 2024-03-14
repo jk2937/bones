@@ -1,5 +1,5 @@
 Bones.Assets = {
-    init: function() {
+    init: function(){
         this.gfx_player = new Image();
         this.gfx_ball = new Image();
         this.gfx_player.src = "../assets/asset2.png";

@@ -1,4 +1,4 @@
-Bones.Debugger = {
+Bones.Debugger = { 
     init: function() {
         this.simulated_lag = false;
         this.simulated_lag_intensity = 100;
@@ -34,27 +34,28 @@ Bones.Debugger = {
                 }
             }
             if (this.mouse_data == true && Bones.Input.mouse_cursor_click == true) {
-                for (let i = 0; i < Bones.Input.mouse_events_history.length; i++) {
+               for (let i = 0; i < Bones.Input.mouse_events_history.length; i++) {
                     let _event = Bones.Input.mouse_events_history[i]
                     let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
-                    let mouse_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
-                    let mouse_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
+                    let mouse_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
+                    let mouse_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
                     Bones.Renderer.context.fillText(_event.type + " " + mouse_x + " " + mouse_y, mouse_x, mouse_y)
                 }
             }
             if (this.touch_data == true) {
-                for (let i = 0; i < Bones.Input.touch_events_history.length; i++) {
+               for (let i = 0; i < Bones.Input.touch_events_history.length; i++) {
                     let _event = Bones.Input.touch_events_history[i]
                     for (let j = 0; j < _event.touches.length; j++) {
                         let touch = _event.touches[j]
                         let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
-                        let touch_x = (touch.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth)
-                        let touch_y = (touch.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight)
+                        let touch_x = (touch.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
+                        let touch_y = (touch.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
                         Bones.Renderer.context.fillText(_event.type + " " + touch.identifier + " " + touch_x + " " + touch_y, touch_x, touch_y)
                     }
-                }
+                }  
             }
         }
     }
 }
 Bones.Debugger.init()
+

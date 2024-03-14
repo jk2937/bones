@@ -1,5 +1,5 @@
 class MenuItem {
-    constructor(x, y, width, height, text, on_activate_function, on_deactivate_function, mode = "default") {
+    constructor(x, y, width, height, text, on_activate_function, on_deactivate_function, mode="default") {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -13,8 +13,8 @@ class MenuItem {
         }
     }
     render() {
-        Bones.Renderer.context.fillStyle = "Gray";
-        Bones.Renderer.context.fillRect(this.x - 1, this.y - 1, this.width + 2, this.height + 2);
+     Bones.Renderer.context.fillStyle = "Gray";
+            Bones.Renderer.context.fillRect(this.x-1, this.y-1, this.width+2, this.height+2);
 
         if (this.mode == "toggle") {
             if (this.activated == true) {
@@ -22,7 +22,8 @@ class MenuItem {
             } else {
                 Bones.Renderer.context.fillStyle = "Tomato";
             }
-        } else if (this.mode != "toggle") {
+        }
+        else if (this.mode != "toggle") {
             Bones.Renderer.context.fillStyle = "white";
         }
 
@@ -31,7 +32,8 @@ class MenuItem {
         Bones.Renderer.context.font = "18px Monospace";
         if (this.mode == "toggle") {
             Bones.Renderer.context.fillStyle = "White";
-        } else if (this.mode != "toggle") {
+        }
+        else if (this.mode != "toggle") {
             Bones.Renderer.context.fillStyle = "Gray";
         }
         Bones.Renderer.context.textAlign = "center";
@@ -40,17 +42,17 @@ class MenuItem {
     }
     read_input() {
         if (
-            (
-                Bones.Input.mouse_cursor_click_this_frame == true &&
-                Bones.Input.mouse_cursor_x > this.x && Bones.Input.mouse_cursor_x < this.x + this.width &&
-                Bones.Input.mouse_cursor_y > this.y && Bones.Input.mouse_cursor_y < this.y + this.height
-            ) ||
-            (
-                Bones.Input.touch_cursor_click_this_frame == true &&
-                Bones.Input.touch_cursor_x > this.x && Bones.Input.touch_cursor_x < this.x + this.width &&
-                Bones.Input.touch_cursor_y > this.y && Bones.Input.touch_cursor_y < this.y + this.height
-            )
-        ) {
+                (
+                    Bones.Input.mouse_cursor_click_this_frame == true 
+                    && Bones.Input.mouse_cursor_x > this.x && Bones.Input.mouse_cursor_x < this.x + this.width
+                    && Bones.Input.mouse_cursor_y > this.y && Bones.Input.mouse_cursor_y < this.y + this.height
+                )
+                || (
+                    Bones.Input.touch_cursor_click_this_frame == true 
+                    && Bones.Input.touch_cursor_x > this.x && Bones.Input.touch_cursor_x < this.x + this.width
+                    && Bones.Input.touch_cursor_y > this.y && Bones.Input.touch_cursor_y < this.y + this.height
+                )
+            ) {
             if (this.mode != "toggle") {
                 this.on_activate_function()
             }
@@ -58,7 +60,8 @@ class MenuItem {
                 if (this.activated == true) {
                     this.on_deactivate_function()
                     this.activated = false
-                } else if (this.activated == false) {
+                }
+                else if (this.activated == false) {
                     this.on_activate_function()
                     this.activated = true
                 }

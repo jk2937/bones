@@ -48,9 +48,9 @@ class NPC {
             this.x = -25;
         }
         if (this.y > Bones.Renderer.height - this.h) {
-            this.x_vel = this.x_vel * 0.7
+            this.x_vel = this.x_vel * 0.7 
             this.y = Bones.Renderer.height - this.h;
-            this.y_vel = 0 - this.y_vel * 0.7
+            this.y_vel = 0 - this.y_vel * 0.7 
             if (this.y_vel > 0) {
                 this.y_vel = 0;
             }
@@ -62,9 +62,9 @@ class NPC {
             this.stuck_time += 1 * Bones.Timer.delta_time * Bones.Timer.timescale;
             if (this.stuck_time > 10) {
                 this.stuck_time = 0
-                this.kicks_counter++
-                this.y_vel = (Math.floor(Math.random() * 100) - 50) // * Bones.Timer.delta_time * Bones.Timer.timescale
-                this.x_vel = (Math.floor(Math.random() * 100) - 50) // * Bones.Timer.delta_time * Bones.Timer.timescale
+                this.kicks_counter ++
+                this.y_vel = (Math.floor(Math.random() * 100) - 50)// * Bones.Timer.delta_time * Bones.Timer.timescale
+                this.x_vel = (Math.floor(Math.random() * 100) - 50)// * Bones.Timer.delta_time * Bones.Timer.timescale
             }
         }
         this.y_vel += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
