@@ -39,16 +39,16 @@ class World {
         // Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
 
         if (Bones.Debugger.test_camera == true) {
-            if (Bones.Input.controls["right"].pressed || Bones.Input.controls["right"].pressed_this_frame) {
+            if (Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame) {
                 Bones.Renderer.camera_x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
-            if (Bones.Input.controls["left"].pressed || Bones.Input.controls["left"].pressed_this_frame) {
+            if (Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame) {
                 Bones.Renderer.camera_x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             } 
-            if (Bones.Input.controls["up"].pressed || Bones.Input.controls["up"].pressed_this_frame) {
+            if (Bones.Input.Keyboard.ControlStates["up"].pressed || Bones.Input.Keyboard.ControlStates["up"].pressed_this_frame) {
                 Bones.Renderer.camera_y -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
-            if (Bones.Input.controls["down"].pressed || Bones.Input.controls["down"].pressed_this_frame) {
+            if (Bones.Input.Keyboard.ControlStates["down"].pressed || Bones.Input.Keyboard.ControlStates["down"].pressed_this_frame) {
                 Bones.Renderer.camera_y += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             } 
             this.player1.tick()

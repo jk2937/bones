@@ -12,7 +12,9 @@ Bones.Input = {
 
         // Todo: implement a key mapper
 
-        this.controls = {}
+        this.Keyboard = new Object()
+
+        this.Keyboard.ControlStates = new Object()
 
         this.keymap = {
             "up": "w",
@@ -29,7 +31,7 @@ Bones.Input = {
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i]
             // out: entry = ["up", "w"]
-            this.controls = Object.assign({ [entry[0]]: { key: entry[1], pressed: false, pressed_this_frame: false } }, this.controls)
+            this.Keyboard.ControlStates = Object.assign({ [entry[0]]: { key: entry[1], pressed: false, pressed_this_frame: false } }, this.Keyboard.ControlStates)
         }
 
         /*
@@ -100,24 +102,24 @@ Bones.Input = {
             // process key events
             // this.control_jump_this_frame = false
 
-            for (let i = 0; i < Object.entries(this.controls).length; i++) {
-                this.controls[Object.entries(this.controls)[i][0]].pressed_this_frame = false
+            for (let i = 0; i < Object.entries(this.Keyboard.ControlStates).length; i++) {
+                this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].pressed_this_frame = false
             }
 
             for (let i = 0; i < this.key_events_buffer.length; i++) {
                 let _event = this.key_events_buffer[i]
                 if (_event.type == "keydown") {
-                   for (let i = 0; i < Object.entries(this.controls).length; i++) {
-                        if (_event.key == this.controls[Object.entries(this.controls)[i][0]].key) {
-                            this.controls[Object.entries(this.controls)[i][0]].pressed = true
-                            this.controls[Object.entries(this.controls)[i][0]].pressed_this_frame = true
+                   for (let i = 0; i < Object.entries(this.Keyboard.ControlStates).length; i++) {
+                        if (_event.key == this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].key) {
+                            this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].pressed = true
+                            this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].pressed_this_frame = true
                         }
                    }
                 }
                 if (_event.type == "keyup") {
-                   for (let i = 0; i < Object.entries(this.controls).length; i++) {
-                        if (_event.key == this.controls[Object.entries(this.controls)[i][0]].key) {
-                            this.controls[Object.entries(this.controls)[i][0]].pressed = false
+                   for (let i = 0; i < Object.entries(this.Keyboard.ControlStates).length; i++) {
+                        if (_event.key == this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].key) {
+                            this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].pressed = false
                         }
                    }
                 }

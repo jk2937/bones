@@ -27,9 +27,9 @@ class Player {
         this.physics_prop = new PhysicsProp("square", new Box(this.x, this.y, 150, 150), 0, true, this.matterjs_world)
     } 
 	read_keyboard_controls() {
-        this.move_left = Bones.Input.controls["left"].pressed || Bones.Input.controls["left"].pressed_this_frame;
-        this.move_right = Bones.Input.controls["right"].pressed || Bones.Input.controls["right"].pressed_this_frame;
-        this.move_jump = Bones.Input.controls["jump"].pressed || Bones.Input.controls["jump"].pressed_this_frame;
+        this.move_left = Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame;
+        this.move_right = Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame;
+        this.move_jump = Bones.Input.Keyboard.ControlStates["jump"].pressed || Bones.Input.Keyboard.ControlStates["jump"].pressed_this_frame;
         if (this.move_left == true && this.move_right == true) {
             this.move_left = false;
             this.move_right = false;
