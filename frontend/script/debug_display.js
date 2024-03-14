@@ -15,7 +15,7 @@ Bones.Debugger = {
         this.test_simple_player_movement = false
         this.test_camera = false
 
-        this.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.Input.ControlStates.Keyboard[\"Left\"].pressed", "Bones.Input.ControlStates.Keyboard[\"Right\"].pressed", "Bones.Input.ControlStates.Keyboard[\"Jump\"].pressed", "", "Bones.Input.ControlStates.Keyboard[\"Left\"].pressed_this_frame", "Bones.Input.ControlStates.Keyboard[\"Right\"].pressed_this_frame", "Bones.Input.ControlStates.Keyboard[\"Jump\"].pressed_this_frame", "", "Bones.Input.mouse_cursor_x", "Bones.Input.mouse_cursor_y", "", "Bones.Input.mouse_cursor_click", "Bones.Input.mouse_cursor_click_this_frame", "", "Bones.Input.touch_cursor_x", "Bones.Input.touch_cursor_y", "", "Bones.Input.touch_cursor_click", "Bones.Input.touch_cursor_click_this_frame", "", "Bones.demo_world1.npc1.stuck_time", "Bones.demo_world1.npc1.kicks_counter", "Bones.demo_world1.npc1.kicks_per_minute", "Bones.demo_world1.npc1.kick_timer / 60"]
+        this.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.Input.controls[\"left\"].pressed", "Bones.Input.controls[\"right\"].pressed", "Bones.Input.controls[\"jump\"].pressed", "", "Bones.Input.controls[\"left\"].pressed_this_frame", "Bones.Input.controls[\"right\"].pressed_this_frame", "Bones.Input.controls[\"jump\"].pressed_this_frame", "", "Bones.Input.mouse_cursor_x", "Bones.Input.mouse_cursor_y", "", "Bones.Input.mouse_cursor_click", "Bones.Input.mouse_cursor_click_this_frame", "", "Bones.Input.touch_cursor_x", "Bones.Input.touch_cursor_y", "", "Bones.Input.touch_cursor_click", "Bones.Input.touch_cursor_click_this_frame", "", "Bones.demo_world1.npc1.stuck_time", "Bones.demo_world1.npc1.kicks_counter", "Bones.demo_world1.npc1.kicks_per_minute", "Bones.demo_world1.npc1.kick_timer / 60"]
         this.stress_test = false;
         this.stress_loops = 999999;
         this.stress_random = false;
@@ -43,8 +43,8 @@ Bones.Debugger = {
                 }
             }
             if (this.touch_data == true) {
-                for (let i = 0; i < Bones.Input.Buffers.Touch.gesture_events.length; i++) {
-                    let _event = Bones.Input.Buffers.Touch.gesture_events[i]
+                for (let i = 0; i < Bones.Input.touch_events_history.length; i++) {
+                    let _event = Bones.Input.touch_events_history[i]
                     for (let j = 0; j < _event.touches.length; j++) {
                         let touch = _event.touches[j]
                         let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
