@@ -19,7 +19,7 @@ Bones.Input = {
             }
         }
 
-        this.touch_events_buffer = [];
+        this.Touch.Buffers.frame_events = [];
         this.Mouse.Buffers.frame_events = [];
         this.key_events_buffer = [];
 
@@ -95,15 +95,15 @@ Bones.Input = {
 
         this.touch_read_controls = function(){
             this.touch_cursor_click_this_frame = false;
-            if (this.touch_events_buffer.length > 0) {
-                let _event = this.touch_events_buffer[this.touch_events_buffer.length - 1];
+            if (this.Touch.Buffers.frame_events.length > 0) {
+                let _event = this.Touch.Buffers.frame_events[this.Touch.Buffers.frame_events.length - 1];
                 if (_event.touches.length > 0) {
                     this.touch_cursor_x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
                     this.touch_cursor_y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
                     }
             }
-            for (let i = 0; i < this.touch_events_buffer.length; i++) {
-                let _event = this.touch_events_buffer[i]
+            for (let i = 0; i < this.Touch.Buffers.frame_events.length; i++) {
+                let _event = this.Touch.Buffers.frame_events[i]
                 if (_event.type == "touchstart") {
                     this.touch_cursor_click = true;
                     this.touch_cursor_click_this_frame = true;
@@ -154,15 +154,15 @@ Bones.Input.init()
 // Add touch events to buffer
 
 Bones.Renderer.canvas.addEventListener("touchstart", function(_event) {
-    Bones.Input.touch_events_buffer.push(_event)
+    Bones.Input.Touch.Buffers.frame_events.push(_event)
 });
 
 Bones.Renderer.canvas.addEventListener("touchend", function(_event) {
-    Bones.Input.touch_events_buffer.push(_event)
+    Bones.Input.Touch.Buffers.frame_events.push(_event)
 });
 
 Bones.Renderer.canvas.addEventListener("touchmove", function(_event) {
-    Bones.Input.touch_events_buffer.push(_event)
+    Bones.Input.Touch.Buffers.frame_events.push(_event)
 });
 
 
