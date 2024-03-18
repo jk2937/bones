@@ -21,7 +21,7 @@ Bones.Input = {
 
         this.Touch.Buffers.frame_events = [];
         this.Mouse.Buffers.frame_events = [];
-        this.key_events_buffer = [];
+        this.Keyboard.Buffers.frame_events = [];
 
         this.touch_events_history = []
         this.mouse_events_history = []
@@ -30,8 +30,6 @@ Bones.Input = {
         // this.keys
 
         // Todo: implement a key mapper
-
-        this.Keyboard = new Object()
 
         this.Keyboard.ControlStates = new Object()
 
@@ -125,8 +123,8 @@ Bones.Input = {
                 this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].pressed_this_frame = false
             }
 
-            for (let i = 0; i < this.key_events_buffer.length; i++) {
-                let _event = this.key_events_buffer[i]
+            for (let i = 0; i < this.Keyboard.Buffers.frame_events.length; i++) {
+                let _event = this.Keyboard.Buffers.frame_events[i]
                 if (_event.type == "keydown") {
                    for (let i = 0; i < Object.entries(this.Keyboard.ControlStates).length; i++) {
                         if (_event.key == this.Keyboard.ControlStates[Object.entries(this.Keyboard.ControlStates)[i][0]].key) {
@@ -197,9 +195,9 @@ Bones.Renderer.canvas.addEventListener("mousemove", function(_event) {
 // Add key events to buffer
 
 document.addEventListener("keydown", function(_event) {
-    Bones.Input.key_events_buffer.push(_event)
+    Bones.Input.Keyboard.Buffers.frame_events.push(_event)
 });
 
 document.addEventListener("keyup", function(_event) {
-    Bones.Input.key_events_buffer.push(_event)
+    Bones.Input.Keyboard.Buffers.frame_events.push(_event)
 }); 
