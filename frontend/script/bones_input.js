@@ -1,5 +1,24 @@
 Bones.Input = {
     init: function() {
+        this.Touch = {
+            Buffers: {
+                frame_events: [],
+                gesture_events: []
+            }
+        }
+        this.Mouse = {
+            Buffers: {
+                frame_events: [],
+                gesture_events: []
+            }
+        }
+        this.Keyboard = {
+            Buffers: {
+                frame_events: [],
+                gesture_events: []
+            }
+        }
+
         this.touch_events_buffer = [];
         this.mouse_events_buffer = [];
         this.key_events_buffer = [];
