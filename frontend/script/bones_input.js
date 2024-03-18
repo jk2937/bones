@@ -23,7 +23,7 @@ Bones.Input = {
         this.Mouse.Buffers.frame_events = [];
         this.Keyboard.Buffers.frame_events = [];
 
-        this.touch_events_history = []
+        this.Touch.Buffers.gesture_events = []
         this.mouse_events_history = []
         this.key_events_history = []
 
@@ -105,11 +105,11 @@ Bones.Input = {
                 if (_event.type == "touchstart") {
                     this.touch_cursor_click = true;
                     this.touch_cursor_click_this_frame = true;
-                    this.touch_events_history = []
+                    this.Touch.Buffers.gesture_events = []
                 }
                 if (_event.type == "touchend") {
                     this.touch_cursor_click = false;
-                    this.touch_events_history = []
+                    this.Touch.Buffers.gesture_events = []
         }
             }
         }

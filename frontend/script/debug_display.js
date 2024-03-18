@@ -43,8 +43,8 @@ Bones.Debugger = {
                 }
             }
             if (this.touch_data == true) {
-               for (let i = 0; i < Bones.Input.touch_events_history.length; i++) {
-                    let _event = Bones.Input.touch_events_history[i]
+               for (let i = 0; i < Bones.Input.Touch.Buffers.gesture_events.length; i++) {
+                    let _event = Bones.Input.Touch.Buffers.gesture_events[i]
                     for (let j = 0; j < _event.touches.length; j++) {
                         let touch = _event.touches[j]
                         let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
