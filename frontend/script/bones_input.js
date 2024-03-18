@@ -20,7 +20,7 @@ Bones.Input = {
         }
 
         this.touch_events_buffer = [];
-        this.mouse_events_buffer = [];
+        this.Mouse.Buffers.frame_events = [];
         this.key_events_buffer = [];
 
         this.touch_events_history = []
@@ -74,13 +74,13 @@ Bones.Input = {
 
         this.mouse_read_controls = function(){
             this.mouse_cursor_click_this_frame = false;
-            if (this.mouse_events_buffer.length > 0) {
-                let _event = this.mouse_events_buffer[this.mouse_events_buffer.length - 1];
+            if (this.Mouse.Buffers.frame_events.length > 0) {
+                let _event = this.Mouse.Buffers.frame_events[this.Mouse.Buffers.frame_events.length - 1];
                 this.mouse_cursor_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
                 this.mouse_cursor_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
             }
-            for (let i = 0; i < this.mouse_events_buffer.length; i++) {
-                let _event = this.mouse_events_buffer[i]
+            for (let i = 0; i < this.Mouse.Buffers.frame_events.length; i++) {
+                let _event = this.Mouse.Buffers.frame_events[i]
                 if (_event.type == "mousedown") {
                     this.mouse_cursor_click = true;
                     this.mouse_cursor_click_this_frame = true;
@@ -182,15 +182,15 @@ window.addEventListener("touchmove", function(_event) {
 // Add mouse events to buffer
 
 Bones.Renderer.canvas.addEventListener("mousedown", function(_event) {
-    Bones.Input.mouse_events_buffer.push(_event)
+    Bones.Input.Mouse.Buffers.frame_events.push(_event)
 });
 
 document.addEventListener("mouseup", function(_event) { // Note: Using "document" here to read mouseup outside of display
-    Bones.Input.mouse_events_buffer.push(_event)
+    Bones.Input.Mouse.Buffers.frame_events.push(_event)
 });
 
 Bones.Renderer.canvas.addEventListener("mousemove", function(_event) {
-    Bones.Input.mouse_events_buffer.push(_event)
+    Bones.Input.Mouse.Buffers.frame_events.push(_event)
 });
 
 

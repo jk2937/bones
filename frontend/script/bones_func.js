@@ -26,13 +26,13 @@ Bones.run = function() {
 
     // Todo: Add this to Bones.Input.tick() perhaps
     Bones.Input.touch_events_history = Bones.Input.touch_events_history.concat(Bones.Input.touch_events_buffer)
-    Bones.Input.mouse_events_history = Bones.Input.mouse_events_history.concat(Bones.Input.mouse_events_buffer)
+    Bones.Input.mouse_events_history = Bones.Input.mouse_events_history.concat(Bones.Input.Mouse.Buffers.frame_events)
     Bones.Input.key_events_history = Bones.Input.key_events_history.concat(Bones.Input.key_events_buffer)
 
     Bones.demo_world1.tick(Bones.Renderer.context, Bones.Renderer.width, Bones.delta_time, Bones.timescale);
 
     Bones.Input.touch_events_buffer = []
-    Bones.Input.mouse_events_buffer = []
+    Bones.Input.Mouse.Buffers.frame_events = []
     Bones.Input.key_events_buffer = []
 
     Bones.Timer.previous_frame_start_time = Bones.Timer.current_frame_start_time
