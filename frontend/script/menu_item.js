@@ -49,8 +49,8 @@ class MenuItem {
                 )
                 || (
                     Bones.Input.Touch.ControlStates.click_this_frame == true 
-                    && Bones.Input.touch_cursor_x > this.x && Bones.Input.touch_cursor_x < this.x + this.width
-                    && Bones.Input.touch_cursor_y > this.y && Bones.Input.touch_cursor_y < this.y + this.height
+                    && Bones.Input.Touch.ControlStates.x > this.x && Bones.Input.Touch.ControlStates.x < this.x + this.width
+                    && Bones.Input.Touch.ControlStates.y > this.y && Bones.Input.Touch.ControlStates.y < this.y + this.height
                 )
             ) {
             if (this.mode != "toggle") {

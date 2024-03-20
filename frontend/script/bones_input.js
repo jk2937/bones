@@ -67,8 +67,8 @@ Bones.Input = {
 
         this.Touch.ControlStates.click = false;
         this.Touch.ControlStates.click_this_frame = false;
-        this.touch_cursor_x = window.innerWidth / 2;
-        this.touch_cursor_y = window.innerHeight / 2;
+        this.Touch.ControlStates.x = window.innerWidth / 2;
+        this.Touch.ControlStates.y = window.innerHeight / 2;
 
         this.mouse_read_controls = function(){
             this.Mouse.ControlStates.click_this_frame = false;
@@ -96,8 +96,8 @@ Bones.Input = {
             if (this.Touch.Buffers.frame_events.length > 0) {
                 let _event = this.Touch.Buffers.frame_events[this.Touch.Buffers.frame_events.length - 1];
                 if (_event.touches.length > 0) {
-                    this.touch_cursor_x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
-                    this.touch_cursor_y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
+                    this.Touch.ControlStates.x = (_event.touches[0].pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
+                    this.Touch.ControlStates.y = (_event.touches[0].pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
                     }
             }
             for (let i = 0; i < this.Touch.Buffers.frame_events.length; i++) {
