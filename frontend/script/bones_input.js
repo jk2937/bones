@@ -24,7 +24,7 @@ Bones.Input = {
         this.Keyboard.Buffers.frame_events = [];
 
         this.Touch.Buffers.gesture_events = []
-        this.mouse_events_history = []
+        this.Mouse.Buffers.gesture_events = []
         this.key_events_history = []
 
         // this.keys
@@ -82,11 +82,11 @@ Bones.Input = {
                 if (_event.type == "mousedown") {
                     this.mouse_cursor_click = true;
                     this.mouse_cursor_click_this_frame = true;
-                    this.mouse_events_history = []
+                    this.Mouse.Buffers.gesture_events = []
                 }
                 if (_event.type == "mouseup") {
                     this.mouse_cursor_click = false;
-                    this.mouse_events_history = []
+                    this.Mouse.Buffers.gesture_events = []
                 }
             }
         }

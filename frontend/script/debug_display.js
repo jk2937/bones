@@ -34,8 +34,8 @@ Bones.Debugger = {
                 }
             }
             if (this.mouse_data == true && Bones.Input.mouse_cursor_click == true) {
-               for (let i = 0; i < Bones.Input.mouse_events_history.length; i++) {
-                    let _event = Bones.Input.mouse_events_history[i]
+               for (let i = 0; i < Bones.Input.Mouse.Buffers.gesture_events.length; i++) {
+                    let _event = Bones.Input.Mouse.Buffers.gesture_events[i]
                     let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
                     let mouse_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
                     let mouse_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
