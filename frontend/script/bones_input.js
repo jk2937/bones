@@ -33,7 +33,7 @@ Bones.Input = {
 
         this.Keyboard.ControlStates = new Object()
 
-        this.keymap = {
+        keymap = {
             "up": "w",
             "down": "s",
             "left": "a",
@@ -43,7 +43,7 @@ Bones.Input = {
             "crouch": "Control"
         }
 
-        let entries = Object.entries(this.keymap)
+        let entries = Object.entries(keymap)
 
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i]
