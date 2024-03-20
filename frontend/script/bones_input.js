@@ -70,7 +70,7 @@ Bones.Input = {
         this.Touch.ControlStates.x = window.innerWidth / 2;
         this.Touch.ControlStates.y = window.innerHeight / 2;
 
-        this.mouse_read_controls = function(){
+        this.process_buffers = function(){
             this.Mouse.ControlStates.click_this_frame = false;
             if (this.Mouse.Buffers.frame_events.length > 0) {
                 let _event = this.Mouse.Buffers.frame_events[this.Mouse.Buffers.frame_events.length - 1];
@@ -89,9 +89,6 @@ Bones.Input = {
                     this.Mouse.Buffers.gesture_events = []
                 }
             }
-        }
-
-        this.touch_read_controls = function(){
             this.Touch.ControlStates.click_this_frame = false;
             if (this.Touch.Buffers.frame_events.length > 0) {
                 let _event = this.Touch.Buffers.frame_events[this.Touch.Buffers.frame_events.length - 1];
@@ -112,10 +109,6 @@ Bones.Input = {
                     this.Touch.Buffers.gesture_events = []
         }
             }
-        }
-
-
-        this.keys_read_controls = function() {
             // process key events
             // this.control_jump_this_frame = false
 
