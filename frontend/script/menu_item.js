@@ -48,7 +48,7 @@ class MenuItem {
                     && Bones.Input.Mouse.ControlStates.y > this.y && Bones.Input.Mouse.ControlStates.y < this.y + this.height
                 )
                 || (
-                    Bones.Input.touch_cursor_click_this_frame == true 
+                    Bones.Input.Touch.ControlStates.click_this_frame == true 
                     && Bones.Input.touch_cursor_x > this.x && Bones.Input.touch_cursor_x < this.x + this.width
                     && Bones.Input.touch_cursor_y > this.y && Bones.Input.touch_cursor_y < this.y + this.height
                 )
