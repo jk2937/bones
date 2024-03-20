@@ -25,7 +25,7 @@ Bones.Input = {
 
         this.Touch.Buffers.gesture_events = []
         this.Mouse.Buffers.gesture_events = []
-        this.key_events_history = []
+        this.Keyboard.Buffers.gesture_events = []
 
         // this.keys
 
