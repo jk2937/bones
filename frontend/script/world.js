@@ -1,9 +1,5 @@
 class World {
     constructor() {
-	// todo: wrap physics functions into class
-        this.matterjs_engine = Matter.Engine.create();
-        this.matterjs_world = this.matterjs_engine.world;
-
         //player init
 
         this.player1 = new Player(this.matterjs_world)
@@ -71,14 +67,14 @@ class World {
 
         this.npc1.tick()
 
-        Matter.Engine.update(this.matterjs_engine, Bones.Timer.delta_time)
+        Matter.Engine.update(Bones.Physics.matterjs_engine, Bones.Timer.delta_time)
 
         this.test_prop1.render()
         this.test_prop2.render()
         this.ground1.render()
 
         if (Bones.Debugger.physics_wireframe == true) {
-            var bodies = Matter.Composite.allBodies(this.matterjs_engine.world)
+            var bodies = Matter.Composite.allBodies(Bones.Physics.matterjs_engine.world)
 
             Bones.Renderer.context.save()
 

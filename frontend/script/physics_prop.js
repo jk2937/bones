@@ -1,5 +1,10 @@
+Bones.Physics = new Object()
+
+Bones.Physics.matterjs_engine = Matter.Engine.create();
+Bones.Physics.matterjs_world = Bones.Physics.matterjs_engine.world;
+
 class BoxProp {
-    constructor(box, angle, anchored, matterjs_world) {
+    constructor(box, angle, anchored) {
         this.x = box.x
         this.y = box.y
 
@@ -13,7 +18,7 @@ class BoxProp {
         this.body = Matter.Bodies.rectangle(this.x, this.y, this.w, this.h, {
             isStatic: this.anchored
         })
-        Matter.Composite.add(matterjs_world, [this.body]);
+        Matter.Composite.add(Bones.Physics.matterjs_world, [this.body]);
     }
     render() {
         this.pos = this.body.position;
