@@ -2,7 +2,7 @@ class World {
     constructor() {
         //player init
 
-        this.player1 = new Player(this.matterjs_world)
+        this.player1 = new Player()
 
         this.test_menu_item1 = new MenuItem(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {});
         this.test_menu_item2 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.demo_world1 = new World(); });
@@ -17,9 +17,9 @@ class World {
 
         // prop init
 
-        this.test_prop1 = new BoxProp(new Box(400, 200, 80, 80), 0, false, this.matterjs_world)
-        this.test_prop2 = new BoxProp(new Box(450, 50, 80, 20), 0, false, this.matterjs_world)
-        this.ground1 = new BoxProp(new Box(400, 610, 810, 60), 0, true, this.matterjs_world)
+        this.test_prop1 = new BoxProp(new Box(400, 200, 80, 80), 0, false)
+        this.test_prop2 = new BoxProp(new Box(450, 50, 80, 20), 0, false)
+        this.ground1 = new BoxProp(new Box(400, 610, 810, 60), 0, true)
 
     }
     tick() {

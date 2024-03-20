@@ -1,5 +1,5 @@
 class Player {
-    constructor(matterjs_world) {
+    constructor() {
 
         //player init
 
@@ -23,8 +23,7 @@ class Player {
 
         this.on_ground = false
         this.jump_lock = false
-        this.matterjs_world = matterjs_world
-        this.physics_prop = new BoxProp(new Box(this.x, this.y, 150, 150), 0, true, this.matterjs_world)
+        this.physics_prop = new BoxProp(new Box(this.x, this.y, 150, 150), 0, true)
     } 
 	read_keyboard_controls() {
         this.move_left = Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame;
