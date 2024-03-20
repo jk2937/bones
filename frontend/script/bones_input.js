@@ -135,9 +135,15 @@ Bones.Input = {
                 }
             }
 
+        } // END FUNCTION process_buffers
+
+        this.load_gesture_events_buffers = function() {
+            this.Touch.Buffers.gesture_events = this.Touch.Buffers.gesture_events.concat(this.Touch.Buffers.frame_events)
+            this.Mouse.Buffers.gesture_events = Bones.Input.Mouse.Buffers.gesture_events.concat(this.Mouse.Buffers.frame_events)
+            this.Keyboard.Buffers.gesture_events = this.Keyboard.Buffers.gesture_events.concat(this.Keyboard.Buffers.frame_events)
         }
 
-    }
+    } // END FUNCTION init
 }
 Bones.Input.init()
 

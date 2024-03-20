@@ -28,6 +28,7 @@ Bones.run = function() {
     Bones.Input.Touch.Buffers.gesture_events = Bones.Input.Touch.Buffers.gesture_events.concat(Bones.Input.Touch.Buffers.frame_events)
     Bones.Input.Mouse.Buffers.gesture_events = Bones.Input.Mouse.Buffers.gesture_events.concat(Bones.Input.Mouse.Buffers.frame_events)
     Bones.Input.Keyboard.Buffers.gesture_events = Bones.Input.Keyboard.Buffers.gesture_events.concat(Bones.Input.Keyboard.Buffers.frame_events)
+    Bones.Input.load_gesture_events_buffers()
 
     Bones.demo_world1.tick(Bones.Renderer.context, Bones.Renderer.width, Bones.delta_time, Bones.timescale);
 
