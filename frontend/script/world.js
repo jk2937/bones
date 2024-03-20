@@ -21,9 +21,9 @@ class World {
 
         // prop init
 
-        this.test_prop1 = new PhysicsProp("square", new Box(400, 200, 80, 80), 0, false, this.matterjs_world)
-        this.test_prop2 = new PhysicsProp("square", new Box(450, 50, 80, 20), 0, false, this.matterjs_world)
-        this.ground1 = new PhysicsProp("square", new Box(400, 610, 810, 60), 0, true, this.matterjs_world)
+        this.test_prop1 = new BoxProp(new Box(400, 200, 80, 80), 0, false, this.matterjs_world)
+        this.test_prop2 = new BoxProp(new Box(450, 50, 80, 20), 0, false, this.matterjs_world)
+        this.ground1 = new BoxProp(new Box(400, 610, 810, 60), 0, true, this.matterjs_world)
 
     }
     tick() {
