@@ -59,8 +59,8 @@ Bones.Input = {
 
         this.Mouse.ControlStates.click = false;
         this.Mouse.ControlStates.click_this_frame = false;
-        this.mouse_cursor_x = window.innerWidth / 2;
-        this.mouse_cursor_y = window.innerHeight / 2;
+        this.Mouse.ControlStates.x = window.innerWidth / 2;
+        this.Mouse.ControlStates.y = window.innerHeight / 2;
 
         this.touch_cursor_click = false;
         this.touch_cursor_click_this_frame = false;
@@ -71,8 +71,8 @@ Bones.Input = {
             this.Mouse.ControlStates.click_this_frame = false;
             if (this.Mouse.Buffers.frame_events.length > 0) {
                 let _event = this.Mouse.Buffers.frame_events[this.Mouse.Buffers.frame_events.length - 1];
-                this.mouse_cursor_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
-                this.mouse_cursor_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
+                this.Mouse.ControlStates.x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
+                this.Mouse.ControlStates.y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
             }
             for (let i = 0; i < this.Mouse.Buffers.frame_events.length; i++) {
                 let _event = this.Mouse.Buffers.frame_events[i]

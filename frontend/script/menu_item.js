@@ -44,8 +44,8 @@ class MenuItem {
         if (
                 (
                     Bones.Input.Mouse.ControlStates.click_this_frame == true 
-                    && Bones.Input.mouse_cursor_x > this.x && Bones.Input.mouse_cursor_x < this.x + this.width
-                    && Bones.Input.mouse_cursor_y > this.y && Bones.Input.mouse_cursor_y < this.y + this.height
+                    && Bones.Input.Mouse.ControlStates.x > this.x && Bones.Input.Mouse.ControlStates.x < this.x + this.width
+                    && Bones.Input.Mouse.ControlStates.y > this.y && Bones.Input.Mouse.ControlStates.y < this.y + this.height
                 )
                 || (
                     Bones.Input.touch_cursor_click_this_frame == true 
