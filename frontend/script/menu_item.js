@@ -43,7 +43,7 @@ class MenuItem {
     read_input() {
         if (
                 (
-                    Bones.Input.mouse_cursor_click_this_frame == true 
+                    Bones.Input.Mouse.ControlStates.click_this_frame == true 
                     && Bones.Input.mouse_cursor_x > this.x && Bones.Input.mouse_cursor_x < this.x + this.width
                     && Bones.Input.mouse_cursor_y > this.y && Bones.Input.mouse_cursor_y < this.y + this.height
                 )

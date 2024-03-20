@@ -27,13 +27,9 @@ Bones.Input = {
         this.Mouse.Buffers.gesture_events = []
         this.Keyboard.Buffers.gesture_events = []
 
-        // this.keys
-
-        // Todo: implement a key mapper
-
         this.Keyboard.ControlStates = new Object()
 
-        keymap = {
+        let keymap = {
             "up": "w",
             "down": "s",
             "left": "a",
@@ -59,9 +55,10 @@ Bones.Input = {
         this.control_run_alt = false;
         */
 
+        this.Mouse.ControlStates = new Object()
 
-        this.mouse_cursor_click = false;
-        this.mouse_cursor_click_this_frame = false;
+        this.Mouse.ControlStates.click = false;
+        this.Mouse.ControlStates.click_this_frame = false;
         this.mouse_cursor_x = window.innerWidth / 2;
         this.mouse_cursor_y = window.innerHeight / 2;
 
@@ -71,7 +68,7 @@ Bones.Input = {
         this.touch_cursor_y = window.innerHeight / 2;
 
         this.mouse_read_controls = function(){
-            this.mouse_cursor_click_this_frame = false;
+            this.Mouse.ControlStates.click_this_frame = false;
             if (this.Mouse.Buffers.frame_events.length > 0) {
                 let _event = this.Mouse.Buffers.frame_events[this.Mouse.Buffers.frame_events.length - 1];
                 this.mouse_cursor_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
@@ -80,12 +77,12 @@ Bones.Input = {
             for (let i = 0; i < this.Mouse.Buffers.frame_events.length; i++) {
                 let _event = this.Mouse.Buffers.frame_events[i]
                 if (_event.type == "mousedown") {
-                    this.mouse_cursor_click = true;
-                    this.mouse_cursor_click_this_frame = true;
+                    this.Mouse.ControlStates.click = true;
+                    this.Mouse.ControlStates.click_this_frame = true;
                     this.Mouse.Buffers.gesture_events = []
                 }
                 if (_event.type == "mouseup") {
-                    this.mouse_cursor_click = false;
+                    this.Mouse.ControlStates.click = false;
                     this.Mouse.Buffers.gesture_events = []
                 }
             }
