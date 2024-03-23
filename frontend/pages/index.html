@@ -24,29 +24,29 @@
     <script src="../libraries/matter.js"></script>
 
 
-    <script src="../scripts/box.js"></script>
-    <script src="../scripts/player.js"></script>
-    <script src="../scripts/menu_item.js"></script>
+    <script src="../scripts/box.js"></script> <!-- dependencies: none -->
+    <script src="../scripts/player.js"></script> <!-- dependencies: box.js, physics_prop.js, bones_assets.js -->
+    <script src="../scripts/menu_item.js"></script> <!-- dependencies: none -->
 
-    <script src="../scripts/npc.js"></script>
+    <script src="../scripts/npc.js"></script> <!-- dependencies: none -->
 
-    <script src="../scripts/world.js"></script>
-
-
-    <script src="../scripts/bones.js"></script>
-
-    <script src="../scripts/physics_prop.js"></script>
-
-    <script src="../scripts/bones_renderer.js"></script>
-    <script src="../scripts/bones_assets.js"></script>
-    <script src="../scripts/bones_timer.js"></script>
-    <script src="../scripts/bones_input.js"></script>
-    <script src="../scripts/bones_func.js"></script>
+    <script src="../scripts/world.js"></script> <!-- dependencies: box.js, player.js, menu_item.js, npc.js, physics_prop.js, bones_renderer.js, bones_assets.js, debug_display.js -->
 
 
-    <script src="../scripts/debug_display.js"></script>
+    <script src="../scripts/bones.js"></script> <!-- dependencies: none -->
 
-    <script src="../scripts/main.js"></script>
+    <script src="../scripts/physics_prop.js"></script> <!-- dependencies: bones.js -->
+
+    <script src="../scripts/bones_renderer.js"></script> <!-- dependencies: bones.js -->
+    <script src="../scripts/bones_assets.js"></script> <!-- dependencies: bones.js -->
+    <script src="../scripts/bones_timer.js"></script> <!-- dependencies: bones.js -->
+    <script src="../scripts/bones_input.js"></script> <!-- dependencies: bones.js, bones_renderer.js -->
+    <script src="../scripts/bones_func.js"></script> <!-- dependencies: bones.js, bones_renderer.js, bones_assets.js, bones_timer.js, bones_input.js, debug_display.js -->
+
+
+    <script src="../scripts/debug_display.js"></script> <!-- dependencies: bones.js -->
+
+    <script src="../scripts/main.js"></script> <!-- dependencies: box.js, player.js, menu_item.js, npc.js, world.js, bones.js, physics_prop.js, bones_renderer.js, bones_assets.js, bones_timer.js, bones_function, debug_display.js -->
 </body>
 
 </html>
