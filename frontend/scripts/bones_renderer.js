@@ -8,9 +8,8 @@ Bones.Renderer = {
         this.display_mode = "stretched_fullscreen_ratio"; 
 
         this.width = 1280
+        this.height = 720
 
-
-this.height = 720
         this.set_display_mode()
 
         this.camera_x = 0;
