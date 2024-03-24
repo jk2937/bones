@@ -5,6 +5,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-js-beautify -r ../frontend/script/*
+js-beautify -s 4 -r ../frontend/script/*
 
 # Todo: make js-beutify turn tabs into spaces
