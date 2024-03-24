@@ -1,10 +1,10 @@
 dependencies = {
     "box.js": {
-        "depends_on": [],
-        "required_by": ["world.js", "player.js", "main.js"]
+        "depends_on": [], //
+        "required_by": ["world.js", "player.js", "main.js"] 
     },
     "player.js": {
-        "depends_on": ["box.js", "physics_prop.js", "bones_assets.js"],
+        "depends_on": ["box.js", "physics_prop.js", "bones_assets.js"], //
         "required_by": ["world.js", "main.js"]
     },
     "menu_item.js": {
