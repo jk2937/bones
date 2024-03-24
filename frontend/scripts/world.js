@@ -4,10 +4,11 @@ class World {
 
         this.player1 = new Player()
 
-        this.test_menu_item1 = new MenuItem(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {});
-        this.test_menu_item2 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.demo_world1 = new World(); });
+        this.menu_items = []
+        this.menu_items.push(new MenuItem(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {}))
+        this.menu_items.push(new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.demo_world1 = new World(); }))
 
-        this.test_menu_item3 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle");
+        this.menu_items.push(new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle"))
 
 
 
@@ -61,10 +62,6 @@ class World {
             this.player1.tick()
         }
 
-        this.test_menu_item1.read_input()
-        this.test_menu_item2.read_input()
-        this.test_menu_item3.read_input()
-
         this.npc1.tick()
 
         Matter.Engine.update(Bones.Physics.matterjs_engine, Bones.Timer.delta_time)
@@ -100,9 +97,11 @@ class World {
         }
 
         this.player1.render()
-        this.test_menu_item1.render()
-        this.test_menu_item2.render()
-        this.test_menu_item3.render()
+        for (let i = 0; i < this.menu_items.length; i++) {
+            this.menu_items[i].read_input()
+            this.menu_items[i].render()
+        }
+
 
 
         Bones.Renderer.context.font = "18px Monospace";
