@@ -7,7 +7,7 @@ class World {
         this.test_menu_item1 = new MenuItem(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {});
         this.test_menu_item2 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.demo_world1 = new World(); });
 
-        this.test_menu_item3 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Camera Mode", function() { Bones.Debugger.test_camera = true }, function() { Bones.Debugger.test_camera = false }, "toggle");
+        this.test_menu_item3 = new MenuItem(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle");
 
 
 
@@ -32,7 +32,7 @@ class World {
 
         // Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
 
-        if (Bones.Debugger.test_camera == true) {
+        if (Bones.DebugDisplay.test_camera == true) {
             if (Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame) {
                 Bones.Renderer.camera_x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
@@ -48,7 +48,7 @@ class World {
             this.player1.tick()
         }
 
-        if (Bones.Debugger.debug_simple_player_movement == true) {
+        if (Bones.DebugDisplay.debug_simple_player_movement == true) {
             if (move_right) {
                 this.player1.x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
@@ -56,7 +56,7 @@ class World {
                 this.player1.x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             }
         }
-        if (Bones.Debugger.test_simple_player_movement != true && Bones.Debugger.test_camera != true) {
+        if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
             this.player1.read_keyboard_controls()
             this.player1.tick()
         }
@@ -73,7 +73,7 @@ class World {
         this.test_prop2.render()
         this.ground1.render()
 
-        if (Bones.Debugger.physics_wireframe == true) {
+        if (Bones.DebugDisplay.physics_wireframe == true) {
             var bodies = Matter.Composite.allBodies(Bones.Physics.matterjs_engine.world)
 
             Bones.Renderer.context.save()
@@ -114,14 +114,14 @@ class World {
         Bones.Renderer.context.fillText("SPACE ........... Jump", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 60)
         this.npc1.render()
 
-        Bones.Debugger.render()
+        Bones.DebugDisplay.render()
 
-        if (Bones.Debugger.stress_test == true) {
+        if (Bones.DebugDisplay.stress_test == true) {
             rand = 1
-            if (Bones.Debugger.stress_random) {
-                rand = Math.random() * Bones.Debugger.stress_loops;
+            if (Bones.DebugDisplay.stress_random) {
+                rand = Math.random() * Bones.DebugDisplay.stress_loops;
             }
-            for (i = 0; i < Bones.Debugger.stress_loops * rand; i++) {
+            for (i = 0; i < Bones.DebugDisplay.stress_loops * rand; i++) {
                 Bones.Renderer.context.fillText("", 0, 0)
             }
         }

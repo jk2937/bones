@@ -1,4 +1,4 @@
-Bones.Debugger = { 
+Bones.DebugDisplay = { 
     init: function() {
         this.simulated_lag = false;
         this.simulated_lag_intensity = 100;
@@ -57,5 +57,5 @@ Bones.Debugger = {
         }
     }
 }
-Bones.Debugger.init()
+Bones.DebugDisplay.init()
 
