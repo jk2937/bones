@@ -47,14 +47,6 @@ Bones.Input = {
             this.Keyboard.ControlStates = Object.assign({ [entry[0]]: { key: entry[1], pressed: false, pressed_this_frame: false } }, this.Keyboard.ControlStates)
         }
 
-        /*
-        this.control_jump_alt = false;
-        this.control_jump_alt = false;
-
-        this.control_run_alt = false;
-        this.control_run_alt = false;
-        */
-
         this.Mouse.ControlStates = new Object()
 
         this.Mouse.ControlStates.click = false;
