@@ -1,5 +1,5 @@
-class World {
-    constructor() {
+Bones.World = {
+    init() {
         //player init
 
         this.player1 = new Player()
@@ -22,7 +22,7 @@ class World {
         this.test_prop2 = new BoxProp(new Box(450, 50, 80, 20), 0, false)
         this.ground1 = new BoxProp(new Box(400, 610, 810, 60), 0, true)
 
-    }
+    },
     tick() {
         Bones.Renderer.context.font = "18px Monospace";
         Bones.Renderer.context.fillStyle = "Gray";
@@ -124,5 +124,6 @@ class World {
                 Bones.Renderer.context.fillText("", 0, 0)
             }
         }
-    }
-}
+    } // END FUNCTION tick
+} // END OBJECT Bones.World
+Bones.World.init()
