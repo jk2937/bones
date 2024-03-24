@@ -9,8 +9,9 @@ Bones.World = {
         this.menu_items = []
         this.create_menu_item(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {})
         this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.World.init() })
+        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Add Physics Object", function() { })
 
-        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle")
+        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 3, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle")
 
 
 
@@ -20,9 +21,10 @@ Bones.World = {
 
         // prop init
 
-        this.test_prop1 = new this.BoxProp(new Box(400, 200, 80, 80), 0, false)
-        this.test_prop2 = new this.BoxProp(new Box(450, 50, 80, 20), 0, false)
-        this.ground1 = new this.BoxProp(new Box(400, 610, 810, 60), 0, true)
+        this.box_props = []
+        this.create_box_prop(400, 200, 80, 80)
+        this.create_box_prop(450, 50, 80, 20)
+        this.create_box_prop(400, 610, 810, 60, anchored=true)
 
     }, // END FUNCTION init
     tick() {
@@ -68,9 +70,12 @@ Bones.World = {
 
         Matter.Engine.update(this.Physics.matterjs_engine, Bones.Timer.delta_time)
 
-        this.test_prop1.render()
-        this.test_prop2.render()
-        this.ground1.render()
+        for (let i = 0; i < this.box_props.length; i++) {
+            this.box_props[i].render()
+        }
+
+
+        // Todo: move this
 
         if (Bones.DebugDisplay.physics_wireframe == true) {
             var bodies = Matter.Composite.allBodies(this.Physics.matterjs_engine.world)
@@ -129,6 +134,9 @@ Bones.World = {
     }, // END FUNCTION tick
     create_menu_item(x, y, width, height, text, on_activate_function, on_deactivate_function, mode='default') {
         this.menu_items.push(new MenuItem(x, y, width, height, text, on_activate_function, on_deactivate_function, mode=mode))
+    },
+    create_box_prop(x, y, width, height, anchored=false) {
+        this.box_props.push(new this.BoxProp(new Box(x, y, width, height), 0, anchored))
     },
     BoxProp: class {
         constructor(box, angle, anchored) {
