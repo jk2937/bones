@@ -5,8 +5,10 @@ class NPC {
         this.x = 0;
         this.y = 0;
 
-        this.h = 100;
         this.w = 100;
+        this.h = 100;
+
+        this.skin = new Skin();
 
         this.x_vel = 0;
         this.y_vel = 0;
@@ -70,6 +72,6 @@ class NPC {
         this.y_vel += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
     }
     render() {
-        Bones.Renderer.context.drawImage(Bones.Assets.gfx_ball, this.x - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y, this.w, this.h)
+        this.skin.render(this.x, this.y)
     }
 }
