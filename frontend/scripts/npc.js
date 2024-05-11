@@ -8,7 +8,7 @@ class NPC {
         this.w = 100;
         this.h = 100;
 
-        this.skin = new Skin();
+        this.animation = new Animation();
 
         this.x_vel = 0;
         this.y_vel = 0;
@@ -72,6 +72,6 @@ class NPC {
         this.y_vel += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
     }
     render() {
-        this.skin.render(this.x, this.y)
+        this.animation.render(this.x, this.y)
     }
 }
