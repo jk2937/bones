@@ -19,7 +19,11 @@ Bones.World = {
         this.box_props = []
         this.create_box_prop(400, 200, 80, 80)
         this.create_box_prop(450, 50, 80, 20)
-        this.create_box_prop(400, 610, 810, 60, anchored=true)
+
+        this.create_box_prop(Bones.Renderer.width / 2, -50, Bones.Renderer.width, 100, anchored=true)
+        this.create_box_prop(Bones.Renderer.width / 2, Bones.Renderer.height + 50, Bones.Renderer.width, 100, anchored=true)
+        this.create_box_prop(-50, Bones.Renderer.height / 2, 100, Bones.Renderer.height, anchored=true)
+        this.create_box_prop(Bones.Renderer.width + 50, Bones.Renderer.height / 2, 100, Bones.Renderer.height, anchored=true)
 
         //npc init
 
