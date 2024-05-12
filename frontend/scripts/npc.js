@@ -1,4 +1,4 @@
-class NPC {
+/* class NPC {
     constructor() {
         //npc init
 
@@ -18,6 +18,8 @@ class NPC {
         this.kicks_counter = 0;
         this.kicks_per_minute = 0
         this.kick_timer = 0
+
+        this.physics_prop = Bones.World.create_box_prop(this.x, this.y, this.w, this.h)
     }
     calculate_kicks_per_minute() {
         this.kicks_per_minute = this.kicks_counter
@@ -70,8 +72,11 @@ class NPC {
             }
         }
         this.y_vel += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
+
+        this.x = this.physics_prop.x
+        this.y = this.physics_prop.y
     }
     render() {
         this.animation.render(this.x, this.y)
     }
-}
+} 
