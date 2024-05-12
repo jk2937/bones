@@ -9,7 +9,7 @@ Bones.World = {
         this.menu_items = []
         this.create_menu_item(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {})
         this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.World.init() })
-        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Add Physics Object", function() { Bones.World.create_box_prop(400, 200, 80, 80) })
+        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Add Physics Object", function() { Bones.World.npcs.push(new Bones.World.NPC()) })
 
         this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 3, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle")
 
@@ -27,7 +27,8 @@ Bones.World = {
 
         //npc init
 
-        this.npc1 = new this.NPC()
+        this.npcs = []
+        this.npcs.push(new this.NPC())
 
 
     }, // END FUNCTION init
@@ -70,7 +71,9 @@ Bones.World = {
             this.player1.tick()
         }
 
-        this.npc1.tick()
+        for (let i = 0; i < this.npcs.length; i++) {
+            this.npcs[i].tick()
+        }
 
         Matter.Engine.update(this.Physics.matterjs_engine, Bones.Timer.delta_time)
 
@@ -122,7 +125,10 @@ Bones.World = {
         Bones.Renderer.context.fillText("Controls:", Bones.Renderer.width - 280 + 125 + 5, 50 + 200)
         Bones.Renderer.context.fillText("A, D ............ Move", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 30)
         Bones.Renderer.context.fillText("SPACE ........... Jump", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 60)
-        this.npc1.render()
+
+        for (let i = 0; i < this.npcs.length; i++) {
+            this.npcs[i].render()
+        }
 
         Bones.DebugDisplay.render()
 
