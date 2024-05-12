@@ -18,7 +18,11 @@ class Animation {
             this.timer -= this.skins.length * this.frame_delay
         }
     }
-    render(x, y) {
+    render(prop) {
+        let x = prop.x
+        let y = prop.y
+        let angle = prop.angle
+
         this.tick()
         console.log(this.timer)
         console.log(this.frame_delay)
@@ -27,6 +31,10 @@ class Animation {
         let skin = Math.floor(this.timer / this.frame_delay * this.skins.length)
         console.log(this.skins.length)
         skin = skin % this.skins.length
-        this.skins[skin].render(this.x + x, this.y + y)
+        Bones.Renderer.context.save()
+        Bones.Renderer.context.translate(this.x + x, this.y + y)
+        Bones.Renderer.context.rotate(angle)
+        this.skins[skin].render(-prop.w / 2, -prop.h / 2)
+        Bones.Renderer.context.restore()
     }
 }
