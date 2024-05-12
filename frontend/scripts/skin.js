@@ -13,6 +13,6 @@ class Skin {
         this.static_image = Bones.Assets.gfx_balloon_sheet
     }
     render(x, y) {
-        Bones.Renderer.context.drawImage(this.static_image, this.sx, this.sy, this.sw, this.sh, this.dx + x - Bones.Renderer.camera_x, this.dy + y - Bones.Renderer.camera_y, this.dw, this.dh)
+        Bones.Renderer.context.drawImage(this.static_image, this.sx, this.sy, this.sw, this.sh, this.dx + x, this.dy + y, this.dw, this.dh)
     }
 }

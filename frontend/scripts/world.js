@@ -110,7 +110,6 @@ Bones.World = {
             Bones.Renderer.context.restore()
         }
 
-        this.player1.render()
         for (let i = 0; i < this.menu_items.length; i++) {
             this.menu_items[i].read_input()
             this.menu_items[i].render()
@@ -132,6 +131,7 @@ Bones.World = {
 
         Bones.DebugDisplay.render()
 
+        this.player1.render()
         if (Bones.DebugDisplay.stress_test == true) {
             rand = 1
             if (Bones.DebugDisplay.stress_random) {

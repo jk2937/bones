@@ -32,7 +32,7 @@ class Animation {
         console.log(this.skins.length)
         skin = skin % this.skins.length
         Bones.Renderer.context.save()
-        Bones.Renderer.context.translate(this.x + x, this.y + y)
+        Bones.Renderer.context.translate(this.x + x - Bones.Renderer.camera_x, this.y + y - Bones.Renderer.camera_y)
         Bones.Renderer.context.rotate(angle)
         this.skins[skin].render(-prop.w / 2, -prop.h / 2)
         Bones.Renderer.context.restore()
