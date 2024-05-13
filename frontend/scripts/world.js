@@ -150,6 +150,44 @@ Bones.World = {
         this.box_props.push(prop)
         return prop
     },
+    create_circle_prop(x, y, radius, anchored=false) {
+        let prop = new this.CircleProp(x, y, radius, 0, anchored)
+        this.box_props.push(prop)
+        return prop
+    },
+     
+    CircleProp: class {
+        constructor(x, y, radius, angle, anchored) {
+            this.x = x
+            this.y = y
+
+            this.angle = angle;
+
+            this.radius = radius;
+
+            this.anchored = anchored;
+
+            this.body = Matter.Bodies.circle(this.x, this.y, this.radius, {
+                isStatic: this.anchored
+            })
+            Matter.Composite.add(Bones.World.Physics.matterjs_world, [this.body]);
+        }
+        render() {
+            this.pos = this.body.position;
+            this.angle = this.body.angle;
+            this.x = this.pos.x;
+            this.y = this.pos.y;
+            Bones.Renderer.context.save()
+            Bones.Renderer.context.fillStyle = "white";
+            Bones.Renderer.context.translate(this.x - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y);
+            Bones.Renderer.context.rotate(this.angle);
+
+            Bones.Renderer.context.fillRect(0 - this.w / 2, 0 - this.h / 2, this.w, this.h);
+            Bones.Renderer.context.restore()
+        }
+    }, // END CLASS BoxProp
+
+
     BoxProp: class {
         constructor(box, angle, anchored) {
             this.x = box.x
@@ -191,8 +229,7 @@ Bones.World = {
             this.x = 200;
             this.y = 100;
 
-            this.w = 100;
-            this.h = 100;
+            this.radius = 50;
 
             this.animation = new Animation();
 
@@ -205,13 +242,16 @@ Bones.World = {
             this.kicks_per_minute = 0
             this.kick_timer = 0
 
-            this.physics_prop = Bones.World.create_box_prop(this.x, this.y, this.w, this.h)
+            this.physics_prop = Bones.World.create_circle_prop(this.x, this.y, this.radius)
+            this.physics_prop.body.density = 0.000001
+            this.physics_prop.body.restitution = 0.9
         }
         calculate_kicks_per_minute() {
             this.kicks_per_minute = this.kicks_counter
             this.kicks_counter = 0
         }
         tick() {
+            /*
             this.kick_timer += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
             if (this.kick_timer > 60 * 60) {
                 this.kick_timer -= 60 * 60
@@ -219,11 +259,11 @@ Bones.World = {
             }
             this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale
             this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale
-
+            */
             /* For top down mode:
             this.y_vel = this.y_vel / 2;
             this.x_vel = this.x_vel / 2; */
-
+            /*
             if (this.x < 0 - this.w) {
                 this.x = Bones.Renderer.width;
             }
@@ -258,7 +298,7 @@ Bones.World = {
                 }
             }
             this.y_vel += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
-
+            */
             this.x = this.physics_prop.x
             this.y = this.physics_prop.y
         }
