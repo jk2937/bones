@@ -8,10 +8,10 @@ Bones.World = {
 
         this.menu_items = []
         this.create_menu_item(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {})
-        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Refresh", function() { Bones.World.init() })
+        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 45, 250 - 10, 30, "Reset", function() { Bones.World.init() })
         this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 2, 250 - 10, 30, "Add Physics Object", function() { Bones.World.npcs.push(new Bones.World.NPC()) })
 
-        this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 3, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle")
+        // this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 3, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle")
 
 
         // prop init
@@ -20,10 +20,10 @@ Bones.World = {
         //this.create_box_prop(400, 200, 80, 80)
         //this.create_box_prop(450, 50, 80, 20)
 
-        this.create_box_prop(Bones.Renderer.width / 2, -50, Bones.Renderer.width, 100, anchored=true)
-        this.create_box_prop(Bones.Renderer.width / 2, Bones.Renderer.height + 50, Bones.Renderer.width, 100, anchored=true)
-        this.create_box_prop(-50, Bones.Renderer.height / 2, 100, Bones.Renderer.height, anchored=true)
-        this.create_box_prop(Bones.Renderer.width + 50, Bones.Renderer.height / 2, 100, Bones.Renderer.height, anchored=true)
+        this.create_box_prop(Bones.Renderer.width / 2, -500, Bones.Renderer.width + 1000, 1000, anchored=true)
+        this.create_box_prop(Bones.Renderer.width / 2, Bones.Renderer.height + 500, Bones.Renderer.width + 1000, 1000, anchored=true)
+        this.create_box_prop(-500, Bones.Renderer.height / 2, 1000, Bones.Renderer.height + 1000, anchored=true)
+        this.create_box_prop(Bones.Renderer.width + 500, Bones.Renderer.height / 2, 1000, Bones.Renderer.height + 1000, anchored=true)
 
         //npc init
 
@@ -36,7 +36,7 @@ Bones.World = {
         Bones.Renderer.context.font = "18px Monospace";
         Bones.Renderer.context.fillStyle = "Gray";
         Bones.Renderer.context.textAlign = "center";
-        Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.8!", Bones.Renderer.canvas.width / 2, 20)
+        Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.0.9!", Bones.Renderer.canvas.width / 2, 20)
 
         Bones.Input.process_buffers()
 
@@ -110,13 +110,6 @@ Bones.World = {
             Bones.Renderer.context.restore()
         }
 
-        for (let i = 0; i < this.menu_items.length; i++) {
-            this.menu_items[i].read_input()
-            this.menu_items[i].render()
-        }
-
-
-
         Bones.Renderer.context.font = "18px Monospace";
         Bones.Renderer.context.fillStyle = "Gray";
         Bones.Renderer.context.textAlign = "center";
@@ -127,6 +120,11 @@ Bones.World = {
 
         for (let i = 0; i < this.npcs.length; i++) {
             this.npcs[i].render()
+        }
+
+        for (let i = 0; i < this.menu_items.length; i++) {
+            this.menu_items[i].read_input()
+            this.menu_items[i].render()
         }
 
         Bones.DebugDisplay.render()
@@ -226,7 +224,7 @@ Bones.World = {
         constructor() {
             //npc init
 
-            this.x = 200;
+            this.x = 400;
             this.y = 100;
 
             this.radius = 50;

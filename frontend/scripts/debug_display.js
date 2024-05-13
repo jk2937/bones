@@ -4,7 +4,8 @@ Bones.DebugDisplay = {
         this.simulated_lag_intensity = 100;
         // The maximum amount of simulated lag you can use before getting lag frames is 100
 
-        this.visible = true
+        this.visible = false
+
         this.touch_data = true
         this.mouse_data = true
 
