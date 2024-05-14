@@ -19,32 +19,43 @@ const clients = {};
 let host_client = ''
 
 io.on('connection', (socket) => {
-    clients[socket.id] = socket
-    socket.emit('welcome message', socket.id)
-    //if (host_client == '') {
-        host_client = socket.id
-        socket.emit('user is host', 'true')
-    //}
-    io.emit('users online', Object.keys(clients))
-    console.log('a user connected');
-    console.log('there are ' + Object.keys(clients).length + ' users online')
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-        delete clients[socket.id]
-        io.emit('user left', socket.id)
+    socket.on('client welcome message', function(msg) {
+        clients[socket.id] = socket
+        socket.emit('welcome message', socket.id)
+        if (host_client == '') {
+            host_client = socket.id
+            socket.emit('user is host', 'true')
+        }
         io.emit('users online', Object.keys(clients))
-    });
-    socket.on('control state message', (msg) => {
-        console.log('recieved control state message: ' + msg);
-        out_msg = msg
-        out_msg.id = socket.id
-        io.emit('control state message', out_msg)
-    });
+        console.log('a user connected');
+        console.log('there are ' + Object.keys(clients).length + ' users online')
+        socket.on('disconnect', () => {
+            console.log('user disconnected');
+            delete clients[socket.id]
+            io.emit('user left', socket.id)
+            io.emit('users online', Object.keys(clients))
+            if (host_client == socket.id) {
+                host_client = ''
+                console.log('host disconnected')
+                if (Object.keys(clients).length > 0) {
+                    let key = Object.keys(clients)[0]    
+                    host_client = key
+                    console.log('new host ' + host_client)
+                    clients[key].emit('user is host', 'true')
+                }
+            }
+        });
+        socket.on('control state message', (msg) => {
+            console.log('recieved control state message: ' + msg);
+            out_msg = msg
+            out_msg.id = socket.id
+            io.emit('control state message', out_msg)
+        });
 
-    socket.on('player positions', function(msg) {
-        io.emit('player positions', msg)
+        socket.on('player positions', function(msg) {
+            io.emit('player positions', msg)
+        });
     });
-
 
 });
 

@@ -53,7 +53,7 @@ Bones.World = {
         Bones.Renderer.context.font = "18px Monospace";
         Bones.Renderer.context.fillStyle = "Gray";
         Bones.Renderer.context.textAlign = "center";
-        Bones.Renderer.context.fillText("Bones \"Alpha\" v0.0.9 - " + netplay_welcome_message, Bones.Renderer.canvas.width / 2, 20)
+        Bones.Renderer.context.fillText("Bones \"Alpha\" v0.0.9 - user id: " + netplay_welcome_message + ' - user is host: ' + netplay_user_is_host, Bones.Renderer.canvas.width / 2, 20)
 
         Bones.Input.process_buffers()
 

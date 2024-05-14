@@ -1,5 +1,6 @@
 let netplay_controller = false
 let netplay_welcome_message = ''
+let netplay_user_is_host = false
 let netplay_users_online = []
 var socket = io()
 
@@ -55,10 +56,9 @@ function netplay_init() {
         console.log(msg)
     });
 
-    activate_netplay_controller()
-
     socket.on('user is host', function(msg) {
         console.log('user is host')
+        netplay_user_is_host = true
         function send_player_positions() {
             console.log('sending player positions')
             for (let i = 0; i < Object.keys(Bones.World.players).length; i++) {
@@ -74,4 +74,8 @@ function netplay_init() {
         }
         setInterval(send_player_positions, 1000);
     });
+
+    activate_netplay_controller()
+
+    socket.emit('client welcome message', 'true')
 }
