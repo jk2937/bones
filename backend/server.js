@@ -16,19 +16,27 @@ app.get('/', (req, res) => {
 });
 
 const clients = {};
+let host_client = ''
 
 io.on('connection', (socket) => {
     clients[socket.id] = socket
-    socket.emit('welcome message', 'Welcome user_' + socket.id + '!')
+    socket.emit('welcome message', socket.id)
+    if (host_client == '') {
+        host_client = socket.id
+    }
+    io.emit('users online', Object.keys(clients))
     console.log('a user connected');
     console.log('there are ' + Object.keys(clients).length + ' users online')
     socket.on('disconnect', () => {
         console.log('user disconnected');
         delete clients[socket.id]
+        io.emit('users online', Object.keys(clients))
     });
     socket.on('control state message', (msg) => {
         console.log('recieved control state message: ' + msg);
-        io.emit('control state message', msg)
+        out_msg = msg
+        out_msg.id = socket.id
+        io.emit('control state message', out_msg)
     });
 });
 

@@ -3,8 +3,15 @@ Bones.World = {
         this.Physics = new Object()
         this.Physics.matterjs_engine = Matter.Engine.create();
         this.Physics.matterjs_world = this.Physics.matterjs_engine.world;
-        this.controller1 = new this.Controller()
-        this.player1 = new this.Player()
+
+        this.controllers = {}
+        this.players = {}
+
+        console.log('netplay users length ' + netplay_users_online.length)
+        for (let i = 0; i < netplay_users_online.length; i++) {
+            this.controllers[netplay_users_online[i]] = new this.Controller()
+            this.players[netplay_users_online[i]] = new this.Player()
+        }
 
         this.menu_items = []
         this.create_menu_item(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {})
@@ -67,81 +74,87 @@ Bones.World = {
             }
         }
         if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
-            this.controller1.read_keyboard_controls()
-            if(netplay_controller == false) {
-                this.player1.read_keyboard_controls()
-            } else {
+            for (let i = 0; i < Object.keys(this.controllers).length; i++){
+                let key = Object.keys(this.controllers)[i]
+                this.controllers[key].read_keyboard_controls()
+                if(netplay_controller == false) {
+                    this.players[key].read_keyboard_controls()
+                } else {
+                }
+                this.players[key].tick()
             }
-            this.player1.tick()
         }
 
-        if (netplay_controller == true && this.controller1.control_state_changed) {
+        if (netplay_controller == true && this.controllers[netplay_welcome_message].control_state_changed) {
             console.log('debug: sending control state message')
             socket.emit('control state message', 
-                { 'move_left': this.controller1.move_left,
-                  'move_right': this.controller1.move_right,
-                  'move_jump': this.controller1.move_jump })
+                { 
+                  'move_left': this.controllers[netplay_welcome_message].move_left,
+                  'move_right': this.controllers[netplay_welcome_message].move_right,
+                  'move_jump': this.controllers[netplay_welcome_message].move_jump });
         }
 
-        for (let i = 0; i < this.npcs.length; i++) {
-            this.npcs[i].tick()
-        }
+for (let i = 0; i < this.npcs.length; i++) {
+        this.npcs[i].tick()
+    }
 
-        Matter.Engine.update(this.Physics.matterjs_engine, Bones.Timer.delta_time)
+    Matter.Engine.update(this.Physics.matterjs_engine, Bones.Timer.delta_time)
 
-        for (let i = 0; i < this.box_props.length; i++) {
-            this.box_props[i].render()
-        }
+    for (let i = 0; i < this.box_props.length; i++) {
+        this.box_props[i].render()
+    }
 
 
-        // Todo: move this
+    // Todo: move this
 
-        if (Bones.DebugDisplay.physics_wireframe == true) {
-            var bodies = Matter.Composite.allBodies(this.Physics.matterjs_engine.world)
+    if (Bones.DebugDisplay.physics_wireframe == true) {
+        var bodies = Matter.Composite.allBodies(this.Physics.matterjs_engine.world)
 
-            Bones.Renderer.context.save()
+        Bones.Renderer.context.save()
 
-            Bones.Renderer.context.beginPath();
+        Bones.Renderer.context.beginPath();
 
-            for (var i = 0; i < bodies.length; i++) {
-                var vertices = bodies[i].vertices;
+        for (var i = 0; i < bodies.length; i++) {
+            var vertices = bodies[i].vertices;
 
-                Bones.Renderer.context.moveTo(vertices[0].x - Bones.Renderer.camera_x, vertices[0].y - Bones.Renderer.camera_y);
+            Bones.Renderer.context.moveTo(vertices[0].x - Bones.Renderer.camera_x, vertices[0].y - Bones.Renderer.camera_y);
 
-                for (var j = 1; j < vertices.length; j += 1) {
-                    Bones.Renderer.context.lineTo(vertices[j].x - Bones.Renderer.camera_x, vertices[j].y - Bones.Renderer.camera_y);
-                }
-
-                Bones.Renderer.context.lineTo(vertices[0].x - Bones.Renderer.camera_x, vertices[0].y - Bones.Renderer.camera_y);
+            for (var j = 1; j < vertices.length; j += 1) {
+                Bones.Renderer.context.lineTo(vertices[j].x - Bones.Renderer.camera_x, vertices[j].y - Bones.Renderer.camera_y);
             }
 
-            Bones.Renderer.context.lineWidth = 1;
-            Bones.Renderer.context.strokeStyle = '#999';
-            Bones.Renderer.context.stroke();
-
-            Bones.Renderer.context.restore()
+            Bones.Renderer.context.lineTo(vertices[0].x - Bones.Renderer.camera_x, vertices[0].y - Bones.Renderer.camera_y);
         }
 
-        Bones.Renderer.context.font = "18px Monospace";
-        Bones.Renderer.context.fillStyle = "Gray";
-        Bones.Renderer.context.textAlign = "center";
+        Bones.Renderer.context.lineWidth = 1;
+        Bones.Renderer.context.strokeStyle = '#999';
+        Bones.Renderer.context.stroke();
 
-        Bones.Renderer.context.fillText("Controls:", Bones.Renderer.width - 280 + 125 + 5, 50 + 200)
-        Bones.Renderer.context.fillText("A, D ............ Move", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 30)
-        Bones.Renderer.context.fillText("SPACE ........... Jump", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 60)
+        Bones.Renderer.context.restore()
+    }
 
-        for (let i = 0; i < this.npcs.length; i++) {
-            this.npcs[i].render()
-        }
-
-        for (let i = 0; i < this.menu_items.length; i++) {
+ for (let i = 0; i < this.menu_items.length; i++) {
             this.menu_items[i].read_input()
             this.menu_items[i].render()
+         }
+
+Bones.Renderer.context.font = "18px Monospace";
+    Bones.Renderer.context.fillStyle = "Gray";
+    Bones.Renderer.context.textAlign = "center";
+
+    Bones.Renderer.context.fillText("Controls:", Bones.Renderer.width - 280 + 125 + 5, 50 + 200)
+    Bones.Renderer.context.fillText("A, D ............ Move", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 30)
+    Bones.Renderer.context.fillText("SPACE ........... Jump", Bones.Renderer.width - 280 + 125 + 5, 50 + 200 + 60)
+
+    for (let i = 0; i < this.npcs.length; i++) {
+        this.npcs[i].render()
+    }
+
+    Bones.DebugDisplay.render()
+        for (let i = 0; i < Object.keys(this.controllers).length; i++){
+            let key = Object.keys(this.controllers)[i]
+            this.players[key].render()
         }
-
-        Bones.DebugDisplay.render()
-
-        this.player1.render()
         if (Bones.DebugDisplay.stress_test == true) {
             rand = 1
             if (Bones.DebugDisplay.stress_random) {
@@ -516,4 +529,4 @@ Bones.World = {
         }
     }, // END CLASS Player
 } // END OBJECT Bones.World
-Bones.World.init()
+//Bones.World.init()

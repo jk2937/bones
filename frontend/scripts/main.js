@@ -6,5 +6,6 @@
  */
 
 window.onload = function() {
-    Bones.start()
+    //Bones.start()
+    netplay_init()
 }
