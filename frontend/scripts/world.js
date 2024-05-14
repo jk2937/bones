@@ -3,7 +3,7 @@ Bones.World = {
         this.Physics = new Object()
         this.Physics.matterjs_engine = Matter.Engine.create();
         this.Physics.matterjs_world = this.Physics.matterjs_engine.world;
-
+        this.controller1 = new this.Controller()
         this.player1 = new this.Player()
 
         this.menu_items = []
@@ -67,16 +67,20 @@ Bones.World = {
             }
         }
         if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
-            this.player1.read_keyboard_controls()
+            this.controller1.read_keyboard_controls()
+            if(netplay_controller == false) {
+                this.player1.read_keyboard_controls()
+            } else {
+            }
             this.player1.tick()
         }
 
-        if (netplay_controller == true && this.player1.control_state_changed) {
+        if (netplay_controller == true && this.controller1.control_state_changed) {
             console.log('debug: sending control state message')
             socket.emit('control state message', 
-                { 'move_left': this.player1.move_left,
-                  'move_right': this.player1.move_right,
-                  'move_jump': this.player1.move_jump })
+                { 'move_left': this.controller1.move_left,
+                  'move_right': this.controller1.move_right,
+                  'move_jump': this.controller1.move_jump })
         }
 
         for (let i = 0; i < this.npcs.length; i++) {
@@ -312,7 +316,39 @@ Bones.World = {
             this.animation.render(this.physics_prop)
         }
     }, // END CLASS NPC
+    Controller: class {
+        constructor() {
+            this.previous_frame_move_left = false;
+            this.previous_frame_move_right = false;
+            this.previous_frame_move_jump = false;
 
+            this.move_left = false;
+            this.move_right = false;
+            this.move_jump = false;
+
+            this.control_state_changed = false;
+        }
+        read_keyboard_controls() {
+            this.control_state_changed = false;
+            if (this.previous_frame_move_left != this.move_left ||
+                    this.previous_frame_move_right != this.move_right ||
+                    this.previous_frame_move_jump != this.move_jump) {
+               this.control_state_changed = true;
+            }
+
+            this.previous_frame_move_left = this.move_left
+            this.previous_frame_move_right = this.move_right
+            this.previous_frame_move_jump = this.move_jump
+
+            this.move_left = Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame;
+            this.move_right = Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame;
+            this.move_jump = Bones.Input.Keyboard.ControlStates["jump"].pressed || Bones.Input.Keyboard.ControlStates["jump"].pressed_this_frame;
+            if (this.move_left == true && this.move_right == true) {
+                this.move_left = false;
+                this.move_right = false;
+            }
+        }
+    }, // END CLASS Controller
     Player: class {
         constructor() {
 
