@@ -21,9 +21,10 @@ let host_client = ''
 io.on('connection', (socket) => {
     clients[socket.id] = socket
     socket.emit('welcome message', socket.id)
-    if (host_client == '') {
+    //if (host_client == '') {
         host_client = socket.id
-    }
+        socket.emit('user is host', 'true')
+    //}
     io.emit('users online', Object.keys(clients))
     console.log('a user connected');
     console.log('there are ' + Object.keys(clients).length + ' users online')
@@ -39,6 +40,12 @@ io.on('connection', (socket) => {
         out_msg.id = socket.id
         io.emit('control state message', out_msg)
     });
+
+    socket.on('player positions', function(msg) {
+        io.emit('player positions', msg)
+    });
+
+
 });
 
 server.listen(PORT, HOST, () => {

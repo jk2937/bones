@@ -44,18 +44,9 @@ Bones.World = {
             if(netplay_users_online[i] in this.controllers == false) {
                 this.controllers[netplay_users_online[i]] = new this.Controller()
             }
-            else {
-                //Matter.Composite.remove(Bones.World.Physics.matterjs_world, Bones.World.players[i].physics_prop.body)
-                //delete netplay_users_online[i]
-            }
             if(netplay_users_online[i] in this.players == false) {
                 this.players[netplay_users_online[i]] = new this.Player()
             }
-            else {
-                //Matter.Composite.remove(Bones.World.Physics.matterjs_world, Bones.World.players[i].physics_prop.body)
-                //delete netplay_users_online[i]
-            }
-
         }
     },
     tick() {
@@ -95,8 +86,8 @@ Bones.World = {
         if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
             for (let i = 0; i < Object.keys(this.controllers).length; i++){
                 let key = Object.keys(this.controllers)[i]
-                console.log('key ' + key)
-                console.log('netplay_users_online ' + netplay_users_online)
+                // console.log('key ' + key)
+                // console.log('netplay_users_online ' + netplay_users_online)
                 if (key in this.players) {
                     this.controllers[key].read_keyboard_controls()
                     if(netplay_controller == false) {

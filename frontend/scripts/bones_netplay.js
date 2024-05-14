@@ -46,9 +46,32 @@ function netplay_init() {
 
     socket.on('user left', function(msg) {
         Matter.Composite.remove(Bones.World.Physics.matterjs_world, Bones.World.players[msg].physics_prop.body)
-        //delete Bones.World.players[msg]
+        delete Bones.World.players[msg]
         delete Bones.World.controllers[msg]
     });
 
+    socket.on('player positions', function(msg) {
+        console.log('player positions')
+        console.log(msg)
+    });
+
     activate_netplay_controller()
+
+    socket.on('user is host', function(msg) {
+        console.log('user is host')
+        function send_player_positions() {
+            console.log('sending player positions')
+            for (let i = 0; i < Object.keys(Bones.World.players).length; i++) {
+                let key = Object.keys(Bones.World.players)[i]
+                socket.emit('player positions', 
+                    {
+                        'id': key,
+                        'x': Bones.World.players[key].x,
+                        'y': Bones.World.players[key].y,
+                    }
+                )
+            }
+        }
+        setInterval(send_player_positions, 1000);
+    });
 }
