@@ -39,6 +39,23 @@ Bones.World = {
 
 
     }, // END FUNCTION init
+    init_new_players() {
+        for (let i = 0; i < netplay_users_online.length; i++) {
+            if(netplay_users_online[i] in this.controllers == false) {
+                this.controllers[netplay_users_online[i]] = new this.Controller()
+            }
+            else {
+                delete netplay_users_online[i]
+            }
+            if(netplay_users_online[i] in this.players == false) {
+                this.players[netplay_users_online[i]] = new this.Player()
+            }
+            else {
+                delete netplay_users_online[i]
+            }
+
+        }
+    },
     tick() {
         Bones.Renderer.context.font = "18px Monospace";
         Bones.Renderer.context.fillStyle = "Gray";

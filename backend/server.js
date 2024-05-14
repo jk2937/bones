@@ -30,6 +30,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('user disconnected');
         delete clients[socket.id]
+        io.emit('user left', socket.id)
         io.emit('users online', Object.keys(clients))
     });
     socket.on('control state message', (msg) => {
