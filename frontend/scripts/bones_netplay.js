@@ -45,7 +45,8 @@ function netplay_init() {
     });
 
     socket.on('user left', function(msg) {
-        delete Bones.World.players[msg]
+        Matter.Composite.remove(Bones.World.Physics.matterjs_world, Bones.World.players[msg].physics_prop.body)
+        //delete Bones.World.players[msg]
         delete Bones.World.controllers[msg]
     });
 
