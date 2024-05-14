@@ -1,0 +1,57 @@
+<!doctype html>
+
+<!-- Copyright 2024 Jonathan Kaschak
+   - This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="../assets/favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, user-scalable=no, minimal-ui, minimum-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>Bones</title>
+</head>
+
+<body>
+    <canvas id="myCanvas"></canvas>
+    <script src="../libraries/matter.js"></script>
+
+
+    <script src="../scripts/box.js"></script> <!-- dependencies: none -->
+
+    <script src="../scripts/skin.js"></script> <!-- dependencies: none -->
+    <script src="../scripts/bones_animation.js"></script> <!-- dependencies: none -->
+
+    <!-- script src="../scripts/npc.js"></script --> <!-- dependencies: none -->
+    <script src="../scripts/menu_item.js"></script> <!-- dependencies: none -->
+
+
+    <script src="../scripts/bones_object.js"></script> <!-- dependencies: none -->
+
+
+    <script src="../scripts/assets.js"></script> <!-- dependencies: bones.js -->
+    <script src="../scripts/renderer.js"></script> <!-- dependencies: bones.js -->
+
+
+    <script src="../scripts/debug_display.js"></script> <!-- dependencies: bones.js -->
+
+
+    <script src="../scripts/timer.js"></script> <!-- dependencies: bones.js -->
+
+
+    <script src="../scripts/input.js"></script> <!-- dependencies: bones.js, bones_renderer.js -->
+    <script src="../scripts/bones_functions.js"></script> <!-- dependencies: bones.js, bones_renderer.js, bones_assets.js, bones_timer.js, bones_input.js, debug_display.js -->
+    <script src="../scripts/world.js"></script> <!-- dependencies: box.js, player.js, menu_item.js, npc.js, physics_prop.js, bones_renderer.js, bones_assets.js, debug_display.js -->
+
+
+    <script src="../scripts/main.js"></script> <!-- dependencies: box.js, player.js, menu_item.js, npc.js, world.js, bones.js, physics_prop.js, bones_renderer.js, bones_assets.js, bones_timer.js, bones_function, debug_display.js -->
+</body>
+
+</html>
