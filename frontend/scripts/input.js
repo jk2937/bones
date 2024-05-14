@@ -23,6 +23,10 @@ Bones.Input = {
         this.Mouse.Buffers.frame_events = [];
         this.Keyboard.Buffers.frame_events = [];
 
+        this.Touch.Buffers.previous_frame_events = [];
+        this.Mouse.Buffers.previous_frame_events = [];
+        this.Keyboard.Buffers.previous_frame_events = [];
+
         this.Touch.Buffers.gesture_events = []
         this.Mouse.Buffers.gesture_events = []
         this.Keyboard.Buffers.gesture_events = []

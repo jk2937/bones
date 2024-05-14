@@ -1,3 +1,11 @@
+function arrays_equal(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+  for (let i = 0; i < arr1.length; i++) {
+    if (!Object.is(arr1[i], arr2[i])) return false;
+  }
+  return true;
+}
+
 Bones.start = function() {
     setInterval(Bones.Timer.calculate_fps, 1000);
     Bones.run();
@@ -31,6 +39,14 @@ Bones.run = function() {
     Bones.Input.load_gesture_events_buffers()
 
     Bones.World.tick(Bones.Renderer.context, Bones.Renderer.width, Bones.delta_time, Bones.timescale);
+
+    /* if (arrays_equal(Bones.Input.Keyboard.Buffers.previous_frame_events, Bones.Input.Keyboard.Buffers.frame_events) == false) {
+        console.log('keyboard state changed')
+    } */
+
+    Bones.Input.Touch.Buffers.previous_frame_events = Bones.Input.Touch.Buffers.frame_events 
+    Bones.Input.Mouse.Buffers.previous_frame_events = Bones.Input.Mouse.Buffers.frame_events 
+    Bones.Input.Keyboard.Buffers.previous_frame_events = Bones.Input.Keyboard.Buffers.frame_events 
 
     Bones.Input.Touch.Buffers.frame_events = []
     Bones.Input.Mouse.Buffers.frame_events = []

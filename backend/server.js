@@ -17,6 +17,12 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+    socket.on('controller message', (msg) => {
+        console.log('message: ' + msg);
+    });
 });
 
 server.listen(PORT, HOST, () => {

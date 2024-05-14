@@ -324,15 +324,32 @@ Bones.World = {
             this.gravity = 0.25
             this.facing_right = true
 
+            this.previous_frame_move_left = false;
+            this.previous_frame_move_right = false;
+            this.previous_frame_move_jump = false;
+
             this.move_left = false;
             this.move_right = false;
             this.move_jump = false;
+
+            this.control_state_changed = false;
 
             this.on_ground = false
             this.jump_lock = false
             this.physics_prop = new Bones.World.BoxProp(new Box(this.x, this.y, 150, 150), 0, true)
         } 
         read_keyboard_controls() {
+            this.control_state_changed = false;
+            if (this.previous_frame_move_left != this.move_left ||
+                    this.previous_frame_move_right != this.move_right ||
+                    this.previous_frame_move_jump != this.move_jump) {
+               this.control_state_changed = true;
+            }
+
+            this.previous_frame_move_left = this.move_left
+            this.previous_frame_move_right = this.move_right
+            this.previous_frame_move_jump = this.move_jump
+
             this.move_left = Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame;
             this.move_right = Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame;
             this.move_jump = Bones.Input.Keyboard.ControlStates["jump"].pressed || Bones.Input.Keyboard.ControlStates["jump"].pressed_this_frame;
