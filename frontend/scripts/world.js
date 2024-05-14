@@ -71,6 +71,14 @@ Bones.World = {
             this.player1.tick()
         }
 
+        if (netplay_controller == true && this.player1.control_state_changed) {
+            console.log('debug: sending control state message')
+            socket.emit('control state message', 
+                { 'move_left': this.player1.move_left,
+                  'move_right': this.player1.move_right,
+                  'move_jump': this.player1.move_jump })
+        }
+
         for (let i = 0; i < this.npcs.length; i++) {
             this.npcs[i].tick()
         }
