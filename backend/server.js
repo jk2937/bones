@@ -41,6 +41,7 @@ io.on('connection', (socket) => {
                     let key = Object.keys(clients)[0]    
                     host_client = key
                     console.log('new host ' + host_client)
+                    console.log('WARNING do not use this feature during production')
                     clients[key].emit('user is host', 'true')
                 }
             }
@@ -53,7 +54,13 @@ io.on('connection', (socket) => {
         });
 
         socket.on('player positions', function(msg) {
-            io.emit('player positions', msg)
+            if (socket.id == host_client) {
+                io.emit('player positions', msg)
+            }
+            else {
+                //todo: test this
+                console.log('non host user attempted host command')
+            }
         });
     });
 

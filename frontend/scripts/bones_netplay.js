@@ -54,6 +54,8 @@ function netplay_init() {
     socket.on('player positions', function(msg) {
         console.log('player positions')
         console.log(msg)
+        Bones.World.players[msg.id].x = msg.x
+        Bones.World.players[msg.id].y = msg.y
     });
 
     socket.on('user is host', function(msg) {
