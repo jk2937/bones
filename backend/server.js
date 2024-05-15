@@ -62,6 +62,16 @@ io.on('connection', (socket) => {
                 console.log('non host user attempted host command')
             }
         });
+
+        socket.on('prop positions', function(msg) {
+            if (socket.id == host_client) {
+                io.emit('prop positions', msg)
+            }
+            else {
+                //todo: test this
+                console.log('non host user attempted host command')
+            }
+        });
     });
 
 });

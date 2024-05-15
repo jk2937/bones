@@ -58,6 +58,12 @@ function netplay_init() {
         Bones.World.players[msg.id].y = msg.y
     });
 
+    socket.on('prop positions', function(msg) {
+        console.log('prop positions')
+        console.log(msg)
+        Matter.Body.setPosition(Bones.World.npcs[msg.id].physics_prop.body, { x: msg.x, y: msg.y }, null);
+    });
+
     socket.on('user is host', function(msg) {
         console.log('user is host')
         netplay_user_is_host = true
@@ -74,7 +80,20 @@ function netplay_init() {
                 )
             }
         }
+        function send_prop_positions() {
+            console.log('sending prop positions')
+            for (let i = 0; i < Bones.World.npcs.length; i++) {
+                socket.emit('prop positions', 
+                    {
+                        'id': i,
+                        'x': Bones.World.npcs[i].x,
+                        'y': Bones.World.npcs[i].y,
+                    }
+                )
+            }
+        }
         setInterval(send_player_positions, 1000);
+        setInterval(send_prop_positions, 500);
     });
 
     activate_netplay_controller()
