@@ -1,5 +1,8 @@
 Bones.World = {
     init() {
+        this.width = 1920
+        this.height = 1080
+
         this.Physics = new Object()
         this.Physics.matterjs_engine = Matter.Engine.create();
         this.Physics.matterjs_world = this.Physics.matterjs_engine.world;
@@ -27,15 +30,17 @@ Bones.World = {
         //this.create_box_prop(400, 200, 80, 80)
         //this.create_box_prop(450, 50, 80, 20)
 
-        this.create_box_prop(Bones.Renderer.width / 2, -500, Bones.Renderer.width + 1000, 1000, anchored=true)
-        this.create_box_prop(Bones.Renderer.width / 2, Bones.Renderer.height + 500, Bones.Renderer.width + 1000, 1000, anchored=true)
-        this.create_box_prop(-500, Bones.Renderer.height / 2, 1000, Bones.Renderer.height + 1000, anchored=true)
-        this.create_box_prop(Bones.Renderer.width + 500, Bones.Renderer.height / 2, 1000, Bones.Renderer.height + 1000, anchored=true)
+        this.create_box_prop(1920 / 2, -500, 1920 + 1000, 1000, anchored=true)
+        this.create_box_prop(1920 / 2, 1080 + 500, 1920 + 1000, 1000, anchored=true)
+        this.create_box_prop(-500, 1080 / 2, 1000, 1080 + 1000, anchored=true)
+        this.create_box_prop(1920 + 500, 1080 / 2, 1000, 1080 + 1000, anchored=true)
 
         //npc init
 
         this.npcs = []
-        this.npcs.push(new this.NPC())
+        for (let i = 0; i < 20; i++) {
+            this.npcs.push(new this.NPC())
+        }
 
 
     }, // END FUNCTION init
@@ -50,8 +55,26 @@ Bones.World = {
         }
     },
     tick() {
+        let client_player = this.players[netplay_welcome_message] 
+        Bones.Renderer.camera_x = (client_player.x + client_player.width / 2 - Bones.Renderer.width / 2 + Bones.Renderer.camera_x * 19) / 20
+        Bones.Renderer.camera_y = (client_player.y + client_player.height / 2 - Bones.Renderer.height / 2 + Bones.Renderer.camera_y * 19) / 20
+        if (Bones.Renderer.camera_x > this.width - Bones.Renderer.width) {
+            Bones.Renderer.camera_x = this.width - Bones.Renderer.width
+        }
+        if (Bones.Renderer.camera_x < 0) {
+            Bones.Renderer.camera_x = 0
+        }
+        if (Bones.Renderer.camera_y > this.height - Bones.Renderer.height) {
+            Bones.Renderer.camera_y = this.height - Bones.Renderer.height
+        }
+        if (Bones.Renderer.camera_y < 0) {
+            Bones.Renderer.camera_y = 0
+        }
+
+        Bones.Renderer.context.drawImage(Bones.Assets.gfx_ice_background, -Bones.Renderer.camera_x, -Bones.Renderer.camera_y, 1920, 1080)
+
         Bones.Renderer.context.font = "18px Monospace";
-        Bones.Renderer.context.fillStyle = "Gray";
+        Bones.Renderer.context.fillStyle = "Black";
         Bones.Renderer.context.textAlign = "center";
         Bones.Renderer.context.fillText("Bones \"Alpha\" v0.0.9 - user id: " + netplay_welcome_message + ' - user is host: ' + netplay_user_is_host, Bones.Renderer.canvas.width / 2, 20)
 
@@ -384,6 +407,8 @@ Bones.Renderer.context.font = "18px Monospace";
             this.movement_speed = 1;
             this.x = 25;
             this.y = 0;
+            this.width = 150;
+            this.height = 150;
             this.x_vel = 0;
             this.y_vel = 0;
             this.max_x_vel = 7
@@ -516,8 +541,8 @@ Bones.Renderer.context.font = "18px Monospace";
                 this.x = 0
                 this.x_vel = 0
             }
-            if (this.x > Bones.Renderer.width - 150) {
-                this.x = Bones.Renderer.width - 150
+            if (this.x > Bones.World.width - 150) {
+                this.x = Bones.World.width - 150
                 this.x_vel = 0
             }
             if (this.y < 0) {
@@ -527,8 +552,8 @@ Bones.Renderer.context.font = "18px Monospace";
                     this.y_vel = 0
                 }
             }
-            if (this.y > Bones.Renderer.height - 150) {
-                this.y = Bones.Renderer.height - 150
+            if (this.y > Bones.World.height - 150) {
+                this.y = Bones.World.height - 150
                 this.y_vel = 0
                 this.on_ground = true
             }
