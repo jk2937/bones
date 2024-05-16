@@ -1,3 +1,12 @@
+function bounding_box(x1, y1, w1, h1, x2, y2, w2, h2) {
+    return !(
+        ((y1 + h1) < (y2)) ||
+        (y1 > (y2 + h2)) ||
+        ((x1 + w1) < x2) ||
+        (x1 > (x2 + w2))
+    );
+}
+
 Bones.World = {
     init() {
         this.width = 1920
@@ -29,11 +38,12 @@ Bones.World = {
 
 
         this.walls = []
-        this.walls.push(this.create_box_prop(1920 / 2, -500, 1920 + 1000, 1000, anchored=true))
-        this.walls.push(this.create_box_prop(1920 / 2, 1080 + 500, 1920 + 1000, 1000, anchored=true))
-        this.walls.push(this.create_box_prop(-500, 1080 / 2, 1000, 1080 + 1000, anchored=true))
-        this.walls.push(this.create_box_prop(1920 + 500, 1080 / 2, 1000, 1080 + 1000, anchored=true))
+        this.walls.push(new this.MapTile(1920 / 2, -500, 1920 + 1000, 1000, anchored=true))
+        this.walls.push(new this.MapTile(1920 / 2, 1080 + 500, 1920 + 1000, 1000, anchored=true))
+        this.walls.push(new this.MapTile(-500, 1080 / 2, 1000, 1080 + 1000, anchored=true))
+        this.walls.push(new this.MapTile(1920 + 500, 1080 / 2, 1000, 1080 + 1000, anchored=true))
 
+        this.walls.push(new this.MapTile(1920 / 2, 1080 - 200, 500, 10, anchored=true))
         //npc init
 
         this.npcs = []
@@ -204,6 +214,15 @@ Bones.Renderer.context.font = "18px Monospace";
     create_menu_item(x, y, width, height, text, on_activate_function, on_deactivate_function, mode='default') {
         this.menu_items.push(new MenuItem(x, y, width, height, text, on_activate_function, on_deactivate_function, mode=mode))
     },
+    MapTile: class {
+        constructor(x, y, width, height) {
+            this.x = x
+            this.y = y
+            this.width = width
+            this.height = height
+            this.physics_prop = new Bones.World.BoxProp(new Box(this.x, this.y, this.width, this.height), 0, true)
+        }
+    },
     create_box_prop(x, y, width, height, anchored=false) {
         let prop = new this.BoxProp(new Box(x, y, width, height), 0, anchored)
         this.box_props.push(prop)
@@ -369,8 +388,8 @@ Bones.Renderer.context.font = "18px Monospace";
             this.x = x
             this.y = y
 
-            this.width = 64
-            this.height = 60
+            this.width = 150
+            this.height = 150
 
             this.move_left = false;
             this.move_right = false;
@@ -399,6 +418,17 @@ Bones.Renderer.context.font = "18px Monospace";
 
         }
         tick() {
+
+            for (let i = 0; i < Bones.World.walls.length; i++){
+                console.log(Bones.World.walls[i].height)
+                if(bounding_box(this.physics_prop.body.position.x - this.width / 2, this.physics_prop.body.position.y - this.height / 2, this.width, this.height, Bones.World.walls[i].x - Bones.World.walls[i].width / 2, Bones.World.walls[i].y - Bones.World.walls[i].height / 2, Bones.World.walls[i].width, Bones.World.walls[i].height)) {
+                    this.on_ground = true
+                    if (this.move_jump != true) {
+                        Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.physics_prop.body.velocity.x, y: 0 })
+                    }
+                }
+            }
+
 
             if (this.move_left) {
                 this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
@@ -472,14 +502,6 @@ Bones.Renderer.context.font = "18px Monospace";
             }
             if (this.y_vel < -this.max_y_vel) {
                 this.y_vel = -this.max_y_vel
-            }
-
-
-            for (let i = 0; i < Bones.World.walls.length; i++){
-                if(Matter.Collision.collides(this.physics_prop.body, Bones.World.walls[i].body) != null) {
-                    this.y_vel = 1
-                    this.on_ground = true
-                }
             }
 
 
