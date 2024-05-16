@@ -37,6 +37,8 @@ Bones.World = {
         //npc init
 
         this.npcs = []
+        for (i = 0; i < 7; i++){
+            this.npcs.push(new this.NPC())
         }
 
 
@@ -378,7 +380,7 @@ Bones.Renderer.context.font = "18px Monospace";
             this.walk_animation = new Animation();
             this.jump_animation = new Animation();
 
-            this.npc = new Bones.World.NPC()
+            this.physics_prop = Bones.World.create_box_prop(this.x, this.y, this.width, this.height)
 
             this.movement_speed = 1;
             this.x = 25;
@@ -408,7 +410,7 @@ Bones.Renderer.context.font = "18px Monospace";
             if (this.move_jump && !this.jump_lock && this.on_ground) {
                 this.y_vel -= this.y_acc
                 
-                Matter.Body.set(this.npc.physics_prop.body, 'velocity', {x: this.npc.physics_prop.body.velocity.x, y: - this.y_acc})
+                Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.physics_prop.body.velocity.x, y: - this.y_acc})
                 this.on_ground = false
                 this.jump_lock = true
             }
@@ -475,19 +477,21 @@ Bones.Renderer.context.font = "18px Monospace";
 
 
             for (let i = 0; i < Bones.World.walls.length; i++){
-                if(Matter.Collision.collides(this.npc.physics_prop.body, Bones.World.walls[i].body) != null) {
+                if(Matter.Collision.collides(this.physics_prop.body, Bones.World.walls[i].body) != null) {
                     this.y_vel = 1
                     this.on_ground = true
                 }
             }
 
 
-                Matter.Body.set(this.npc.physics_prop.body, 'velocity', {x: this.x_vel, y: this.npc.physics_prop.body.velocity.y })
-            this.x = this.npc.physics_prop.x
-            this.y = this.npc.physics_prop.y
+                Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.x_vel, y: this.physics_prop.body.velocity.y })
+                Matter.Body.set(this.physics_prop.body, 'angle', 0)
+                Matter.Body.set(this.physics_prop.body, 'angularVelocity', 0)
+            this.x = this.physics_prop.x
+            this.y = this.physics_prop.y
         }
         render() {
-            this.idle_animation.render(this.npc.physics_prop)
+            this.idle_animation.render(this.physics_prop)
         }
 
     }, // END CLASS Physics Player
