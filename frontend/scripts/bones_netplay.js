@@ -56,8 +56,10 @@ function netplay_init() {
         //console.log(msg)
         //Bones.World.players[msg.id].x = msg.x
         //Bones.World.players[msg.id].y = msg.y
-        console.log(msg.x)
-        Matter.Body.set(Bones.World.players[msg.id].physics_prop.body, 'position', { x: msg.x, y: msg.y }, null);
+        Matter.Body.set(Bones.World.players[msg.id].physics_prop.body, 'position', msg.position, null);
+        Matter.Body.set(Bones.World.players[msg.id].physics_prop.body, 'velocity', msg.velocity, null);
+        Matter.Body.set(Bones.World.players[msg.id].physics_prop.body, 'angle', msg.angle, null);
+        Matter.Body.set(Bones.World.players[msg.id].physics_prop.body, 'angularVelocity', msg.angularVelocity, null);
     });
 
     socket.on('prop positions', function(msg) {
@@ -80,8 +82,12 @@ function netplay_init() {
                 socket.emit('player positions', 
                     {
                         'id': key,
-                        'x': Bones.World.players[key].physics_prop.body.position.x,
-                        'y': Bones.World.players[key].physics_prop.body.position.y,
+                        'position': Bones.World.players[key].physics_prop.body.position,
+                        'velocity': Bones.World.players[key].physics_prop.body.velocity,
+                        'angle': Bones.World.players[key].physics_prop.body.angle,
+                        'angular_velocity': Bones.World.players[key].physics_prop.body.angularVelocity
+ 
+
                     }
                 )
             }
