@@ -419,9 +419,42 @@ Bones.Renderer.context.font = "18px Monospace";
         }
         tick() {
 
+
+            for (let i = 0; i < Bones.World.players.length; i++){
+                let collide_body = Matter.Bodies.rectangle(this.physics_prop.body.position.x + 1, this.physics_prop.body.position.y - this.height / 2 + this.height - 1, this.width - 3, 2)
+
+
+                if(Matter.Collision.collides(collide_body, Bones.World.players[i].physics_prop.body)) {
+
+                    this.on_ground = true
+                    if (this.move_jump != true) {
+                        Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.physics_prop.body.velocity.x, y: 0 })
+                    }
+                }
+            }
+
+
+            for (let i = 0; i < Bones.World.npcs.length; i++){
+                let collide_body = Matter.Bodies.rectangle(this.physics_prop.body.position.x + 1, this.physics_prop.body.position.y - this.height / 2 + this.height - 1, this.width - 3, 2)
+
+
+                if(Matter.Collision.collides(collide_body, Bones.World.npcs[i].physics_prop.body)) {
+
+                    this.on_ground = true
+                    if (this.move_jump != true) {
+                        Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.physics_prop.body.velocity.x, y: 0 })
+                    }
+                }
+            }
+
+
+
             for (let i = 0; i < Bones.World.walls.length; i++){
-                console.log(Bones.World.walls[i].height)
-                if(bounding_box(this.physics_prop.body.position.x - this.width / 2 + 1, this.physics_prop.body.position.y - this.height / 2 + this.height - 1, this.width - 2, 1, Bones.World.walls[i].x - Bones.World.walls[i].width / 2, Bones.World.walls[i].y - Bones.World.walls[i].height / 2, Bones.World.walls[i].width, Bones.World.walls[i].height)) {
+                let collide_body = Matter.Bodies.rectangle(this.physics_prop.body.position.x + 1, this.physics_prop.body.position.y - this.height / 2 + this.height - 1, this.width - 3, 2)
+
+
+                if(Matter.Collision.collides(collide_body, Bones.World.walls[i].physics_prop.body)) {
+
                     this.on_ground = true
                     if (this.move_jump != true) {
                         Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.physics_prop.body.velocity.x, y: 0 })
