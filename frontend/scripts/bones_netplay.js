@@ -54,8 +54,10 @@ function netplay_init() {
     socket.on('player positions', function(msg) {
         //console.log('player positions')
         //console.log(msg)
-        Bones.World.players[msg.id].x = msg.x
-        Bones.World.players[msg.id].y = msg.y
+        //Bones.World.players[msg.id].x = msg.x
+        //Bones.World.players[msg.id].y = msg.y
+        console.log(msg.x)
+        Matter.Body.set(Bones.World.players[msg.id].physics_prop.body, 'position', { x: msg.x, y: msg.y }, null);
     });
 
     socket.on('prop positions', function(msg) {
@@ -78,8 +80,8 @@ function netplay_init() {
                 socket.emit('player positions', 
                     {
                         'id': key,
-                        'x': Bones.World.players[key].x,
-                        'y': Bones.World.players[key].y,
+                        'x': Bones.World.players[key].physics_prop.body.position.x,
+                        'y': Bones.World.players[key].physics_prop.body.position.y,
                     }
                 )
             }

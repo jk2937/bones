@@ -49,14 +49,14 @@ Bones.World = {
                 this.controllers[netplay_users_online[i]] = new this.Controller()
             }
             if(netplay_users_online[i] in this.players == false) {
-                this.players[netplay_users_online[i]] = new this.Player()
+                this.players[netplay_users_online[i]] = new this.PhysicsPlayer(0, 0)
             }
         }
     },
     tick() {
         let client_player = this.players[netplay_welcome_message] 
-        Bones.Renderer.camera_x = (client_player.x + client_player.width / 2 - Bones.Renderer.width / 2 + Bones.Renderer.camera_x * 19) / 20
-        Bones.Renderer.camera_y = (client_player.y + client_player.height / 2 - Bones.Renderer.height / 2 + Bones.Renderer.camera_y * 19) / 20
+        Bones.Renderer.camera_x = (client_player.physics_prop.body.position.x + client_player.width / 2 - Bones.Renderer.width / 2 + Bones.Renderer.camera_x * 19) / 20
+        Bones.Renderer.camera_y = (client_player.physics_prop.body.position.y + client_player.height / 2 - Bones.Renderer.height / 2 + Bones.Renderer.camera_y * 19) / 20
         if (Bones.Renderer.camera_x > this.width - Bones.Renderer.width) {
             Bones.Renderer.camera_x = this.width - Bones.Renderer.width
         }
@@ -380,8 +380,7 @@ Bones.Renderer.context.font = "18px Monospace";
             this.walk_animation = new Animation();
             this.jump_animation = new Animation();
 
-            this.physics_prop = Bones.World.create_box_prop(this.x, this.y, this.width, this.height)
-
+            this.physics_prop = new Bones.World.BoxProp(new Box(this.x, this.y, this.width, this.height), 0, false)
             this.movement_speed = 1;
             this.x = 25;
             this.y = 0;
