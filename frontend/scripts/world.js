@@ -10,10 +10,11 @@ Bones.World = {
         this.controllers = {}
         this.players = {}
 
-        console.log('netplay users length ' + netplay_users_online.length)
+        this.box_props = []
+        //console.log('netplay users length ' + netplay_users_online.length)
         for (let i = 0; i < netplay_users_online.length; i++) {
             this.controllers[netplay_users_online[i]] = new this.Controller()
-            this.players[netplay_users_online[i]] = new this.Player()
+            this.players[netplay_users_online[i]] = new this.PhysicsPlayer(100, 0)
         }
 
         this.menu_items = []
@@ -23,23 +24,19 @@ Bones.World = {
 
         // this.create_menu_item(Bones.Renderer.width - 280 + 5, 50 + 40 * 3, 250 - 10, 30, "Camera Mode", function() { Bones.DebugDisplay.test_camera = true }, function() { Bones.DebugDisplay.test_camera = false }, "toggle")
 
-
-        // prop init
-
-        this.box_props = []
         //this.create_box_prop(400, 200, 80, 80)
         //this.create_box_prop(450, 50, 80, 20)
 
-        this.create_box_prop(1920 / 2, -500, 1920 + 1000, 1000, anchored=true)
-        this.create_box_prop(1920 / 2, 1080 + 500, 1920 + 1000, 1000, anchored=true)
-        this.create_box_prop(-500, 1080 / 2, 1000, 1080 + 1000, anchored=true)
-        this.create_box_prop(1920 + 500, 1080 / 2, 1000, 1080 + 1000, anchored=true)
+
+        this.walls = []
+        this.walls.push(this.create_box_prop(1920 / 2, -500, 1920 + 1000, 1000, anchored=true))
+        this.walls.push(this.create_box_prop(1920 / 2, 1080 + 500, 1920 + 1000, 1000, anchored=true))
+        this.walls.push(this.create_box_prop(-500, 1080 / 2, 1000, 1080 + 1000, anchored=true))
+        this.walls.push(this.create_box_prop(1920 + 500, 1080 / 2, 1000, 1080 + 1000, anchored=true))
 
         //npc init
 
         this.npcs = []
-        for (let i = 0; i < 20; i++) {
-            this.npcs.push(new this.NPC())
         }
 
 
@@ -123,7 +120,7 @@ Bones.World = {
         }
 
         if (netplay_controller == true && this.controllers[netplay_welcome_message].control_state_changed) {
-            console.log('debug: sending control state message')
+            //console.log('debug: sending control state message')
             socket.emit('control state message', 
                 { 
                   'move_left': this.controllers[netplay_welcome_message].move_left,
@@ -279,9 +276,6 @@ Bones.Renderer.context.font = "18px Monospace";
             Bones.Renderer.context.restore()
         }
     }, // END CLASS BoxProp
-
-
-
     NPC: class {
         constructor() {
             //npc init
@@ -366,6 +360,139 @@ Bones.Renderer.context.font = "18px Monospace";
             this.animation.render(this.physics_prop)
         }
     }, // END CLASS NPC
+
+
+    PhysicsPlayer: class {
+        constructor(x, y) {
+            this.x = x
+            this.y = y
+
+            this.width = 64
+            this.height = 60
+
+            this.move_left = false;
+            this.move_right = false;
+            this.move_jump = false;
+
+            this.idle_animation = new Animation();
+            this.walk_animation = new Animation();
+            this.jump_animation = new Animation();
+
+            this.npc = new Bones.World.NPC()
+
+            this.movement_speed = 1;
+            this.x = 25;
+            this.y = 0;
+            this.width = 150;
+            this.height = 150;
+            this.x_vel = 0;
+            this.y_vel = 0;
+            this.max_x_vel = 7
+            this.max_y_vel = 70
+            this.x_acc = 1
+            this.y_acc = 10 // Todo: air acceleration, air max vel, run speed, bunny hopping
+            this.ground_friction = 0.55
+            this.air_friction = 0.05
+            this.gravity = 0.25
+            this.facing_right = true
+
+        }
+        tick() {
+
+            if (this.move_left) {
+                this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+            }
+            if (this.move_right) {
+                this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+            }
+            if (this.move_jump && !this.jump_lock && this.on_ground) {
+                this.y_vel -= this.y_acc
+                
+                Matter.Body.set(this.npc.physics_prop.body, 'velocity', {x: this.npc.physics_prop.body.velocity.x, y: - this.y_acc})
+                this.on_ground = false
+                this.jump_lock = true
+            }
+            if (!this.move_jump) {
+                this.jump_lock = false
+            }
+
+            // Gravity
+
+            this.y_vel += this.gravity * Bones.Timer.delta_time * Bones.Timer.timescale
+
+            // Friction
+
+            if (!this.move_left && !this.move_right) {
+                if (this.x_vel > 0) {
+                    if (this.on_ground == true) {
+                        if (this.x_vel <= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+                            this.x_vel = 0; // player_ground_friction;
+                        } else {
+                            this.x_vel -= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+                        }
+                    }
+                    if (this.on_ground == false) {
+                        if (this.x_vel < this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+                            this.x_vel = this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+                        } else {
+                            this.x_vel -= this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+                        }
+                    }
+                }
+                if (this.x_vel < 0) {
+                    if (this.on_ground == true) {
+                        if (this.x_vel >= -this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+                            this.x_vel = 0; // -player_ground_friction
+                        } else {
+                            this.x_vel += this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+                        }
+                    }
+                    if (this.on_ground == false) {
+                        if (this.x_vel > -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+                            this.x_vel = -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
+                        } else {
+                            this.x_vel += this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
+                        }
+                    }
+                }
+            }
+
+
+            // Maximum Velocities
+
+            if (this.x_vel > this.max_x_vel) {
+                this.x_vel = this.max_x_vel
+            }
+            if (this.x_vel < -this.max_x_vel) {
+                this.x_vel = -this.max_x_vel
+            }
+            if (this.y_vel > this.max_y_vel) {
+                this.y_vel = this.max_y_vel
+            }
+            if (this.y_vel < -this.max_y_vel) {
+                this.y_vel = -this.max_y_vel
+            }
+
+
+            for (let i = 0; i < Bones.World.walls.length; i++){
+                if(Matter.Collision.collides(this.npc.physics_prop.body, Bones.World.walls[i].body) != null) {
+                    this.y_vel = 1
+                    this.on_ground = true
+                }
+            }
+
+
+                Matter.Body.set(this.npc.physics_prop.body, 'velocity', {x: this.x_vel, y: this.npc.physics_prop.body.velocity.y })
+            this.x = this.npc.physics_prop.x
+            this.y = this.npc.physics_prop.y
+        }
+        render() {
+            this.idle_animation.render(this.npc.physics_prop)
+        }
+
+    }, // END CLASS Physics Player
+
+
     Controller: class {
         constructor() {
             this.previous_frame_move_left = false;

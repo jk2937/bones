@@ -10,19 +10,19 @@ function netplay_init() {
     function activate_netplay_controller () {
         netplay_controller = true
 
-        console.log('neplay controller activated')
+        //console.log('neplay controller activated')
     }
 
     socket.on('welcome message', function(msg) {
-        console.log('recieved control state message')
-        console.log(msg)
+        //console.log('recieved control state message')
+        //console.log(msg)
         netplay_welcome_message = msg
     });
 
     socket.on('control state message', function(msg) {
         if (msg.id in Bones.World.players) {
-            console.log('recieved control state message')
-            console.log(msg.move_jump)
+            //console.log('recieved control state message')
+            //console.log(msg.move_jump)
             Bones.World.players[msg.id].move_left = msg.move_left;
             Bones.World.players[msg.id].move_right = msg.move_right;
             Bones.World.players[msg.id].move_jump = msg.move_jump;
@@ -33,7 +33,7 @@ function netplay_init() {
     });
 
     socket.on('users online', function(msg) {
-        console.log('users online: ' + msg)
+        //console.log('users online: ' + msg)
         netplay_users_online = msg
         if (netplay_world_loaded == false) {
             netplay_world_loaded = true
@@ -52,15 +52,16 @@ function netplay_init() {
     });
 
     socket.on('player positions', function(msg) {
-        console.log('player positions')
-        console.log(msg)
+        //console.log('player positions')
+        //console.log(msg)
         Bones.World.players[msg.id].x = msg.x
         Bones.World.players[msg.id].y = msg.y
     });
 
     socket.on('prop positions', function(msg) {
-        console.log('prop positions')
-        console.log(msg)
+        //console.log('prop positions')
+        //console.log(msg)
+        
         Matter.Body.set(Bones.World.npcs[msg.id].physics_prop.body, 'position', msg.position, null);
         Matter.Body.set(Bones.World.npcs[msg.id].physics_prop.body, 'velocity', msg.velocity, null);
         Matter.Body.set(Bones.World.npcs[msg.id].physics_prop.body, 'angle', msg.angle, null);
@@ -68,10 +69,10 @@ function netplay_init() {
     });
 
     socket.on('user is host', function(msg) {
-        console.log('user is host')
+        //console.log('user is host')
         netplay_user_is_host = true
         function send_player_positions() {
-            console.log('sending player positions')
+            //console.log('sending player positions')
             for (let i = 0; i < Object.keys(Bones.World.players).length; i++) {
                 let key = Object.keys(Bones.World.players)[i]
                 socket.emit('player positions', 
@@ -84,7 +85,7 @@ function netplay_init() {
             }
         }
         function send_prop_positions() {
-            console.log('sending prop positions')
+            //console.log('sending prop positions')
             for (let i = 0; i < Bones.World.npcs.length; i++) {
                 socket.emit('prop positions', 
                     {
