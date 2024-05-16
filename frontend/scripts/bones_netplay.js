@@ -61,7 +61,10 @@ function netplay_init() {
     socket.on('prop positions', function(msg) {
         console.log('prop positions')
         console.log(msg)
-        Matter.Body.setPosition(Bones.World.npcs[msg.id].physics_prop.body, { x: msg.x, y: msg.y }, null);
+        Matter.Body.set(Bones.World.npcs[msg.id].physics_prop.body, 'position', msg.position, null);
+        Matter.Body.set(Bones.World.npcs[msg.id].physics_prop.body, 'velocity', msg.velocity, null);
+        Matter.Body.set(Bones.World.npcs[msg.id].physics_prop.body, 'angle', msg.angle, null);
+        Matter.Body.set(Bones.World.npcs[msg.id].physics_prop.body, 'angularVelocity', msg.angular_velocity, null);
     });
 
     socket.on('user is host', function(msg) {
@@ -86,14 +89,16 @@ function netplay_init() {
                 socket.emit('prop positions', 
                     {
                         'id': i,
-                        'x': Bones.World.npcs[i].x,
-                        'y': Bones.World.npcs[i].y,
+                        'position': Bones.World.npcs[i].physics_prop.body.position,
+                        'velocity': Bones.World.npcs[i].physics_prop.body.velocity,
+                        'angle': Bones.World.npcs[i].physics_prop.body.angle,
+                        'angular_velocity': Bones.World.npcs[i].physics_prop.body.angularVelocity
                     }
                 )
             }
         }
         setInterval(send_player_positions, 1000);
-        setInterval(send_prop_positions, 500);
+        setInterval(send_prop_positions, 250);
     });
 
     activate_netplay_controller()
