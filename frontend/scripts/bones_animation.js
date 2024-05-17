@@ -47,10 +47,10 @@ class Animation {
 class PlayerAnimation {
     constructor() {
         this.skins = [
-            new Skin(Bones.Assets.gfx_balloon_sheet, 8, 13, 16, 39, 0, 0, 100, 200),
-            new Skin(Bones.Assets.gfx_balloon_sheet, 30, 13, 16, 39, 0, 0, 100, 200),
-            new Skin(Bones.Assets.gfx_balloon_sheet, 52, 13, 16, 39, 0, 0, 100, 200),
-            new Skin(Bones.Assets.gfx_balloon_sheet, 74, 13, 16, 39, 0, 0, 100, 200),
+            new Skin(Bones.Assets.gfx_man_standing, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_walking, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_running, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_walking, 0, 0, 100, 100, 0, 0, 150, 150),
         ]
         this.timer = 0
         this.frame_delay = 100
@@ -58,15 +58,14 @@ class PlayerAnimation {
         this.x = 0
         this.y = 0
     }
-    tick() {
-        this.timer += Bones.Timer.delta_time * Bones.Timer.timescale
+    tick(delta_time) {
+        this.timer += delta_time * Bones.Timer.timescale
         if(this.loop == true && this.timer > this.skins.length * this.frame_delay) {
             this.timer -= this.skins.length * this.frame_delay
         }
     }
     render(x, y, w, h, is_circle=false) {
 
-        this.tick()
         /* console.log(this.timer)
         console.log(this.frame_delay)
         console.log(this.skins.length)

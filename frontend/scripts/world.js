@@ -388,23 +388,49 @@ Bones.Renderer.context.font = "18px Monospace";
             this.x = x
             this.y = y
 
-            this.width = 150
-            this.height = 150
+            this.width = 20
+            this.height = 120
 
             this.move_left = false;
             this.move_right = false;
             this.move_jump = false;
 
             this.idle_animation = new PlayerAnimation();
-            this.walk_animation = new PlayerAnimation();
+
+            this.walk_right_animation = new PlayerAnimation()
+            this.walk_right_animation.skins = [
+            new Skin(Bones.Assets.gfx_man_standing, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_walking_flip, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_running_flip, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_walking_flip, 0, 0, 100, 100, 0, 0, 150, 150),
+        ]
+            this.walk_right_animation.x = -62
+            this.walk_right_animation.y = -15
+
+            this.walk_left_animation = new PlayerAnimation();
+            this.walk_left_animation.skins = [
+            new Skin(Bones.Assets.gfx_man_standing_flip, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_walking, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_running, 0, 0, 100, 100, 0, 0, 150, 150),
+            new Skin(Bones.Assets.gfx_man_walking, 0, 0, 100, 100, 0, 0, 150, 150),
+        ]
+            this.walk_left_animation.x = -62 
+            this.walk_left_animation.y = -15 
+
+
+
             this.jump_animation = new PlayerAnimation();
+            this.jump_animation.skins = [
+            new Skin(Bones.Assets.gfx_man_dancing, 0, 0, 100, 100, 0, 0, 150, 150),
+        ]
+            this.jump_animation.x = -62 
+            this.jump_animation.y = -15 
+
 
             this.physics_prop = new Bones.World.BoxProp(new Box(this.x, this.y, this.width, this.height), 0, false)
             this.movement_speed = 1;
             this.x = 25;
             this.y = 0;
-            this.width = 150;
-            this.height = 150;
             this.x_vel = 0;
             this.y_vel = 0;
             this.max_x_vel = 7
@@ -429,7 +455,7 @@ Bones.Renderer.context.font = "18px Monospace";
 
                 if(Matter.Collision.collides(collide_body, bodies[i])) {
 
-                    this.on_ground = true
+                    this.on_grroundound = true
                     if (this.move_jump != true) {
                         Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.physics_prop.body.velocity.x, y: 0 })
                     }
@@ -563,7 +589,19 @@ Bones.Renderer.context.font = "18px Monospace";
 
         }
         render() {
-            this.idle_animation.render(this.physics_prop.body.position.x, this.physics_prop.body.position.y, this.width, this.height)
+            if(this.x_vel <= -1) {
+                this.walk_left_animation.tick(Math.abs(this.x_vel * 0.6) * Bones.Timer.delta_time)
+            this.walk_left_animation.render(this.physics_prop.body.position.x, this.physics_prop.body.position.y, this.width, this.height)
+            }
+            if (this.x_vel >= 1) {
+                this.walk_right_animation.tick(Math.abs(this.x_vel * 0.6) * Bones.Timer.delta_time)
+            this.walk_right_animation.render(this.physics_prop.body.position.x, this.physics_prop.body.position.y, this.width, this.height)
+            }
+            if(this.x_vel < 1 && this.x_vel > -1) {
+                this.walk_left_animation.timer = 0
+                this.walk_right_animation.timer = 0
+                this.walk_right_animation.render(this.physics_prop.body.position.x, this.physics_prop.body.position.y, this.width, this.height)
+            }
         }
 
     }, // END CLASS Physics Player
