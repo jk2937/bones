@@ -6,7 +6,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 
-const PORT = 3000;
+const PORT = 30;
 const HOST = '0.0.0.0';
 
 app.use(express.static(path.join(__dirname, '/../frontend'), { dotfiles: 'allow' }));

@@ -122,10 +122,10 @@ Bones.World = {
                 // console.log('netplay_users_online ' + netplay_users_online)
                 if (key in this.players) {
                     this.controllers[key].read_keyboard_controls()
-                    if(netplay_controller == false) {
-                        this.players[key].read_keyboard_controls()
-                    } else {
-                    }
+                    //if(netplay_controller == false) {
+                        //this.players[key].read_keyboard_controls()
+                    //} else {
+                    //}
                     this.players[key].tick()
                 }
             }
@@ -394,6 +394,12 @@ Bones.Renderer.context.font = "18px Monospace";
             this.move_left = false;
             this.move_right = false;
             this.move_jump = false;
+        
+            this.previous_frame_move_left = false;
+            this.previous_frame_move_right = false;
+            this.previous_frame_move_jump = false;
+
+            this.control_state_changed = false;
 
             this.idle_animation = new PlayerAnimation();
 
@@ -442,7 +448,30 @@ Bones.Renderer.context.font = "18px Monospace";
             this.gravity = 0.25
             this.facing_right = true
 
+            this.rewind_buffer = {}
+
         }
+        read_keyboard_controls() { //Todo: fix redundancy with controller
+            this.control_state_changed = false;
+            if (this.previous_frame_move_left != this.move_left ||
+                    this.previous_frame_move_right != this.move_right ||
+                    this.previous_frame_move_jump != this.move_jump) {
+               this.control_state_changed = true;
+            }
+
+            this.previous_frame_move_left = this.move_left
+            this.previous_frame_move_right = this.move_right
+            this.previous_frame_move_jump = this.move_jump
+
+            this.move_left = Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame;
+            this.move_right = Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame;
+            this.move_jump = Bones.Input.Keyboard.ControlStates["jump"].pressed || Bones.Input.Keyboard.ControlStates["jump"].pressed_this_frame;
+            if (this.move_left == true && this.move_right == true) {
+                this.move_left = false;
+                this.move_right = false;
+            }
+        }
+
         tick() {
             var bodies = Matter.Composite.allBodies(Bones.World.Physics.matterjs_engine.world)
 
@@ -586,6 +615,34 @@ Bones.Renderer.context.font = "18px Monospace";
                 Matter.Body.set(this.physics_prop.body, 'angularVelocity', 0)
             this.x = this.physics_prop.x
             this.y = this.physics_prop.y
+
+        }
+        save_rewind_buffer() {
+            let timestamp = Date.now()
+            this.rewind_buffer[timestamp] = {}
+            let buf = this.rewind_buffer[timestamp]
+
+            buf.x = this.x
+            buf.y = this.y
+
+            buf.move_left = this.move_left
+            buf.move_right = this.move_right
+            buf.move_jump = this.move_jump
+        
+            buf.previous_frame_move_left = this.previous_frame_move_left
+            buf.previous_frame_move_right = this.previous_frame_move_right
+            buf.prebious_frame_move_jump = this.previous_frame_move_jump
+
+            buf.control_state_changed = this.control_state_changed
+
+            buf.x_vel = this.x_vel
+            buf.y_vel = this.y_vel
+            buf.facing_right = this.facing_right
+
+            buf.physics_prop_body_position = this.physics_prop.body.position
+            buf.physics_prop_body_velocity = this.physics_prop.body.velocity
+            buf.physics_prop_body_angle = this.physics_prop.body.angle
+            buf.physics_prop_body_angular_velocity = this.physics_prop.body.angularVelocity
 
         }
         render() {
