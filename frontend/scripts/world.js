@@ -418,6 +418,23 @@ Bones.Renderer.context.font = "18px Monospace";
 
         }
         tick() {
+            var bodies = Matter.Composite.allBodies(Bones.World.Physics.matterjs_engine.world)
+
+            for (let i = 0; i < bodies.length; i++){
+                if(bodies[i] == this.physics_prop.body) {
+                    continue
+                }
+                let collide_body = Matter.Bodies.rectangle(this.physics_prop.body.position.x + 5, this.physics_prop.body.position.y - this.height / 2 + this.height - 1, this.width - 15, 2)
+
+
+                if(Matter.Collision.collides(collide_body, bodies[i])) {
+
+                    this.on_ground = true
+                    if (this.move_jump != true) {
+                        Matter.Body.set(this.physics_prop.body, 'velocity', {x: this.physics_prop.body.velocity.x, y: 0 })
+                    }
+                }
+            }
 
 
             for (let i = 0; i < Bones.World.players.length; i++){
