@@ -395,9 +395,9 @@ Bones.Renderer.context.font = "18px Monospace";
             this.move_right = false;
             this.move_jump = false;
 
-            this.idle_animation = new Animation();
-            this.walk_animation = new Animation();
-            this.jump_animation = new Animation();
+            this.idle_animation = new PlayerAnimation();
+            this.walk_animation = new PlayerAnimation();
+            this.jump_animation = new PlayerAnimation();
 
             this.physics_prop = new Bones.World.BoxProp(new Box(this.x, this.y, this.width, this.height), 0, false)
             this.movement_speed = 1;
@@ -560,9 +560,10 @@ Bones.Renderer.context.font = "18px Monospace";
                 Matter.Body.set(this.physics_prop.body, 'angularVelocity', 0)
             this.x = this.physics_prop.x
             this.y = this.physics_prop.y
+
         }
         render() {
-            this.idle_animation.render(this.physics_prop)
+            this.idle_animation.render(this.physics_prop.body.position.x, this.physics_prop.body.position.y, this.width, this.height)
         }
 
     }, // END CLASS Physics Player

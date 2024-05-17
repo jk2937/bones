@@ -10,9 +10,9 @@ class Skin {
         this.dw = dw
         this.dh = dh
 
-        this.static_image = Bones.Assets.gfx_balloon_sheet
+        this.static_image = static_image
     }
-    render(x, y) {
-        Bones.Renderer.context.drawImage(this.static_image, this.sx, this.sy, this.sw, this.sh, this.dx + x, this.dy + y, this.dw, this.dh)
+    render(x, y, w=this.dw, h=this.dh) {
+        Bones.Renderer.context.drawImage(this.static_image, this.sx, this.sy, this.sw, this.sh, this.dx + x, this.dy + y, w, h)
     }
 }
