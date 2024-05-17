@@ -46,6 +46,27 @@ io.on('connection', (socket) => {
                 }
             }
         });
+        socket.on('request ping call from host', function(msg) {
+            console.log('got \'request ping call from host\' message')
+            //send 'ping call request' to host_client           
+            clients[host_client].emit('ping call request', { 'requester client id': socket.id })
+        });
+        socket.on('request ping response from client', function(msg) {
+            console.log('got \'request ping response from client\' message')
+            //send 'ping response request' to client
+            clients[msg['requester client id']].ping_timestamp = msg.timestamp
+            clients[msg['requester client id']].emit('ping response request', '')
+        });
+        socket.on('send ping response to host', function(msg) {
+            console.log('got \'send ping response to host\' message')
+            //send 'ping response' to host_client
+            clients[host_client].emit('ping response', { 'requester client id': socket.id, 'timestamp': clients[socket.id].ping_timestamp })
+        });
+
+        socket.on('player ping', function(msg) {
+            io.emit('player ping', msg)
+        });
+
         socket.on('control state message', (msg) => {
             console.log('recieved control state message: ' + msg);
             out_msg = msg

@@ -1,3 +1,7 @@
+function request_ping() {
+    socket.emit('request ping call from host')
+}
+
 function send_player_positions() {
     //console.log('sending player positions')
     for (let i = 0; i < Object.keys(Bones.World.players).length; i++) {
@@ -34,6 +38,7 @@ function send_prop_positions() {
 
 let netplay_controller = false
 let netplay_welcome_message = ''
+let netplay_ping = 50
 let netplay_user_is_host = false
 let netplay_users_online = []
 var socket = io()
@@ -43,7 +48,7 @@ netplay_world_loaded = false
 function netplay_init() {
     function activate_netplay_controller () {
         netplay_controller = true
-
+        setInterval(request_ping, 5000)
         //console.log('neplay controller activated')
     }
 
@@ -51,6 +56,33 @@ function netplay_init() {
         //console.log('recieved control state message')
         //console.log(msg)
         netplay_welcome_message = msg
+    });
+
+    socket.on('ping call request', function(msg) {
+        console.log('got \'ping call request\' message')
+        //send 'request ping response from client' to server
+        msg.timestamp = Date.now()
+        socket.emit('request ping response from client', msg)
+    });
+    socket.on('ping response request', function(msg) {
+        console.log('got \'ping response request\' message')
+        //send 'send ping response to host' to server
+        socket.emit('send ping response to host', '')
+    });
+    socket.on('ping response', function(msg) {
+        console.log('got \'ping response\' message')
+        let timestamp = Date.now()
+        let ping = timestamp - msg.timestamp
+        //calculate ping and emit to all clients and server with requesting client socket id
+        socket.emit('player ping', { 'id': msg['requester client id'], 'ping': ping }) 
+    });
+
+    socket.on('player ping', function(msg) {
+        if(msg.id == netplay_welcome_message) {
+            netplay_ping = msg.ping
+            console.log('player ping')
+            console.log(netplay_ping)
+        }
     });
 
     socket.on('control state message', function(msg) {
