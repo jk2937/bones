@@ -40,7 +40,9 @@ Bones.Input = {
             "right": "d",
             "jump": " ",
             "sprint": "Shift",
-            "crouch": "Control"
+            "crouch": "Control",
+            "savestate": "Enter",
+            "loadstate": "Backspace",
         }
 
         let entries = Object.entries(keymap)

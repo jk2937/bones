@@ -131,6 +131,16 @@ Bones.World = {
             }
         }
 
+        if(Bones.Input.Keyboard.ControlStates["savestate"].pressed_this_frame) {
+            console.log('savestate')
+            client_player.save_rewind_buffer()
+        }
+
+        if(Bones.Input.Keyboard.ControlStates["loadstate"].pressed_this_frame) {
+            console.log('loadstate')
+            client_player.load_rewind_buffer()
+        }
+
         if (netplay_controller == true && this.controllers[netplay_welcome_message].control_state_changed) {
             //console.log('debug: sending control state message')
             socket.emit('control state message', 
@@ -619,6 +629,7 @@ Bones.Renderer.context.font = "18px Monospace";
         }
         save_rewind_buffer() {
             let timestamp = Date.now()
+            timestamp = 0
             this.rewind_buffer[timestamp] = {}
             let buf = this.rewind_buffer[timestamp]
 
@@ -631,7 +642,7 @@ Bones.Renderer.context.font = "18px Monospace";
         
             buf.previous_frame_move_left = this.previous_frame_move_left
             buf.previous_frame_move_right = this.previous_frame_move_right
-            buf.prebious_frame_move_jump = this.previous_frame_move_jump
+            buf.previous_frame_move_jump = this.previous_frame_move_jump
 
             buf.control_state_changed = this.control_state_changed
 
@@ -639,10 +650,41 @@ Bones.Renderer.context.font = "18px Monospace";
             buf.y_vel = this.y_vel
             buf.facing_right = this.facing_right
 
-            buf.physics_prop_body_position = this.physics_prop.body.position
-            buf.physics_prop_body_velocity = this.physics_prop.body.velocity
+            buf.physics_prop_body_position = { ...this.physics_prop.body.position }
+            buf.physics_prop_body_velocity = { ...this.physics_prop.body.velocity }
             buf.physics_prop_body_angle = this.physics_prop.body.angle
-            buf.physics_prop_body_angular_velocity = this.physics_prop.body.angularVelocity
+            buf.physics_prop_body_angular_velocity = this.physics_prop.body.angularVelocity 
+
+
+
+        }
+        load_rewind_buffer(rewind_time=5000) {
+           let buf = this.rewind_buffer[0]
+
+            this.x = buf.x
+            this.y = buf.y
+
+            //this.move_left = buf.move_left
+            //this.move_right = buf.move_right
+            //this.move_jump = buf.move_jump
+
+            this.previous_frame_move_left = buf.previous_frame_move_left
+            this.previous_frame_move_right = buf.previous_frame_move_right
+
+            this.previous_frame_move_jump = buf.previous_frame_move_jump
+
+            this.control_state_changed = this.control_state_changed
+
+            this.x_vel = buf.x_vel
+            this.y_vel = buf.y_vel
+            this.facing_right = buf.facing_right
+
+            
+            console.log(buf.physics_prop_body_angle)
+            Matter.Body.set(this.physics_prop.body, 'position', buf.physics_prop_body_position, null);
+            Matter.Body.set(this.physics_prop.body, 'velocity', buf.physics_prop_body_velocity, null);
+            Matter.Body.set(this.physics_prop.body, 'angle', buf.physics_prop_body_angle, null);
+            /* Matter.Body.set(this.physics_prop.body, 'angularVelocity', buf.physics_prop_body_angular_velocity, null); */
 
         }
         render() {

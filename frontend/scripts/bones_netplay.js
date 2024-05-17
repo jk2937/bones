@@ -1,3 +1,37 @@
+function send_player_positions() {
+    //console.log('sending player positions')
+    for (let i = 0; i < Object.keys(Bones.World.players).length; i++) {
+        let key = Object.keys(Bones.World.players)[i]
+        socket.emit('player positions', 
+            {
+                'id': key,
+                'position': Bones.World.players[key].physics_prop.body.position,
+                'velocity': Bones.World.players[key].physics_prop.body.velocity,
+                'angle': Bones.World.players[key].physics_prop.body.angle,
+                'angular_velocity': Bones.World.players[key].physics_prop.body.angularVelocity
+
+
+            }
+        )
+    }
+}
+function send_prop_positions() {
+    //console.log('sending prop positions')
+    for (let i = 0; i < Bones.World.npcs.length; i++) {
+        socket.emit('prop positions', 
+            {
+                'id': i,
+                'position': Bones.World.npcs[i].physics_prop.body.position,
+                'velocity': Bones.World.npcs[i].physics_prop.body.velocity,
+                'angle': Bones.World.npcs[i].physics_prop.body.angle,
+                'angular_velocity': Bones.World.npcs[i].physics_prop.body.angularVelocity
+            }
+        )
+    }
+}
+
+
+
 let netplay_controller = false
 let netplay_welcome_message = ''
 let netplay_user_is_host = false
