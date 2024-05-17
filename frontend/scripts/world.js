@@ -131,10 +131,10 @@ Bones.World = {
             }
         }
 
-        if(Bones.Input.Keyboard.ControlStates["savestate"].pressed_this_frame) {
-            console.log('savestate')
+        //if(Bones.Input.Keyboard.ControlStates["savestate"].pressed_this_frame) {
+            //console.log('savestate')
             client_player.save_rewind_buffer()
-        }
+        //}
 
         if(Bones.Input.Keyboard.ControlStates["loadstate"].pressed_this_frame) {
             console.log('loadstate')
@@ -458,7 +458,7 @@ Bones.Renderer.context.font = "18px Monospace";
             this.gravity = 0.25
             this.facing_right = true
 
-            this.rewind_buffer = {}
+            this.rewind_buffer = []
 
         }
         read_keyboard_controls() { //Todo: fix redundancy with controller
@@ -629,9 +629,9 @@ Bones.Renderer.context.font = "18px Monospace";
         }
         save_rewind_buffer() {
             let timestamp = Date.now()
-            timestamp = 0
-            this.rewind_buffer[timestamp] = {}
-            let buf = this.rewind_buffer[timestamp]
+            this.rewind_buffer.push({})
+            let buf = this.rewind_buffer.at(-1)
+            buf.timestamp = timestamp
 
             buf.x = this.x
             buf.y = this.y
@@ -656,10 +656,31 @@ Bones.Renderer.context.font = "18px Monospace";
             buf.physics_prop_body_angular_velocity = this.physics_prop.body.angularVelocity 
 
 
-
+            while(this.rewind_buffer.length > 100) {
+                this.rewind_buffer.shift()
+            }
+            console.log(this.rewind_buffer.length)
         }
-        load_rewind_buffer(rewind_time=5000) {
-           let buf = this.rewind_buffer[0]
+        load_rewind_buffer(rewind_time=250) {
+            let timestamp = Date.now()
+            let target_timestamp = timestamp - rewind_time
+            let rewind_buffer_i = -1
+            for (let i = 0; i < this.rewind_buffer.length; i++) {
+                console.log('i')
+                console.log(i)
+                console.log('try timestamp')
+                console.log(this.rewind_buffer[i].timestamp)
+                if(target_timestamp < this.rewind_buffer[i].timestamp) {
+                    rewind_buffer_i = i
+                    break
+                }
+            }
+            console.log(rewind_buffer_i)
+            let buf = this.rewind_buffer.at(rewind_buffer_i)
+            console.log('target timestamp')
+            console.log(timestamp)
+            console.log('rewind timestamp')
+            console.log(buf.timestamp)
 
             this.x = buf.x
             this.y = buf.y
@@ -685,7 +706,8 @@ Bones.Renderer.context.font = "18px Monospace";
             Matter.Body.set(this.physics_prop.body, 'velocity', buf.physics_prop_body_velocity, null);
             Matter.Body.set(this.physics_prop.body, 'angle', buf.physics_prop_body_angle, null);
             /* Matter.Body.set(this.physics_prop.body, 'angularVelocity', buf.physics_prop_body_angular_velocity, null); */
-
+            send_player_positions()
+            this.rewind_buffer = []
         }
         render() {
             if(this.x_vel <= -1) {
