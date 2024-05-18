@@ -1,3 +1,5 @@
+netplay_buffer = []
+
 function request_ping() {
     socket.emit('request ping call from host')
 }
@@ -88,7 +90,8 @@ function netplay_init() {
     });
 
     socket.on('control state message', function(msg) {
-        if (msg.id in Bones.World.players) {
+        netplay_buffer.push(['control state message', msg])
+        /* if (msg.id in Bones.World.players) {
             //console.log('recieved control state message')
             //console.log(msg.move_jump)
             let player = Bones.World.players[msg.id]
@@ -101,9 +104,7 @@ function netplay_init() {
             player.move_jump = msg.move_jump;
             player.fast_forward(ping)
         }
-        else {
-
-        }
+        */
     });
 
     socket.on('users online', function(msg) {

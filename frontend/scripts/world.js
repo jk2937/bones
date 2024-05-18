@@ -157,8 +157,27 @@ Bones.World = {
 for (let i = 0; i < this.npcs.length; i++) {
         this.npcs[i].tick()
     }
-    
-        //Matter.Engine.update(this.Physics.matterjs_engine, Bones.Timer.delta_time)
+   
+    for (let i = 0; i < netplay_buffer.length; i++) {
+        msg = netplay_buffer[i][1]
+        if (netplay_buffer[i][0] == 'control state message') {
+            if (msg.id in Bones.World.players) {
+                //console.log('recieved control state message')
+                //console.log(msg.move_jump)
+                let player = Bones.World.players[msg.id]
+                let ping = netplay_client_ping[msg.id]
+                console.log('ping')
+                console.log(ping) 
+                player.load_rewind_buffer(-ping)
+                player.move_left = msg.move_left;
+                player.move_right = msg.move_right;
+                player.move_jump = msg.move_jump;
+                player.fast_forward(ping)
+            }
+        }
+    }
+
+        Matter.Engine.update(this.Physics.matterjs_engine, Bones.Timer.delta_time)
 
     for (let i = 0; i < this.box_props.length; i++) {
         this.box_props[i].render()
@@ -726,7 +745,7 @@ Bones.Renderer.context.font = "18px Monospace";
                     continue
                 }
                 Matter.Body.setStatic(Bones.World.players[key].physics_prop.body, true)
-            } 
+            }
             //timestep
             console.log('_time')
             console.log(_time)
