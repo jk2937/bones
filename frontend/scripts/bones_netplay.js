@@ -39,6 +39,7 @@ function send_prop_positions() {
 let netplay_controller = false
 let netplay_welcome_message = ''
 let netplay_ping = 50
+let netplay_client_ping = {}
 let netplay_user_is_host = false
 let netplay_users_online = []
 var socket = io()
@@ -83,15 +84,22 @@ function netplay_init() {
             console.log('player ping')
             console.log(netplay_ping)
         }
+        netplay_client_ping[msg.id] = msg.ping
     });
 
     socket.on('control state message', function(msg) {
         if (msg.id in Bones.World.players) {
             //console.log('recieved control state message')
             //console.log(msg.move_jump)
-            Bones.World.players[msg.id].move_left = msg.move_left;
-            Bones.World.players[msg.id].move_right = msg.move_right;
-            Bones.World.players[msg.id].move_jump = msg.move_jump;
+            let player = Bones.World.players[msg.id]
+            let ping = netplay_client_ping[msg.id]
+            console.log('ping')
+            console.log(ping) 
+            player.load_rewind_buffer(-ping)
+            player.move_left = msg.move_left;
+            player.move_right = msg.move_right;
+            player.move_jump = msg.move_jump;
+            player.fast_forward(ping)
         }
         else {
 
@@ -172,7 +180,7 @@ function netplay_init() {
                 )
             }
         }
-        setInterval(send_player_positions, 1000);
+        setInterval(send_player_positions, 100);
         setInterval(send_prop_positions, 250);
     });
 
