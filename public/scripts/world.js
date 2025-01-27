@@ -315,6 +315,10 @@ Bones.World = {
 			this.move_up = false;
 			this.move_down = false;
 			this.move_aim = 90;
+			this.move_aim_interp = []
+			for (let i = 0; i < this.interp_strength; i++) {
+				this.move_aim_interp.push(this.move_aim)
+			}
             this.move_jump = false;
             this.jump_lock = false
         } 
@@ -502,18 +506,37 @@ Bones.World = {
 				}
 			}
 			
-			//this.move_aim = aim
+			this.move_aim_interp.push(this.move_aim)
+			let interp_move_aim = this.move_aim
+			for (let i = 0; i < this.interp_strength; i++) {
+				if (this.move_aim - this.move_aim_interp[this.move_aim_interp.length-1-i] > 0.5) {
+					this.move_aim_interp[this.move_aim_interp.length-1-i] += 1
+				}
+				if (this.move_aim - this.move_aim_interp[this.move_aim_interp.length-1-i] < -0.5) {
+					this.move_aim_interp[this.move_aim_interp.length-1-i] -= 1
+				}
+				interp_move_aim = interp_move_aim + this.move_aim_interp[this.move_aim_interp.length-1-i]
+			}
+			interp_move_aim = interp_move_aim / (this.interp_strength+1)
 			
 			//player
 			Bones.Renderer.context.beginPath();
 			Bones.Renderer.context.arc(interp_x + this.width / 2, interp_y + this.height / 2, this.height / 2, 0, 2 * Math.PI);
 			Bones.Renderer.context.stroke();
 			
-			//reticle
-			Bones.Renderer.context.beginPath();
-			let reticle_width = 20
-			Bones.Renderer.context.arc(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), reticle_width, 0, 2 * Math.PI);
-			Bones.Renderer.context.stroke();
+			if (this.id != clientId) {
+				//reticle
+				Bones.Renderer.context.beginPath();
+				let reticle_width = 20
+				Bones.Renderer.context.arc(interp_x + this.width / 2 + Math.cos(interp_move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), interp_y + this.height / 2 + Math.sin(interp_move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), reticle_width, 0, 2 * Math.PI);
+				Bones.Renderer.context.stroke();
+			} else {
+				//reticle
+				Bones.Renderer.context.beginPath();
+				let reticle_width = 20
+				Bones.Renderer.context.arc(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), reticle_width, 0, 2 * Math.PI);
+				Bones.Renderer.context.stroke();
+			}
  }
 		serialize() {
 			return JSON.stringify([this.movement_speed, this.x, this.y, this.x_vel, this.y_vel, this.max_x_vel, this.max_y_vel, this.x_acc, this.y_acc, this.ground_friction, this.air_friction, this.gravity, this.facing_right, this.move_left, this.move_right, this.move_up, this.move_down, this.move_aim, this.move_jump, this.on_ground, this.jump_lock = false])
