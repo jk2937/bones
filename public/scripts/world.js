@@ -64,7 +64,10 @@ Bones.World = {
 						this.players[i].read_keyboard_controls(
 							this.controllers[i].left,
 							this.controllers[i].right,
-							this.controllers[i].jump
+							this.controllers[i].up,
+							this.controllers[i].down,
+							this.controllers[i].aim,
+							this.controllers[i].jump,
 						);
 					}
 				}
@@ -233,10 +236,23 @@ Bones.World = {
 		constructor(id) {
 			this.left = false;
 			this.right = false;
+			this.up = false;
+			this.down = false;
+			this.aim = 90;
 			this.jump = false;
 			this.id = id
 		}
 		update() {
+			if(Bones.Input.Keyboard.ControlStates["up"].pressed || Bones.Input.Keyboard.ControlStates["up"].pressed_this_frame) {
+				this.up = true;
+			} else {
+				this.up = false;
+			}
+			if(Bones.Input.Keyboard.ControlStates["down"].pressed || Bones.Input.Keyboard.ControlStates["down"].pressed_this_frame) {
+				this.down = true;
+			} else {
+				this.down = false;
+			}
 			if(Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame) {
 				this.left = true;
 			} else {
@@ -254,13 +270,16 @@ Bones.World = {
 			}
 		}
 		serialize() {
-			return JSON.stringify([this.left, this.right, this.jump])
+			return JSON.stringify([this.left, this.right, this.up, this.down, this.aim, this.jump])
 		}
 		deserialize(dumps) {
 			const state = JSON.parse(dumps);
 			this.left = state[0];
 			this.right = state[1];
-			this.jump = state[2];
+			this.up = state[2];
+			this.down = state[3];
+			this.aim = state[4];
+			this.jump = state[5];
 		}
 	}, // END CONTROLLER CLASS
 
@@ -271,6 +290,8 @@ Bones.World = {
             this.movement_speed = 1;
             this.x = 25;
             this.y = 0;
+			this.width = 150;
+			this.height = 150;
 			this.interp_strength = 10
 			this.x_interp = []
 			this.y_interp = []
@@ -291,18 +312,26 @@ Bones.World = {
 
             this.move_left = false;
             this.move_right = false;
+			this.move_up = false;
+			this.move_down = false;
+			this.move_aim = 90;
             this.move_jump = false;
-
-            this.on_ground = false
             this.jump_lock = false
         } 
-        read_keyboard_controls(move_left, move_right, move_jump) {
+        read_keyboard_controls(move_left, move_right, move_up, move_down, move_aim, move_jump) {
             this.move_left = move_left;
             this.move_right = move_right;
+			this.move_up = move_up;
+			this.move_down = move_down;
+			this.move_aim = move_aim;
             this.move_jump = move_jump;
             if (this.move_left == true && this.move_right == true) {
                 this.move_left = false;
                 this.move_right = false;
+            }
+            if (this.move_up == true && this.move_down == true) {
+                this.move_up = false;
+                this.move_down = false;
             }
         }
         tick() {
@@ -314,18 +343,25 @@ Bones.World = {
             if (this.move_right) {
                 this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
             }
-            if (this.move_jump && !this.jump_lock && this.on_ground) {
+            if (this.move_down) {
+                this.y_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+            }
+            if (this.move_up) {
+                this.y_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+            }
+            /*if (this.move_jump && !this.jump_lock && this.on_ground) {
                 this.y_vel -= this.y_acc
                 this.on_ground = false
                 this.jump_lock = true
-            }
+            }*/
+			this.on_ground = true;
             if (!this.move_jump) {
                 this.jump_lock = false
             }
 
             // Gravity
 
-            this.y_vel += this.gravity * Bones.Timer.delta_time * Bones.Timer.timescale
+            //this.y_vel += this.gravity * Bones.Timer.delta_time * Bones.Timer.timescale
 
             // Friction
 
@@ -363,6 +399,22 @@ Bones.World = {
                     }
                 }
             }
+			if (!this.move_up && !this.move_down) {
+                if (this.y_vel > 0) {
+					if (this.y_vel <= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+						this.y_vel = 0; // player_ground_friction;
+					} else {
+						this.y_vel -= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+					}
+                }
+                if (this.y_vel < 0) {
+					if (this.y_vel >= -this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+						this.y_vel = 0; // -player_ground_friction
+					} else {
+						this.y_vel += this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+					}
+                }
+			}
 
 
             // Maximum Velocities
@@ -373,11 +425,11 @@ Bones.World = {
             if (this.x_vel < -this.max_x_vel) {
                 this.x_vel = -this.max_x_vel
             }
-            if (this.y_vel > this.max_y_vel) {
-                this.y_vel = this.max_y_vel
+            if (this.y_vel > this.max_x_vel) {
+                this.y_vel = this.max_x_vel
             }
-            if (this.y_vel < -this.max_y_vel) {
-                this.y_vel = -this.max_y_vel
+            if (this.y_vel < -this.max_x_vel) {
+                this.y_vel = -this.max_x_vel
             }
 
             // Commit x and y Velocities
@@ -392,8 +444,8 @@ Bones.World = {
                 this.x = 0
                 this.x_vel = 0
             }
-            if (this.x > Bones.Renderer.width - 150) {
-                this.x = Bones.Renderer.width - 150
+            if (this.x > Bones.Renderer.width - this.width) {
+                this.x = Bones.Renderer.width - this.width
                 this.x_vel = 0
             }
             if (this.y < 0) {
@@ -403,8 +455,8 @@ Bones.World = {
                     this.y_vel = 0
                 }
             }
-            if (this.y > Bones.Renderer.height - 150) {
-                this.y = Bones.Renderer.height - 150
+            if (this.y > Bones.Renderer.height - this.height) {
+                this.y = Bones.Renderer.height - this.height
                 this.y_vel = 0
                 this.on_ground = true
             }
@@ -420,10 +472,51 @@ Bones.World = {
 			}
 			interp_x = interp_x / (this.interp_strength+1)
 			interp_y = interp_y / (this.interp_strength+1)
-            Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, interp_x - Bones.Renderer.camera_x, interp_y - Bones.Renderer.camera_y, 150, 150)
-        }
+            //Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, interp_x - Bones.Renderer.camera_x, interp_y - Bones.Renderer.camera_y, this.width, this.height)
+			//let aim = (this.move_aim - 90) / 360
+			
+			if (this.id == clientId) {
+				let mx = Bones.Input.Mouse.ControlStates.x
+				let my = Bones.Input.Mouse.ControlStates.y
+				
+				//mouse
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.arc(mx, my, 10, 0, 2 * Math.PI);
+				Bones.Renderer.context.stroke();
+				
+				let x = mx - interp_x - this.width / 2 
+				let y = my - interp_y - this.height / 2 
+				
+				var dAx = x;
+				var dAy = y;
+				var dBx = 0;
+				var dBy = -1;
+				var angle = Math.atan2(dAx * dBy - dAy * dBx, dAx * dBx + dAy * dBy);
+				var degree_angle = 360 - angle * (180 / Math.PI);
+				
+				this.move_aim = (degree_angle - 90) / 360
+				for (let i = 0; i < Bones.World.controllers.length; i++) {
+					if (Bones.World.controllers[i].id == this.id) {
+						Bones.World.controllers[i].aim = this.move_aim
+					}
+				}
+			}
+			
+			//this.move_aim = aim
+			
+			//player
+			Bones.Renderer.context.beginPath();
+			Bones.Renderer.context.arc(interp_x + this.width / 2, interp_y + this.height / 2, this.height / 2, 0, 2 * Math.PI);
+			Bones.Renderer.context.stroke();
+			
+			//reticle
+			Bones.Renderer.context.beginPath();
+			let reticle_width = 20
+			Bones.Renderer.context.arc(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), reticle_width, 0, 2 * Math.PI);
+			Bones.Renderer.context.stroke();
+ }
 		serialize() {
-			return JSON.stringify([this.movement_speed, this.x, this.y, this.x_vel, this.y_vel, this.max_x_vel, this.max_y_vel, this.x_acc, this.y_acc, this.ground_friction, this.air_friction, this.gravity, this.facing_right, this.move_left, this.move_right, this.move_jump, this.on_ground, this.jump_lock = false])
+			return JSON.stringify([this.movement_speed, this.x, this.y, this.x_vel, this.y_vel, this.max_x_vel, this.max_y_vel, this.x_acc, this.y_acc, this.ground_friction, this.air_friction, this.gravity, this.facing_right, this.move_left, this.move_right, this.move_up, this.move_down, this.move_aim, this.move_jump, this.on_ground, this.jump_lock = false])
 		}
 		deserialize(dumps) {
 			const state = JSON.parse(dumps);
@@ -444,10 +537,13 @@ Bones.World = {
 
             this.move_left = state[13];
             this.move_right = state[14];
-            this.move_jump = state[15];
+            this.move_up = state[15];
+            this.move_down = state[16];
+            this.move_aim = state[17];
+            this.move_jump = state[18];
 
-            this.on_ground = state[16]
-            this.jump_lock = state[17]
+            this.on_ground = state[19]
+            this.jump_lock = state[20]
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
