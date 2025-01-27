@@ -5,6 +5,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-window.onload = function() {
-    Bones.start()
+if(isServer == false) {
+	window.onload = function() {
+		Bones.start()
+		netplay_init()
+	}
+} else {
+	Bones.start()
 }

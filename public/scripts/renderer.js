@@ -1,16 +1,19 @@
 Bones.Renderer = {
     init: function() {
-        this.canvas = document.getElementById("myCanvas");
-        this.context = this.canvas.getContext("2d");
-
-        this.canvas.style.border = "none";
-
-        this.display_mode = "stretched_fullscreen_ratio"; 
 
         this.width = 1280
         this.height = 720
+		
+		if (isServer == false) {
+			this.canvas = document.getElementById("myCanvas");
+			this.context = this.canvas.getContext("2d");
 
-        this.set_display_mode()
+			this.canvas.style.border = "none";
+
+			this.display_mode = "stretched_fullscreen_ratio"; 
+
+			this.set_display_mode()
+		}
 
         this.camera_x = 0;
         this.camera_y = 0;
