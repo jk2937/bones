@@ -64,7 +64,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.16!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.17!", Bones.Renderer.canvas.width / 2, 25)
 			
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
@@ -545,6 +545,10 @@ Bones.World = {
 			
 			this.score = 0;
 			
+			this.just_respawned = true;
+			
+			this.interp_cooldown = 50;
+			
 			if (this._class == 'Melee') {
 				this.x_acc = 0.1;
 				this.max_x_vel = 3.5;
@@ -610,6 +614,25 @@ Bones.World = {
 			this._select = _select
         }
         tick() {
+			this.interp_cooldown -= 1;
+			if (this.interp_cooldown <= 0){
+				this.interp_cooldown = 0
+			}
+			
+			if ((this.just_respawned == true && this.respawn_timer == 0) || this.interp_cooldown > 0) {
+				this.just_respawned = false;
+				console.log('just respawned')
+				for (let i = 0; i < this.interp_strength; i++) {
+					this.x_interp = []
+					this.y_interp = []
+					this.x_interp_calc = this.x
+					this.y_interp_calc = this.y
+					for (let i = 0; i < this.interp_strength; i++) {
+						this.x_interp.push(this.x)
+						this.y_interp.push(this.y)
+					}
+				}
+			}
 			if(this.respawning == false){
 				// Control
 
@@ -881,10 +904,7 @@ Bones.World = {
 						this.x = Math.random() * Bones.World.width;
 						this.y = Math.random() * Bones.World.height;
 					}
-					for (let i = 0; i < this.interp_strength; i++) {
-						this.x_interp.push(0)
-						this.y_interp.push(0)
-					}
+					this.just_respawned = true;
 				}
 			}
         }
