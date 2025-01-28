@@ -49,11 +49,11 @@ Bones.run = function() {
     Bones.Timer.frame_lock = false;
 
     if (Bones.DebugDisplay.simulated_lag != true) { 
-		//if(isServer == false) {
-			//requestAnimationFrame(Bones.run);
-		//} else {
+		if(isServer == false) {
+			requestAnimationFrame(Bones.run);
+		} else {
 			setTimeout(Bones.run, 0)
-		//}
+		}
     }
     if (Bones.DebugDisplay.simulated_lag == true) {
         setTimeout(Bones.run, Math.floor(Math.random() * Bones.DebugDisplay.simulated_lag_intensity))

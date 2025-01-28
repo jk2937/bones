@@ -41,10 +41,6 @@ Bones.World = {
     }, // END FUNCTION init
     tick() {
 		if (isServer == false) {
-			Bones.Renderer.context.font = "bold 24px Monospace";
-			Bones.Renderer.context.fillStyle = "#495664";
-			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.14!", Bones.Renderer.canvas.width / 2, 20)
 
 			Bones.Input.process_buffers()
 			
@@ -65,6 +61,10 @@ Bones.World = {
 				// Stroke it (Do the Drawing)
 				Bones.Renderer.context.stroke();
 			}
+			Bones.Renderer.context.font = "bold 24px Monospace";
+			Bones.Renderer.context.fillStyle = "#495664";
+			Bones.Renderer.context.textAlign = "center";
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.15!", Bones.Renderer.canvas.width / 2, 20)
 			
 			Bones.Renderer.context.beginPath();
 			Bones.Renderer.context.strokeStyle = "#495664";
@@ -79,7 +79,7 @@ Bones.World = {
 				Bones.Renderer.context.font = "bold 24px Monospace";
 				Bones.Renderer.context.fillStyle = "#495664";
 				Bones.Renderer.context.textAlign = "left";
-				Bones.Renderer.context.fillText("Player " + i + ": " + this.players[i].score, 30, i* 30 + 60)
+				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 60)
 			}
 		}
 
@@ -217,7 +217,7 @@ Bones.World = {
 						this.bullets[j].size / 2
 					) && this.players[i].respawning == false) {
 						this.players[i].health -= this.bullets[j].damage
-						if (this.players[i].health < 0) {
+						if (this.players[i].health <= 0) {
 							this.players[i].health = 0
 							console.log('last hit')
 							for (let k = 0; k < this.players.length; k++) {
@@ -895,6 +895,11 @@ Bones.World = {
 				Bones.Renderer.context.fillStyle = "#495664";
 				Bones.Renderer.context.textAlign = "center";
 				Bones.Renderer.context.fillText(this.health, this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 40)
+				
+				Bones.Renderer.context.font = "bold 24px Monospace";
+				Bones.Renderer.context.fillStyle = "#495664";
+				Bones.Renderer.context.textAlign = "center";
+				Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
 				
 				if(this.id == clientId){
 					Bones.Renderer.context.font = "bold 50px Monospace";
