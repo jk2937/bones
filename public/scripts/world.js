@@ -77,6 +77,7 @@ Bones.World = {
 							this.controllers[i].aim,
 							this.controllers[i].fire,
 							this.controllers[i].jump,
+							this.controllers[i]._select,
 						);
 					}
 				}
@@ -177,10 +178,19 @@ Bones.World = {
             this.angle = angle;
             this.ttl = ttl;
             this.size = size;
+			this.active = true
         }
 		tick () {
 			this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * Bones.Timer.delta_time * Bones.Timer.timescale
 			this.y += this.velocity * Math.sin(this.angle * 2 * Math.PI) * Bones.Timer.delta_time * Bones.Timer.timescale
+			this.ttl --
+			if (this.ttl <= 0) {
+				this.active = false
+				this.x = -1000
+				this.y = -1000
+				this.velocity = 0
+				this.size = 0
+			}
 		}
         render() {
 			Bones.Renderer.context.beginPath();
@@ -283,6 +293,7 @@ Bones.World = {
 			this.aim = 90;
 			this.fire = false;
 			this.jump = false;
+			this._select = 0;
 			this.id = id
 		}
 		update() {
@@ -316,9 +327,21 @@ Bones.World = {
 			} else {
 				this.fire = false;
 			}
+			if(Bones.Input.Keyboard.ControlStates["select0"].pressed || Bones.Input.Keyboard.ControlStates["select0"].pressed_this_frame) {
+				this._select = 0;
+			}
+			if(Bones.Input.Keyboard.ControlStates["select1"].pressed || Bones.Input.Keyboard.ControlStates["select1"].pressed_this_frame) {
+				this._select = 1;
+			}
+			if(Bones.Input.Keyboard.ControlStates["select2"].pressed || Bones.Input.Keyboard.ControlStates["select2"].pressed_this_frame) {
+				this._select = 2;
+			}
+			if(Bones.Input.Keyboard.ControlStates["select3"].pressed || Bones.Input.Keyboard.ControlStates["select3"].pressed_this_frame) {
+				this._select = 3;
+			}
 		}
 		serialize() {
-			return JSON.stringify([this.left, this.right, this.up, this.down, this.aim, this.fire, this.jump])
+			return JSON.stringify([this.left, this.right, this.up, this.down, this.aim, this.fire, this.jump, this._select])
 		}
 		deserialize(dumps) {
 			const state = JSON.parse(dumps);
@@ -329,6 +352,7 @@ Bones.World = {
 			this.aim = state[4];
 			this.fire = state[5];
 			this.jump = state[6];
+			this._select = state[7];
 		}
 	}, // END CONTROLLER CLASS
 
@@ -368,11 +392,57 @@ Bones.World = {
 			for (let i = 0; i < this.interp_strength; i++) {
 				this.move_aim_interp.push(this.move_aim)
 			}
-			this.move_fire = 90;
+			this.move_fire = false;
+			this.move_fire_cooldown = 0;
             this.move_jump = false;
-            this.jump_lock = false
-        } 
-        read_keyboard_controls(move_left, move_right, move_up, move_down, move_aim, move_fire, move_jump) {
+            this.jump_lock = false;
+			
+			this._class = 'fire'
+			
+			if (this._class == 'earth') {
+				this.x_acc = 0.1;
+				this.max_x_vel = 3.5;
+			}
+			
+			if (this._class == 'air') {
+				this.x_acc = 1;
+				this.max_x_vel = 7;
+			}
+			
+			if (this._class == 'water') {
+				this.x_acc = 0.2;
+				this.max_x_vel = 4.5;
+			}
+			
+			if (this._class == 'fire') {
+				this.x_acc = 2;
+				this.max_x_vel = 7;
+			}
+        }
+		change_class(_class) {
+			this._class = _class
+			
+			if (this._class == 'earth') {
+				this.x_acc = 0.1;
+				this.max_x_vel = 3.5;
+			}
+			
+			if (this._class == 'air') {
+				this.x_acc = 1;
+				this.max_x_vel = 7;
+			}
+			
+			if (this._class == 'water') {
+				this.x_acc = 0.2;
+				this.max_x_vel = 4.5;
+			}
+			
+			if (this._class == 'fire') {
+				this.x_acc = 2;
+				this.max_x_vel = 7;
+			}
+		}
+        read_keyboard_controls(move_left, move_right, move_up, move_down, move_aim, move_fire, move_jump, _select) {
             this.move_left = move_left;
             this.move_right = move_right;
 			this.move_up = move_up;
@@ -388,6 +458,18 @@ Bones.World = {
                 this.move_up = false;
                 this.move_down = false;
             }
+			if (_select == 0) {
+				this.change_class('earth')
+			}
+			if (_select == 1) {
+				this.change_class('water')
+			}
+			if (_select == 2) {
+				this.change_class('fire')
+			}
+			if (_select == 3) {
+				this.change_class('air')
+			}
         }
         tick() {
             // Control
@@ -515,13 +597,6 @@ Bones.World = {
                 this.y_vel = 0
                 this.on_ground = true
             }
-			
-			if (this.move_fire) {
-				
-				let size = 100
-				let offset = 30 + size / 2
-				Bones.World.bullets.push(new Bones.World.Bullet(this.x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, 10, this.move_aim, 5000, size))
-			}
         }
         render() {
 			this.x_interp.push(this.x)
@@ -594,10 +669,66 @@ Bones.World = {
 				let reticle_width = 20
 				Bones.Renderer.context.arc(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), reticle_width, 0, 2 * Math.PI);
 				Bones.Renderer.context.stroke();
+				
+				/*if (this.move_fire) {
+					
+					let size = 100
+					let offset = 30 + size / 2
+					Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, 10, this.move_aim, 5000, size))
+				}
+				*/
 			}
+				//move this to tick
+				
+				if (this.move_fire && this.move_fire_cooldown <= 0) {
+					this.move_fire_cooldown = 50
+					let size = 50
+					let offset = 30 + size / 2
+					let ttl = 40
+					let speed = 25
+					if (this._class == 'earth') {
+						size = 150
+						offset = 30 + size / 2
+						ttl = 20
+						speed = 2
+						this.move_fire_cooldown = 90
+					}
+					
+					if (this._class == 'water') {
+						size = 75
+						offset = 30 + size / 2
+						ttl = 20
+						speed = 8
+						this.move_fire_cooldown = 5
+					}
+					
+					if (this._class == 'air') {
+						size = 50
+						offset = 30 + size / 2
+						ttl = 40
+						speed = 25
+						this.move_fire_cooldown = 75
+					}
+					
+					if (this._class == 'fire') {
+						size = 40
+						offset = 30 + size / 2
+						ttl = 7
+						speed = 45
+						this.move_fire_cooldown = 30
+						let spread = 90
+						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size))
+						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.025, ttl, size))
+						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.05, ttl, size))
+						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.025, ttl, size))
+						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.05, ttl, size))
+					}
+					Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size))
+				}
+				this.move_fire_cooldown --
  }
 		serialize() {
-			return JSON.stringify([this.movement_speed, this.x, this.y, this.x_vel, this.y_vel, this.max_x_vel, this.max_y_vel, this.x_acc, this.y_acc, this.ground_friction, this.air_friction, this.gravity, this.facing_right, this.move_left, this.move_right, this.move_up, this.move_down, this.move_aim, this.move_fire, this.move_jump, this.on_ground, this.jump_lock = false])
+			return JSON.stringify([this.movement_speed, this.x, this.y, this.x_vel, this.y_vel, this.max_x_vel, this.max_y_vel, this.x_acc, this.y_acc, this.ground_friction, this.air_friction, this.gravity, this.facing_right, this.move_left, this.move_right, this.move_up, this.move_down, this.move_aim, this.move_fire, this.move_jump, this.on_ground, this.jump_lock = false, this._class])
 		}
 		deserialize(dumps) {
 			const state = JSON.parse(dumps);
@@ -626,6 +757,7 @@ Bones.World = {
 
             this.on_ground = state[20]
             this.jump_lock = state[21]
+            this._class = state[22]
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
