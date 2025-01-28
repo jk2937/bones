@@ -115,9 +115,9 @@ Bones.World = {
 			}
         }
         for (let i = 0; i < this.players.length; i++) {
-            this.players[i].tick()
 			if (this.players[i].active == false) {
 				this.players.splice(i, 1)
+				console.log('player deactivated')
 			}
         }
 
@@ -444,8 +444,8 @@ Bones.World = {
             //player init
 			this.id = id
             this.movement_speed = 1;
-            this.x = 25;
-            this.y = 0;
+            this.x = Math.random() * Bones.World.width;
+            this.y = Math.random() * Bones.World.height;
 			this.width = 100;
 			this.height = 100;
 			this.interp_strength = 10
@@ -698,6 +698,8 @@ Bones.World = {
 			
 			this.x_interp.push(this.x)
 			this.y_interp.push(this.y)
+			this.x_interp = this.x_interp.slice(0-this.interp_strength)
+			this.y_interp = this.y_interp.slice(0-this.interp_strength)
 			this.x_interp_calc = this.x
 			this.y_interp_calc = this.y
 			for (let i = 0; i < this.interp_strength; i++) {
@@ -739,6 +741,7 @@ Bones.World = {
 			}
 			
 			this.move_aim_interp.push(this.move_aim)
+			this.move_aim_interp = this.move_aim_interp.slice(0-this.interp_strength)
 			this.aim_interp_calc = this.move_aim
 			for (let i = 0; i < this.interp_strength; i++) {
 				if (this.move_aim - this.move_aim_interp[this.move_aim_interp.length-1-i] > 0.5) {
@@ -803,6 +806,14 @@ Bones.World = {
 				Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size, damage))
 			}
 			this.fire_cooldown --
+			
+			if (this.health <= 0) {
+				if(isServer){
+					this.health = 100;
+					this.x = Math.random() * Bones.World.width;
+					this.y = Math.random() * Bones.World.height;
+				}
+			}
         }
         render() {
 			
@@ -865,6 +876,7 @@ Bones.World = {
 					this.fire_cooldown,
 					this._select,
 					this.active,
+					this.health,
 				])
 		}
 		deserialize(dumps) {
@@ -880,6 +892,7 @@ Bones.World = {
             this.x_acc = state[7]
             this.y_acc = state[8] // Todo: air acceleration, air max vel, run speed, bunny hopping
             this.ground_friction = state[9]
+            this.air_friction = state[10]
             this.air_friction = state[10]
             this.gravity = state[11]
             this.facing_right = state[12]
@@ -899,6 +912,7 @@ Bones.World = {
             //this.fire_cooldown = state[23]
             this._select = state[24]
             this.active = state[25]
+            this.health = state[26]
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World

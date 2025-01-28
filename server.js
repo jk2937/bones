@@ -74,6 +74,7 @@ io.on('connection', (socket) => {
 		for (let i = 0; i < Bones.World.players.length; i++) {
 			if (Bones.World.players[i].id == clientId) {
 				Bones.World.players[i].deactivate()
+				socket.broadcast.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
 			}
 		}
 	});
