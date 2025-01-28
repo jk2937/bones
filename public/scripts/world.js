@@ -44,7 +44,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.12!", Bones.Renderer.canvas.width / 2, 20)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.13!", Bones.Renderer.canvas.width / 2, 20)
 
 			Bones.Input.process_buffers()
 			
