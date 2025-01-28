@@ -17,18 +17,48 @@ Bones.World = {
         //npc init
 
         this.npcs = []
+		
+		this.width = 2000
+		this.height = 2000
         /*this.npcs.push(new this.NPC())*/
 
 
     }, // END FUNCTION init
     tick() {
 		if (isServer == false) {
-			Bones.Renderer.context.font = "18px Monospace";
-			Bones.Renderer.context.fillStyle = "Gray";
+			Bones.Renderer.context.font = "bold 24px Monospace";
+			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
 			Bones.Renderer.context.fillText("Welcome to Bones \"Alpha\" v0.1.0!", Bones.Renderer.canvas.width / 2, 20)
 
 			Bones.Input.process_buffers()
+			
+			
+			
+		
+			// Define a new path
+			let grids = 500
+			let size = 50
+			let cols = 27
+			for (let i = 0; i < grids; i++){
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#8c97a2";
+				Bones.Renderer.context.lineWidth = 1;
+				Bones.Renderer.context.rect((0 - Bones.Renderer.camera_x % size + i * size) % (size * cols) - size, 0 - Bones.Renderer.camera_y % size + (Math.floor(i / cols) * size ) - size, size, size);
+				Bones.Renderer.context.stroke();
+
+				// Stroke it (Do the Drawing)
+				Bones.Renderer.context.stroke();
+			}
+			
+			Bones.Renderer.context.beginPath();
+			Bones.Renderer.context.strokeStyle = "#495664";
+			Bones.Renderer.context.lineWidth = 8;
+			Bones.Renderer.context.rect(0 - Bones.Renderer.camera_x, 0 - Bones.Renderer.camera_y, this.width, this.height);
+			Bones.Renderer.context.stroke();
+
+			// Stroke it (Do the Drawing)
+			Bones.Renderer.context.stroke();
 		}
 
         // Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
@@ -46,7 +76,7 @@ Bones.World = {
             if (Bones.Input.Keyboard.ControlStates["down"].pressed || Bones.Input.Keyboard.ControlStates["down"].pressed_this_frame) {
                 Bones.Renderer.camera_y += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
             } 
-            this.player1.tick()
+            //this.player1.tick()
         }
 
         if (Bones.DebugDisplay.debug_simple_player_movement == true) {
@@ -134,6 +164,15 @@ Bones.World = {
                 Bones.Renderer.context.fillText("", 0, 0)
             }
         }
+		
+		if(!isServer) {
+			for (let i = 0; i < this.players.length; i++) {
+				if (this.players[i].id == clientId) {
+					Bones.Renderer.camera_x = this.players[0].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
+					Bones.Renderer.camera_y = this.players[0].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
+				}
+			}
+		}
     }, // END FUNCTION tick
     create_menu_item(x, y, width, height, text, on_activate_function, on_deactivate_function, mode='default') {
         this.menu_items.push(new MenuItem(x, y, width, height, text, on_activate_function, on_deactivate_function, mode=mode))
@@ -194,7 +233,9 @@ Bones.World = {
 		}
         render() {
 			Bones.Renderer.context.beginPath();
-			Bones.Renderer.context.arc(this.x + this.size / 2, this.y + this.size / 2, this.size / 2, 0, 2 * Math.PI);
+			Bones.Renderer.context.strokeStyle = "#495664";
+			Bones.Renderer.context.lineWidth = 4;
+			Bones.Renderer.context.arc(this.x + this.size / 2 - Bones.Renderer.camera_x, this.y + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
 			Bones.Renderer.context.stroke();
         }
 		serialize() {
@@ -363,11 +404,13 @@ Bones.World = {
             this.movement_speed = 1;
             this.x = 25;
             this.y = 0;
-			this.width = 150;
-			this.height = 150;
+			this.width = 100;
+			this.height = 100;
 			this.interp_strength = 10
 			this.x_interp = []
 			this.y_interp = []
+			this.x_interp_calc = this.x
+			this.y_interp_calc = this.y
 			for (let i = 0; i < this.interp_strength; i++) {
 				this.x_interp.push(this.x)
 				this.y_interp.push(this.y)
@@ -389,15 +432,18 @@ Bones.World = {
 			this.move_down = false;
 			this.move_aim = 90;
 			this.move_aim_interp = []
+			this.aim_interp_calc = this.move_aim
 			for (let i = 0; i < this.interp_strength; i++) {
 				this.move_aim_interp.push(this.move_aim)
 			}
 			this.move_fire = false;
-			this.move_fire_cooldown = 0;
+			this.fire_cooldown = 0;
             this.move_jump = false;
             this.jump_lock = false;
 			
 			this._class = 'fire'
+			
+			this._select = 0
 			
 			if (this._class == 'earth') {
 				this.x_acc = 0.1;
@@ -420,7 +466,7 @@ Bones.World = {
 			}
         }
 		change_class(_class) {
-			this._class = _class
+			this._class = _class;
 			
 			if (this._class == 'earth') {
 				this.x_acc = 0.1;
@@ -458,18 +504,7 @@ Bones.World = {
                 this.move_up = false;
                 this.move_down = false;
             }
-			if (_select == 0) {
-				this.change_class('earth')
-			}
-			if (_select == 1) {
-				this.change_class('water')
-			}
-			if (_select == 2) {
-				this.change_class('fire')
-			}
-			if (_select == 3) {
-				this.change_class('air')
-			}
+			this._select = _select
         }
         tick() {
             // Control
@@ -486,6 +521,21 @@ Bones.World = {
             if (this.move_up) {
                 this.y_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
             }
+			
+			if(this.fire_cooldown <= 0){
+				if (this._select == 0) {
+					this.change_class('earth')
+				}
+				if (this._select == 1) {
+					this.change_class('water')
+				}
+				if (this._select == 2) {
+					this.change_class('fire')
+				}
+				if (this._select == 3) {
+					this.change_class('air')
+				}
+			}
             /*if (this.move_jump && !this.jump_lock && this.on_ground) {
                 this.y_vel -= this.y_acc
                 this.on_ground = false
@@ -581,8 +631,8 @@ Bones.World = {
                 this.x = 0
                 this.x_vel = 0
             }
-            if (this.x > Bones.Renderer.width - this.width) {
-                this.x = Bones.Renderer.width - this.width
+            if (this.x > Bones.World.width - this.width) {
+                this.x = Bones.World.width - this.width
                 this.x_vel = 0
             }
             if (this.y < 0) {
@@ -592,55 +642,56 @@ Bones.World = {
                     this.y_vel = 0
                 }
             }
-            if (this.y > Bones.Renderer.height - this.height) {
-                this.y = Bones.Renderer.height - this.height
+            if (this.y > Bones.World.height - this.height) {
+                this.y = Bones.World.height - this.height
                 this.y_vel = 0
                 this.on_ground = true
             }
-        }
-        render() {
+			
 			this.x_interp.push(this.x)
 			this.y_interp.push(this.y)
-			let interp_x = this.x
-			let interp_y = this.y
+			this.x_interp_calc = this.x
+			this.y_interp_calc = this.y
 			for (let i = 0; i < this.interp_strength; i++) {
-				interp_x = interp_x + this.x_interp[this.x_interp.length-1-i]
-				interp_y = interp_y + this.y_interp[this.y_interp.length-1-i]
+				this.x_interp_calc = this.x_interp_calc + this.x_interp[this.x_interp.length-1-i]
+				this.y_interp_calc = this.y_interp_calc + this.y_interp[this.y_interp.length-1-i]
 			}
-			interp_x = interp_x / (this.interp_strength+1)
-			interp_y = interp_y / (this.interp_strength+1)
-            //Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, interp_x - Bones.Renderer.camera_x, interp_y - Bones.Renderer.camera_y, this.width, this.height)
+			this.x_interp_calc = this.x_interp_calc / (this.interp_strength+1)
+			this.y_interp_calc = this.y_interp_calc / (this.interp_strength+1)
+            //Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height)
 			//let aim = (this.move_aim - 90) / 360
 			
-			if (this.id == clientId) {
-				let mx = Bones.Input.Mouse.ControlStates.x
-				let my = Bones.Input.Mouse.ControlStates.y
-				
-				//mouse
-				Bones.Renderer.context.beginPath();
-				Bones.Renderer.context.arc(mx, my, 10, 0, 2 * Math.PI);
-				Bones.Renderer.context.stroke();
-				
-				let x = mx - interp_x - this.width / 2 
-				let y = my - interp_y - this.height / 2 
-				
-				var dAx = x;
-				var dAy = y;
-				var dBx = 0;
-				var dBy = -1;
-				var angle = Math.atan2(dAx * dBy - dAy * dBx, dAx * dBx + dAy * dBy);
-				var degree_angle = 360 - angle * (180 / Math.PI);
-				
-				this.move_aim = (degree_angle - 90) / 360
-				for (let i = 0; i < Bones.World.controllers.length; i++) {
-					if (Bones.World.controllers[i].id == this.id) {
-						Bones.World.controllers[i].aim = this.move_aim
+			if(!isServer) {
+				if (this.id == clientId) {
+					let mx = Bones.Input.Mouse.ControlStates.x + Bones.Renderer.camera_x
+					let my = Bones.Input.Mouse.ControlStates.y + Bones.Renderer.camera_y
+					
+					/*//mouse
+					Bones.Renderer.context.beginPath();
+					Bones.Renderer.context.arc(mx, my, 10, 0, 2 * Math.PI);
+					Bones.Renderer.context.stroke();*/
+					
+					let x = mx - this.x_interp_calc - this.width / 2 
+					let y = my - this.y_interp_calc - this.height / 2 
+					
+					var dAx = x;
+					var dAy = y;
+					var dBx = 0;
+					var dBy = -1;
+					var angle = Math.atan2(dAx * dBy - dAy * dBx, dAx * dBx + dAy * dBy);
+					var degree_angle = 360 - angle * (180 / Math.PI);
+					
+					this.move_aim = (degree_angle - 90) / 360
+					for (let i = 0; i < Bones.World.controllers.length; i++) {
+						if (Bones.World.controllers[i].id == this.id) {
+							Bones.World.controllers[i].aim = this.move_aim
+						}
 					}
 				}
 			}
 			
 			this.move_aim_interp.push(this.move_aim)
-			let interp_move_aim = this.move_aim
+			this.aim_interp_calc = this.move_aim
 			for (let i = 0; i < this.interp_strength; i++) {
 				if (this.move_aim - this.move_aim_interp[this.move_aim_interp.length-1-i] > 0.5) {
 					this.move_aim_interp[this.move_aim_interp.length-1-i] += 1
@@ -648,87 +699,112 @@ Bones.World = {
 				if (this.move_aim - this.move_aim_interp[this.move_aim_interp.length-1-i] < -0.5) {
 					this.move_aim_interp[this.move_aim_interp.length-1-i] -= 1
 				}
-				interp_move_aim = interp_move_aim + this.move_aim_interp[this.move_aim_interp.length-1-i]
+				this.aim_interp_calc = this.aim_interp_calc + this.move_aim_interp[this.move_aim_interp.length-1-i]
 			}
-			interp_move_aim = interp_move_aim / (this.interp_strength+1)
+			this.aim_interp_calc = this.aim_interp_calc / (this.interp_strength+1)
 			
-			//player
+			if (this.move_fire && this.fire_cooldown <= 0) {
+				this.fire_cooldown = 50
+				let size = 50
+				let offset = 30 + size / 2
+				let ttl = 40
+				let speed = 25
+				if (this._class == 'earth') {
+					size = 150
+					offset = 30 + size / 2
+					ttl = 20
+					speed = 2
+					this.fire_cooldown = 90
+				}
+				
+				if (this._class == 'water') {
+					size = 75
+					offset = 30 + size / 2
+					ttl = 20
+					speed = 8
+					this.fire_cooldown = 5
+				}
+				
+				if (this._class == 'air') {
+					size = 50
+					offset = 30 + size / 2
+					ttl = 40
+					speed = 25
+					this.fire_cooldown = 75
+				}
+				
+				if (this._class == 'fire') {
+					size = 40
+					offset = 30 + size / 2
+					ttl = 7
+					speed = 45
+					this.fire_cooldown = 30
+					let spread = 90
+					Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size))
+					Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.025, ttl, size))
+					Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.05, ttl, size))
+					Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.025, ttl, size))
+					Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.05, ttl, size))
+				}
+				Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size))
+			}
+			this.fire_cooldown --
+        }
+        render() {
+			
+			//
 			Bones.Renderer.context.beginPath();
-			Bones.Renderer.context.arc(interp_x + this.width / 2, interp_y + this.height / 2, this.height / 2, 0, 2 * Math.PI);
+			Bones.Renderer.context.strokeStyle = "#495664";
+			Bones.Renderer.context.lineWidth = 4;
+			Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 - Bones.Renderer.camera_y, this.height / 2, 0, 2 * Math.PI);
 			Bones.Renderer.context.stroke();
 			
 			if (this.id != clientId) {
 				//reticle
 				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.lineWidth = 4;
 				let reticle_width = 20
-				Bones.Renderer.context.arc(interp_x + this.width / 2 + Math.cos(interp_move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), interp_y + this.height / 2 + Math.sin(interp_move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), reticle_width, 0, 2 * Math.PI);
+				Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 				Bones.Renderer.context.stroke();
 			} else {
 				//reticle
 				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.lineWidth = 4;
 				let reticle_width = 20
-				Bones.Renderer.context.arc(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width), reticle_width, 0, 2 * Math.PI);
+				Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 				Bones.Renderer.context.stroke();
-				
-				/*if (this.move_fire) {
-					
-					let size = 100
-					let offset = 30 + size / 2
-					Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, 10, this.move_aim, 5000, size))
-				}
-				*/
 			}
-				//move this to tick
-				
-				if (this.move_fire && this.move_fire_cooldown <= 0) {
-					this.move_fire_cooldown = 50
-					let size = 50
-					let offset = 30 + size / 2
-					let ttl = 40
-					let speed = 25
-					if (this._class == 'earth') {
-						size = 150
-						offset = 30 + size / 2
-						ttl = 20
-						speed = 2
-						this.move_fire_cooldown = 90
-					}
-					
-					if (this._class == 'water') {
-						size = 75
-						offset = 30 + size / 2
-						ttl = 20
-						speed = 8
-						this.move_fire_cooldown = 5
-					}
-					
-					if (this._class == 'air') {
-						size = 50
-						offset = 30 + size / 2
-						ttl = 40
-						speed = 25
-						this.move_fire_cooldown = 75
-					}
-					
-					if (this._class == 'fire') {
-						size = 40
-						offset = 30 + size / 2
-						ttl = 7
-						speed = 45
-						this.move_fire_cooldown = 30
-						let spread = 90
-						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size))
-						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.025, ttl, size))
-						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.05, ttl, size))
-						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.025, ttl, size))
-						Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.05, ttl, size))
-					}
-					Bones.World.bullets.push(new Bones.World.Bullet(interp_x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, interp_y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size))
-				}
-				this.move_fire_cooldown --
  }
 		serialize() {
-			return JSON.stringify([this.movement_speed, this.x, this.y, this.x_vel, this.y_vel, this.max_x_vel, this.max_y_vel, this.x_acc, this.y_acc, this.ground_friction, this.air_friction, this.gravity, this.facing_right, this.move_left, this.move_right, this.move_up, this.move_down, this.move_aim, this.move_fire, this.move_jump, this.on_ground, this.jump_lock = false, this._class])
+			return JSON.stringify([
+					this.movement_speed, 
+					this.x, 
+					this.y, 
+					this.x_vel, 
+					this.y_vel, 
+					this.max_x_vel, 
+					this.max_y_vel, 
+					this.x_acc, 
+					this.y_acc, 
+					this.ground_friction, 
+					this.air_friction, 
+					this.gravity, 
+					this.facing_right, 
+					this.move_left, 
+					this.move_right, 
+					this.move_up, 
+					this.move_down, 
+					this.move_aim, 
+					this.move_fire, 
+					this.move_jump, 
+					this.on_ground, 
+					this.jump_lock, 
+					this._class, 
+					this.fire_cooldown,
+					this._select
+				])
 		}
 		deserialize(dumps) {
 			const state = JSON.parse(dumps);
@@ -758,6 +834,9 @@ Bones.World = {
             this.on_ground = state[20]
             this.jump_lock = state[21]
             this._class = state[22]
+			
+            //this.fire_cooldown = state[23]
+            this._select = state[24]
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World

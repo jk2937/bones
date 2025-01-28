@@ -22,7 +22,7 @@ Bones.run = function() {
 	if(isServer == false) {
 		Bones.Renderer.refresh_display()
 		
-		Bones.Renderer.context.fillStyle = "LightGray";
+		Bones.Renderer.context.fillStyle = "#F0F8FF";
 		Bones.Renderer.context.fillRect(0, 0, Bones.Renderer.width, Bones.Renderer.height);
 		
 		// Todo: Add this to Bones.Input.tick() perhaps
