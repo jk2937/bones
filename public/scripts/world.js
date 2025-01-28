@@ -854,6 +854,10 @@ Bones.World = {
 						this.x = Math.random() * Bones.World.width;
 						this.y = Math.random() * Bones.World.height;
 					}
+					for (let i = 0; i < this.interp_strength; i++) {
+						this.x_interp.push(0)
+						this.y_interp.push(0)
+					}
 				}
 			}
 			if (this.health <= 0 && this.respawning == false) {
