@@ -64,7 +64,15 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.15!", Bones.Renderer.canvas.width / 2, 20)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.16!", Bones.Renderer.canvas.width / 2, 25)
+			
+			Bones.Renderer.context.font = "bold 24px Monospace";
+			Bones.Renderer.context.fillStyle = "#495664";
+			Bones.Renderer.context.textAlign = "left";
+			Bones.Renderer.context.fillText("1. Melee", 30, Bones.Renderer.height - 100)
+			Bones.Renderer.context.fillText("2. Flamethrower", 30, Bones.Renderer.height - 75)
+			Bones.Renderer.context.fillText("3. Shotgun", 30, Bones.Renderer.height - 50)
+			Bones.Renderer.context.fillText("4. Pistol", 30, Bones.Renderer.height - 25)
 			
 			Bones.Renderer.context.beginPath();
 			Bones.Renderer.context.strokeStyle = "#495664";
@@ -79,7 +87,7 @@ Bones.World = {
 				Bones.Renderer.context.font = "bold 24px Monospace";
 				Bones.Renderer.context.fillStyle = "#495664";
 				Bones.Renderer.context.textAlign = "left";
-				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 60)
+				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 25)
 			}
 		}
 
@@ -127,7 +135,7 @@ Bones.World = {
 							this.controllers[j].up,
 							this.controllers[j].down,
 							this.controllers[j].aim,
-							this.controllers[j].fire,
+							this.controllers[j].Shotgun,
 							this.controllers[j].jump,
 							this.controllers[j]._select,
 						);
@@ -416,7 +424,7 @@ Bones.World = {
 			this.up = false;
 			this.down = false;
 			this.aim = 90;
-			this.fire = false;
+			this.Shotgun = false;
 			this.jump = false;
 			this._select = 2;
 			this.id = id
@@ -448,9 +456,9 @@ Bones.World = {
 				this.jump = false;
 			}
 			if(Bones.Input.Mouse.ControlStates.click_this_frame || Bones.Input.Mouse.ControlStates.click) {
-				this.fire = true;
+				this.Shotgun = true;
 			} else {
-				this.fire = false;
+				this.Shotgun = false;
 			}
 			if(Bones.Input.Keyboard.ControlStates["select0"].pressed || Bones.Input.Keyboard.ControlStates["select0"].pressed_this_frame) {
 				this._select = 0;
@@ -466,7 +474,7 @@ Bones.World = {
 			}
 		}
 		serialize() {
-			return JSON.stringify([this.left, this.right, this.up, this.down, this.aim, this.fire, this.jump, this._select])
+			return JSON.stringify([this.left, this.right, this.up, this.down, this.aim, this.Shotgun, this.jump, this._select])
 		}
 		deserialize(dumps) {
 			const state = JSON.parse(dumps);
@@ -475,7 +483,7 @@ Bones.World = {
 			this.up = state[2];
 			this.down = state[3];
 			this.aim = state[4];
-			this.fire = state[5];
+			this.Shotgun = state[5];
 			this.jump = state[6];
 			this._select = state[7];
 		}
@@ -504,9 +512,9 @@ Bones.World = {
             this.max_x_vel = 7
             this.max_y_vel = 70
             this.x_acc = 1
-            this.y_acc = 10 // Todo: air acceleration, air max vel, run speed, bunny hopping
+            this.y_acc = 10 // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
             this.ground_friction = 0.55
-            this.air_friction = 0.05
+            this.Pistol_friction = 0.05
             this.gravity = 0.25
             this.facing_right = true
 
@@ -520,12 +528,12 @@ Bones.World = {
 			for (let i = 0; i < this.interp_strength; i++) {
 				this.move_aim_interp.push(this.move_aim)
 			}
-			this.move_fire = false;
-			this.fire_cooldown = 0;
+			this.move_Shotgun = false;
+			this.Shotgun_cooldown = 0;
             this.move_jump = false;
             this.jump_lock = false;
 			
-			this._class = 'fire'
+			this._class = 'Shotgun'
 			
 			this._select = 2
 			
@@ -537,22 +545,22 @@ Bones.World = {
 			
 			this.score = 0;
 			
-			if (this._class == 'earth') {
+			if (this._class == 'Melee') {
 				this.x_acc = 0.1;
 				this.max_x_vel = 3.5;
 			}
 			
-			if (this._class == 'air') {
+			if (this._class == 'Pistol') {
 				this.x_acc = 1;
 				this.max_x_vel = 7;
 			}
 			
-			if (this._class == 'water') {
+			if (this._class == 'Flamethrower') {
 				this.x_acc = 0.2;
 				this.max_x_vel = 4.5;
 			}
 			
-			if (this._class == 'fire') {
+			if (this._class == 'Shotgun') {
 				this.x_acc = 2;
 				this.max_x_vel = 7;
 			}
@@ -560,22 +568,22 @@ Bones.World = {
 		change_class(_class) {
 			this._class = _class;
 			
-			/*if (this._class == 'earth') {
+			/*if (this._class == 'Melee') {
 				this.x_acc = 0.1;
 				this.max_x_vel = 3.5;
 			}
 			
-			if (this._class == 'air') {
+			if (this._class == 'Pistol') {
 				this.x_acc = 1;
 				this.max_x_vel = 7;
 			}
 			
-			if (this._class == 'water') {
+			if (this._class == 'Flamethrower') {
 				this.x_acc = 0.2;
 				this.max_x_vel = 4.5;
 			}
 			
-			if (this._class == 'fire') {
+			if (this._class == 'Shotgun') {
 				this.x_acc = 2;
 				this.max_x_vel = 7;
 			}*/
@@ -583,13 +591,13 @@ Bones.World = {
 		deactivate() {
 			this.active = false;
 		}
-        read_keyboard_controls(move_left, move_right, move_up, move_down, move_aim, move_fire, move_jump, _select) {
+        read_keyboard_controls(move_left, move_right, move_up, move_down, move_aim, move_Shotgun, move_jump, _select) {
             this.move_left = move_left;
             this.move_right = move_right;
 			this.move_up = move_up;
 			this.move_down = move_down;
 			this.move_aim = move_aim;
-			this.move_fire = move_fire;
+			this.move_Shotgun = move_Shotgun;
             this.move_jump = move_jump;
             if (this.move_left == true && this.move_right == true) {
                 this.move_left = false;
@@ -618,18 +626,18 @@ Bones.World = {
 					this.y_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
 				}
 				
-				if(this.fire_cooldown <= 0){
+				if(this.Shotgun_cooldown <= 0){
 					if (this._select == 0) {
-						this.change_class('earth')
+						this.change_class('Melee')
 					}
 					if (this._select == 1) {
-						this.change_class('water')
+						this.change_class('Flamethrower')
 					}
 					if (this._select == 2) {
-						this.change_class('fire')
+						this.change_class('Shotgun')
 					}
 					if (this._select == 3) {
-						this.change_class('air')
+						this.change_class('Pistol')
 					}
 				}
 				/*if (this.move_jump && !this.jump_lock && this.on_ground) {
@@ -658,10 +666,10 @@ Bones.World = {
 							}
 						}
 						if (this.on_ground == false) {
-							if (this.x_vel < this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
-								this.x_vel = this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+							if (this.x_vel < this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+								this.x_vel = this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 							} else {
-								this.x_vel -= this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+								this.x_vel -= this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 							}
 						}
 					}
@@ -674,10 +682,10 @@ Bones.World = {
 							}
 						}
 						if (this.on_ground == false) {
-							if (this.x_vel > -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
-								this.x_vel = -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
+							if (this.x_vel > -this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+								this.x_vel = -this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale
 							} else {
-								this.x_vel += this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
+								this.x_vel += this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale
 							}
 						}
 					}
@@ -802,47 +810,47 @@ Bones.World = {
 				}
 				this.aim_interp_calc = this.aim_interp_calc / (this.interp_strength+1)
 				
-				if (this.move_fire && this.fire_cooldown <= 0) {
-					this.fire_cooldown = 50
+				if (this.move_Shotgun && this.Shotgun_cooldown <= 0) {
+					this.Shotgun_cooldown = 50
 					let size = 25
 					let offset = 15 + size / 2
 					let ttl = 40
 					let speed = 25
 					let damage = 10
-					if (this._class == 'earth') {
+					if (this._class == 'Melee') {
 						size = 75
 						offset = 30 + size / 2
 						ttl = 20
 						speed = 2
 						damage = 90
-						this.fire_cooldown = 80
+						this.Shotgun_cooldown = 80
 					}
 					
-					if (this._class == 'water') {
+					if (this._class == 'Flamethrower') {
 						size = 35
 						offset = 30 + size / 2
 						ttl = 20
 						speed = 8
 						damage = 5
-						this.fire_cooldown = 2
+						this.Shotgun_cooldown = 2
 					}
 					
-					if (this._class == 'air') {
+					if (this._class == 'Pistol') {
 						size = 25
 						offset = 30 + size / 2
 						ttl = 40
 						speed = 25
 						damage = 50
-						this.fire_cooldown = 60
+						this.Shotgun_cooldown = 60
 					}
 					
-					if (this._class == 'fire') {
+					if (this._class == 'Shotgun') {
 						size = 20
 						offset = 30 + size / 2
 						ttl = 7
 						speed = 20
 						damage = 1
-						this.fire_cooldown = 40
+						this.Shotgun_cooldown = 40
 						let spread = 90
 						damage = 10
 						if(isServer || this.id == clientId){
@@ -857,9 +865,9 @@ Bones.World = {
 						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size, damage, this.id, Bones.World.getBulletId()))
 					}
 				}
-				this.fire_cooldown -= 1 * Bones.Timer.delta_time * Bones.Timer.timescale
-				if (this.fire_cooldown < 0) {
-					this.fire_cooldown = 0;
+				this.Shotgun_cooldown -= 1 * Bones.Timer.delta_time * Bones.Timer.timescale
+				if (this.Shotgun_cooldown < 0) {
+					this.Shotgun_cooldown = 0;
 				}
 			} // ENDIF RESPAWNING
 			
@@ -902,10 +910,15 @@ Bones.World = {
 				Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
 				
 				if(this.id == clientId){
+					Bones.Renderer.context.font = "bold 40px Monospace";
+					Bones.Renderer.context.fillStyle = "#495664";
+					Bones.Renderer.context.textAlign = "center";
+					Bones.Renderer.context.fillText(this._class, Bones.Renderer.width / 2, Bones.Renderer.height - 80)
+					
 					Bones.Renderer.context.font = "bold 50px Monospace";
 					Bones.Renderer.context.fillStyle = "#495664";
 					Bones.Renderer.context.textAlign = "center";
-					Bones.Renderer.context.fillText(Math.round(this.fire_cooldown), Bones.Renderer.width / 2, Bones.Renderer.height - 20)
+					Bones.Renderer.context.fillText(Math.round(this.Shotgun_cooldown), Bones.Renderer.width / 2, Bones.Renderer.height - 20)
 				}
 				
 				if (this.id != clientId) {
@@ -946,7 +959,7 @@ Bones.World = {
 					this.x_acc, 
 					this.y_acc, 
 					this.ground_friction, 
-					this.air_friction, 
+					this.Pistol_friction, 
 					this.gravity, 
 					this.facing_right, 
 					this.move_left, 
@@ -954,12 +967,12 @@ Bones.World = {
 					this.move_up, 
 					this.move_down, 
 					this.move_aim, 
-					this.move_fire, 
+					this.move_Shotgun, 
 					this.move_jump, 
 					this.on_ground, 
 					this.jump_lock, 
 					this._class, 
-					this.fire_cooldown,
+					this.Shotgun_cooldown,
 					this._select,
 					this.active,
 					this.health,
@@ -979,10 +992,10 @@ Bones.World = {
             this.max_x_vel = state[5]
             this.max_y_vel = state[6]
             this.x_acc = state[7]
-            this.y_acc = state[8] // Todo: air acceleration, air max vel, run speed, bunny hopping
+            this.y_acc = state[8] // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
             this.ground_friction = state[9]
-            this.air_friction = state[10]
-            this.air_friction = state[10]
+            this.Pistol_friction = state[10]
+            this.Pistol_friction = state[10]
             this.gravity = state[11]
             this.facing_right = state[12]
 
@@ -991,14 +1004,14 @@ Bones.World = {
             this.move_up = state[15];
             this.move_down = state[16];
             this.move_aim = state[17];
-            //this.move_fire = state[18];
+            //this.move_Shotgun = state[18];
             this.move_jump = state[19];
 
             this.on_ground = state[20]
             this.jump_lock = state[21]
             this._class = state[22]
 			
-            //this.fire_cooldown = state[23]
+            //this.Shotgun_cooldown = state[23]
             this._select = state[24]
             this.active = state[25]
             this.health = state[26]
