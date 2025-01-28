@@ -40,7 +40,7 @@ Bones.DebugDisplay = {
                     let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
                     let mouse_x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
                     let mouse_y = (_event.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
-                    Bones.Renderer.context.fillText(_event.type + " " + mouse_x + " " + mouse_y, mouse_x, mouse_y)
+                    //Bones.Renderer.context.fillText(_event.type + " " + mouse_x + " " + mouse_y, mouse_x, mouse_y)
                 }
             }
             if (this.touch_data == true) {
@@ -51,7 +51,7 @@ Bones.DebugDisplay = {
                         let canvas_position = Bones.Renderer.canvas.getBoundingClientRect();
                         let touch_x = (touch.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
                         let touch_y = (touch.pageY - Bones.Renderer.canvas.offsetTop) * (Bones.Renderer.height / Bones.Renderer.canvas.offsetHeight) 
-                        Bones.Renderer.context.fillText(_event.type + " " + touch.identifier + " " + touch_x + " " + touch_y, touch_x, touch_y)
+                        //Bones.Renderer.context.fillText(_event.type + " " + touch.identifier + " " + touch_x + " " + touch_y, touch_x, touch_y)
                     }
                 }  
             }
