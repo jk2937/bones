@@ -71,7 +71,11 @@ io.on('connection', (socket) => {
 	setInterval(sendloop, 0);
 
 	socket.on('disconnect', () => {
-		console.log('A user disconnected');
+		for (let i = 0; i < Bones.World.players.length; i++) {
+			if (Bones.World.players[i].id == clientId) {
+				Bones.World.players[i].deactivate()
+			}
+		}
 	});
 });
 
