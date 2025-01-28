@@ -28,5 +28,5 @@ function netplay_init() {
 			}
 		}
 	}
-	setInterval(networkloop, 0)
+	setInterval(networkloop, 20)
 }

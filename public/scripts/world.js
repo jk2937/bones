@@ -37,9 +37,9 @@ Bones.World = {
 			
 		
 			// Define a new path
-			let grids = 500
-			let size = 50
-			let cols = 27
+			let size = 35
+			let cols = Math.floor( Bones.Renderer.width / size ) + 1
+			let grids = Math.floor( Bones.Renderer.height / size ) * cols + 2 * cols
 			for (let i = 0; i < grids; i++){
 				Bones.Renderer.context.beginPath();
 				Bones.Renderer.context.strokeStyle = "#8c97a2";
@@ -446,8 +446,8 @@ Bones.World = {
             this.movement_speed = 1;
             this.x = Math.random() * Bones.World.width;
             this.y = Math.random() * Bones.World.height;
-			this.width = 100;
-			this.height = 100;
+			this.width = 65;
+			this.height = 65;
 			this.interp_strength = 10
 			this.x_interp = []
 			this.y_interp = []
@@ -756,13 +756,13 @@ Bones.World = {
 			
 			if (this.move_fire && this.fire_cooldown <= 0) {
 				this.fire_cooldown = 50
-				let size = 50
-				let offset = 30 + size / 2
+				let size = 25
+				let offset = 15 + size / 2
 				let ttl = 40
 				let speed = 25
 				let damage = 10
 				if (this._class == 'earth') {
-					size = 150
+					size = 75
 					offset = 30 + size / 2
 					ttl = 20
 					speed = 2
@@ -771,7 +771,7 @@ Bones.World = {
 				}
 				
 				if (this._class == 'water') {
-					size = 75
+					size = 35
 					offset = 30 + size / 2
 					ttl = 20
 					speed = 8
@@ -780,7 +780,7 @@ Bones.World = {
 				}
 				
 				if (this._class == 'air') {
-					size = 50
+					size = 25
 					offset = 30 + size / 2
 					ttl = 40
 					speed = 25
@@ -789,7 +789,7 @@ Bones.World = {
 				}
 				
 				if (this._class == 'fire') {
-					size = 40
+					size = 20
 					offset = 30 + size / 2
 					ttl = 7
 					speed = 45
@@ -835,7 +835,7 @@ Bones.World = {
 				Bones.Renderer.context.beginPath();
 				Bones.Renderer.context.strokeStyle = "#495664";
 				Bones.Renderer.context.lineWidth = 4;
-				let reticle_width = 20
+				let reticle_width = 15
 				Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 				Bones.Renderer.context.stroke();
 			} else {
@@ -843,7 +843,7 @@ Bones.World = {
 				Bones.Renderer.context.beginPath();
 				Bones.Renderer.context.strokeStyle = "#495664";
 				Bones.Renderer.context.lineWidth = 4;
-				let reticle_width = 20
+				let reticle_width = 15
 				Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 				Bones.Renderer.context.stroke();
 			}
@@ -909,7 +909,7 @@ Bones.World = {
             this.jump_lock = state[21]
             this._class = state[22]
 			
-            //this.fire_cooldown = state[23]
+            this.fire_cooldown = state[23]
             this._select = state[24]
             this.active = state[25]
             this.health = state[26]

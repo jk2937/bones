@@ -52,7 +52,7 @@ Bones.run = function() {
 		if(isServer == false) {
 			requestAnimationFrame(Bones.run);
 		} else {
-			setTimeout(Bones.run, 0)
+			setTimeout(Bones.run, 20)
 		}
     }
     if (Bones.DebugDisplay.simulated_lag == true) {
