@@ -44,7 +44,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.13!", Bones.Renderer.canvas.width / 2, 20)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.14!", Bones.Renderer.canvas.width / 2, 20)
 
 			Bones.Input.process_buffers()
 			
@@ -74,6 +74,13 @@ Bones.World = {
 
 			// Stroke it (Do the Drawing)
 			Bones.Renderer.context.stroke();
+			
+			for (let i = 0; i < this.players.length; i++) {
+				Bones.Renderer.context.font = "bold 24px Monospace";
+				Bones.Renderer.context.fillStyle = "#495664";
+				Bones.Renderer.context.textAlign = "left";
+				Bones.Renderer.context.fillText("Player " + i + ": " + this.players[i].score, 30, i* 30 + 60)
+			}
 		}
 
         // Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
@@ -208,10 +215,20 @@ Bones.World = {
 						this.bullets[j].x + this.bullets[j].size / 2,
 						this.bullets[j].y + this.bullets[j].size / 2,
 						this.bullets[j].size / 2
-					)) {
+					) && this.players[i].respawning == false) {
 						this.players[i].health -= this.bullets[j].damage
 						if (this.players[i].health < 0) {
 							this.players[i].health = 0
+							console.log('last hit')
+							for (let k = 0; k < this.players.length; k++) {
+								if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
+									this.players[k].score ++
+									if (this.players[i].health <= 0) {
+										this.players[i].respawn_timer = 175;
+										this.players[i].respawning = true;
+									}
+								}
+							}
 						}
 						this.bullets[j].deactivate()
 					}
@@ -517,6 +534,8 @@ Bones.World = {
 			
 			this.respawn_timer = 0;
 			this.respawning = false;
+			
+			this.score = 0;
 			
 			if (this._class == 'earth') {
 				this.x_acc = 0.1;
@@ -860,10 +879,6 @@ Bones.World = {
 					}
 				}
 			}
-			if (this.health <= 0 && this.respawning == false) {
-				this.respawn_timer = 175;
-				this.respawning = true;
-			}
         }
         render() {
 			if(this.respawning == false) {
@@ -945,6 +960,7 @@ Bones.World = {
 					this.health,
 					this.respawn_timer,
 					this.respawning,
+					this.score,
 				])
 		}
 		deserialize(dumps) {
@@ -983,6 +999,7 @@ Bones.World = {
             this.health = state[26]
 			this.respawn_timer = state[27];
 			this.respawning = state[28]
+			this.score = state[29]
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
