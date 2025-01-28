@@ -196,3 +196,5 @@ document.addEventListener("keydown", function(_event) {
 document.addEventListener("keyup", function(_event) {
     Bones.Input.Keyboard.Buffers.frame_events.push(_event)
 }); 
+
+document.addEventListener('contextmenu', event => event.preventDefault());

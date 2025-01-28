@@ -20,6 +20,28 @@ function netplay_init() {
 			}
 		}
     });
+	socket.on('server bullet state', function(data) {
+		let state = JSON.parse(data[1]);
+		if(state[8] != clientId) {
+			for (let i = 0; i < Bones.World.bullets.length; i++){
+				if (Bones.World.bullets[i].id == data[0]) {
+					Bones.World.bullets[i].deserialize(data[1])
+				}
+			}
+			let bullet_in_world = false
+			for (let i = 0; i < Bones.World.bullets.length; i++){
+				if (Bones.World.bullets[i].id == data[0]) {
+					bullet_in_world = true
+				}
+			}
+			if (!bullet_in_world) {
+					let new_bullet = new Bones.World.Bullet(-1000, -1000, 0, 0, 1000, 0, 0, -1, data[0])
+					new_bullet.deserialize(data[1])
+					Bones.World.bullets.push(new_bullet)
+					console.log('new bullet')
+			}
+		}
+    });
 	
 	function networkloop() {
 		for (let i = 0; i < Bones.World.controllers.length; i++) {

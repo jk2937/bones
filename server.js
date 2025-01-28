@@ -66,6 +66,10 @@ io.on('connection', (socket) => {
 			socket.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
 			socket.broadcast.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
 		}
+		for (i = 0; i < Bones.World.bullets.length; i++) {
+			socket.emit('server bullet state', [Bones.World.bullets[i].id, Bones.World.bullets[i].serialize()])
+			socket.broadcast.emit('server bullet state', [Bones.World.bullets[i].id, Bones.World.bullets[i].serialize()])
+		}
 	}
 	
 	setInterval(sendloop, 20);
