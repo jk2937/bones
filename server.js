@@ -52,6 +52,10 @@ io.on('connection', (socket) => {
 			//socket.broadcast.emit('make player', Bones.World.players[i].id);
 		}
 	}
+	for (i = 0; i < Bones.World.players.length; i++) {
+		socket.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
+		socket.broadcast.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
+	}
 	
 	socket.on('client controller state', (data) => {
 		for (let i = 0; i < Bones.World.controllers.length; i++) {
