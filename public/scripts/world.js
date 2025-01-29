@@ -936,17 +936,21 @@ Bones.World = {
 				// Movement Bounderies
 
 				if (this.x < 0) {
-					this.x = 0
+					this.x = 2
+					this.velocity = 0
 				}
 				if (this.x > Bones.World.width - this.width) {
-					this.x = Bones.World.width - this.width
+					this.x = Bones.World.width - this.width - 2
+					this.velocity = 0
 				}
 				if (this.y < 0) {
-					this.y = 0
+					this.y = 2
 					//this.y_vel = 0 - this.y_vel
+					this.velocity = 0
 				}
 				if (this.y > Bones.World.height - this.height) {
-					this.y = Bones.World.height - this.height
+					this.y = Bones.World.height - this.height - 2
+					this.velocity = 0
 				}
 				
 				for (let i = 0; i < Bones.World.walls.length; i++){
