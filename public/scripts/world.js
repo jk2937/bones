@@ -857,17 +857,17 @@ Bones.World = {
 
 				// Movement Bounderies
 
-				if (this.x < 0 && this.move_left) {
+				if (this.x < 0) {
 					this.x = 0
 				}
-				if (this.x > Bones.World.width - this.width && this.move_right) {
+				if (this.x > Bones.World.width - this.widtht) {
 					this.x = Bones.World.width - this.width
 				}
-				if (this.y < 0 && this.move_up) {
+				if (this.y < 0) {
 					this.y = 0
 					this.y_vel = 0 - this.y_vel
 				}
-				if (this.y > Bones.World.height - this.height && this.move_down) {
+				if (this.y > Bones.World.height - this.height) {
 					this.y = Bones.World.height - this.height
 				}
 				
