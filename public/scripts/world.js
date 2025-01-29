@@ -13,6 +13,57 @@ function circle_collision(p1x, p1y, r1, p2x, p2y, r2) {
 	return false;
   }
 }
+function addForceToVector(angle, magnitude, targetAngle, targetMagnitude, rotationSpeed = 0.1, acceleration = 0.1) {
+    // Convert the angles to radians
+    angle = angle * Math.PI / 180;
+    targetAngle = targetAngle * Math.PI / 180;
+
+    // Calculate the difference between the target angle and the current angle
+    let angleDiff = targetAngle - angle;
+
+    // Normalize the angle difference to be between -π and π
+    if (angleDiff > Math.PI) {
+        angleDiff -= 2 * Math.PI;
+    } else if (angleDiff < -Math.PI) {
+        angleDiff += 2 * Math.PI;
+    }
+
+    // Update the angle
+    let newAngle = angle + Math.sign(angleDiff) * Math.min(Math.abs(angleDiff), rotationSpeed);
+
+    // Update the magnitude
+    let magnitudeDiff = targetMagnitude - magnitude;
+    let newMagnitude = magnitude + Math.min(Math.max(magnitudeDiff, -acceleration), acceleration);
+
+    // Return the new angle and magnitude
+    return [newAngle * 180 / Math.PI, newMagnitude];
+}
+function removeXComponent(angle, magnitude) {
+    // Convert the angle to radians
+    let angleInRadians = angle * Math.PI / 180;
+
+    // Convert the vector to Cartesian coordinates
+    let x = magnitude * Math.cos(angleInRadians);
+    let y = magnitude * Math.sin(angleInRadians);
+
+    // Remove the x component
+    x = 0;
+
+    // Convert the vector back to polar coordinates
+    let newMagnitude = Math.sqrt(x * x + y * y);
+    let newAngleInRadians = Math.atan2(y, x);
+
+    // Convert the new angle back to degrees
+    let newAngle = newAngleInRadians * 180 / Math.PI;
+
+    // If the new magnitude is 0, set the new angle to 0
+    if (newMagnitude === 0) {
+        newAngle = 0;
+    }
+
+    // Return the new angle and magnitude
+    return [newAngle, newMagnitude];
+}
 Bones.World = {
     init() {
 
@@ -509,7 +560,9 @@ Bones.World = {
 			}
             this.x_vel = 0;
             this.y_vel = 0;
-            this.max_x_vel = 7
+			this.velocity = 7;
+			this.angle = 90;
+            this.max_x_vel = 14
             this.max_y_vel = 70
             this.x_acc = 1
             this.y_acc = 10 // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
@@ -635,18 +688,52 @@ Bones.World = {
 			}
 			if(this.respawning == false){
 				// Control
-
-				if (this.move_left) {
-					this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+				let new_vec = []
+				if (this.move_up && this.move_right) {
+					//this.angle = 315 / 360
+					//this.velocity = this.max_x_vel
+					new_vec = addForceToVector(this.angle, this.velocity, 315 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
 				}
-				if (this.move_right) {
-					this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+				else if (this.move_right && this.move_down) {
+					//this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+					new_vec = addForceToVector(this.angle, this.velocity, 45 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
 				}
-				if (this.move_down) {
-					this.y_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+				else if (this.move_down && this.move_left) {
+					new_vec = addForceToVector(this.angle, this.velocity, 135 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
 				}
-				if (this.move_up) {
-					this.y_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+				else if (this.move_left && this.move_up) {
+					//this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+					new_vec = addForceToVector(this.angle, this.velocity, 225 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
+				}
+				else if (this.move_up) {
+					new_vec = addForceToVector(this.angle, this.velocity, 270 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
+				}
+				else if (this.move_right) {
+					//this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+					new_vec = addForceToVector(this.angle, this.velocity, 360 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
+				}
+				else if (this.move_down) {
+					new_vec = addForceToVector(this.angle, this.velocity, 90 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
+				}
+				else if (this.move_left) {
+					//this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
+					new_vec = addForceToVector(this.angle, this.velocity, 180 / 360, this.max_x_vel, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale, this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale)
+					this.angle = new_vec[0]
+					this.velocity = new_vec[1]
 				}
 				
 				if(this.Shotgun_cooldown <= 0){
@@ -668,10 +755,10 @@ Bones.World = {
 					this.on_ground = false
 					this.jump_lock = true
 				}*/
-				this.on_ground = true;
+				/*this.on_ground = true;
 				if (!this.move_jump) {
 					this.jump_lock = false
-				}
+				}*/
 
 				// Gravity
 
@@ -679,7 +766,14 @@ Bones.World = {
 
 				// Friction
 
-				if (!this.move_left && !this.move_right) {
+				if(!this.move_left && !this.move_right && !this.move_up && !this.move_down && this.velocity > 0) {
+					if (this.velocity <= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+						this.velocity = 0; // player_ground_friction;
+					} else {
+						this.velocity -= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+					}
+				}
+				/*if (!this.move_left && !this.move_right) {
 					if (this.x_vel > 0) {
 						if (this.on_ground == true) {
 							if (this.x_vel <= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
@@ -728,12 +822,12 @@ Bones.World = {
 							this.y_vel += this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 						}
 					}
-				}
+				}*/
 
 
 				// Maximum Velocities
 
-				if (this.x_vel > this.max_x_vel) {
+				/*if (this.x_vel > this.max_x_vel) {
 					this.x_vel = this.max_x_vel
 				}
 				if (this.x_vel < -this.max_x_vel) {
@@ -744,35 +838,37 @@ Bones.World = {
 				}
 				if (this.y_vel < -this.max_x_vel) {
 					this.y_vel = -this.max_x_vel
+				}*/
+				
+				if (this.velocity > this.max_x_vel) {
+					this.velocity = this.max_x_vel
 				}
 
 				// Commit x and y Velocities
 
-				this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
-				this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
+				/*this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
+				this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;*/
+				
+				this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * Bones.Timer.delta_time * Bones.Timer.timescale
+				this.y += this.velocity * Math.sin(this.angle * 2 * Math.PI) * Bones.Timer.delta_time * Bones.Timer.timescale
+				
+				//this.angle += 0.01 * Bones.Timer.delta_time * Bones.Timer.timescale
 
 
 				// Movement Bounderies
 
-				if (this.x < 0) {
+				if (this.x < 0 && this.move_left) {
 					this.x = 0
-					this.x_vel = 0
 				}
-				if (this.x > Bones.World.width - this.width) {
+				if (this.x > Bones.World.width - this.width && this.move_right) {
 					this.x = Bones.World.width - this.width
-					this.x_vel = 0
 				}
-				if (this.y < 0) {
+				if (this.y < 0 && this.move_up) {
 					this.y = 0
 					this.y_vel = 0 - this.y_vel
-					if (this.y_vel > 0) {
-						this.y_vel = 0
-					}
 				}
-				if (this.y > Bones.World.height - this.height) {
+				if (this.y > Bones.World.height - this.height && this.move_down) {
 					this.y = Bones.World.height - this.height
-					this.y_vel = 0
-					this.on_ground = true
 				}
 				
 				this.x_interp.push(this.x)
@@ -999,6 +1095,8 @@ Bones.World = {
 					this.respawn_timer,
 					this.respawning,
 					this.score,
+					this.angle,
+					this.velocity,
 				])
 		}
 		deserialize(dumps) {
@@ -1038,6 +1136,8 @@ Bones.World = {
 			this.respawn_timer = state[27];
 			this.respawning = state[28]
 			this.score = state[29]
+			this.angle = state[30]
+			this.velocity = state[31]
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
