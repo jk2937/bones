@@ -860,7 +860,7 @@ Bones.World = {
 				if (this.x < 0) {
 					this.x = 0
 				}
-				if (this.x > Bones.World.width - this.widtht) {
+				if (this.x > Bones.World.width - this.width) {
 					this.x = Bones.World.width - this.width
 				}
 				if (this.y < 0) {
