@@ -13,6 +13,30 @@ function circle_collision(p1x, p1y, r1, p2x, p2y, r2) {
 	return false;
   }
 }
+function addVelocity(theta1, v1, theta2, v2) {
+    // Convert angles to radians
+    let theta1InRadians = theta1 * Math.PI / 180;
+    let theta2InRadians = theta2 * Math.PI / 180;
+
+    // Convert to x and y components
+    let vx1 = v1 * Math.cos(theta1InRadians);
+    let vy1 = v1 * Math.sin(theta1InRadians);
+    let vx2 = v2 * Math.cos(theta2InRadians);
+    let vy2 = v2 * Math.sin(theta2InRadians);
+
+    // Add x and y components
+    let newVx = vx1 + vx2;
+    let newVy = vy1 + vy2;
+
+    // Calculate new angle and magnitude
+    let newMagnitude = Math.sqrt(newVx ** 2 + newVy ** 2);
+    let newThetaInRadians = Math.atan2(newVy, newVx);
+
+    // Convert new angle back to degrees
+    let newTheta = newThetaInRadians * 180 / Math.PI;
+
+    return [newTheta, newMagnitude];
+}
 function addForceToVector(angle, magnitude, targetAngle, targetMagnitude, rotationSpeed = 0.1, acceleration = 0.1) {
     // Convert the angles to radians
     angle = angle * Math.PI / 180;
@@ -37,32 +61,6 @@ function addForceToVector(angle, magnitude, targetAngle, targetMagnitude, rotati
 
     // Return the new angle and magnitude
     return [newAngle * 180 / Math.PI, newMagnitude];
-}
-function removeXComponent(angle, magnitude) {
-    // Convert the angle to radians
-    let angleInRadians = angle * Math.PI / 180;
-
-    // Convert the vector to Cartesian coordinates
-    let x = magnitude * Math.cos(angleInRadians);
-    let y = magnitude * Math.sin(angleInRadians);
-
-    // Remove the x component
-    x = 0;
-
-    // Convert the vector back to polar coordinates
-    let newMagnitude = Math.sqrt(x * x + y * y);
-    let newAngleInRadians = Math.atan2(y, x);
-
-    // Convert the new angle back to degrees
-    let newAngle = newAngleInRadians * 180 / Math.PI;
-
-    // If the new magnitude is 0, set the new angle to 0
-    if (newMagnitude === 0) {
-        newAngle = 0;
-    }
-
-    // Return the new angle and magnitude
-    return [newAngle, newMagnitude];
 }
 Bones.World = {
     init() {
@@ -477,7 +475,7 @@ Bones.World = {
 			this.aim = 90;
 			this.Shotgun = false;
 			this.jump = false;
-			this._select = 2;
+			this._select = 3;
 			this.id = id
 		}
 		update() {
@@ -564,10 +562,11 @@ Bones.World = {
 			this.angle = 90;
             this.max_x_vel = 14
             this.max_y_vel = 70
-            this.x_acc = 1
+            this.x_acc = 3
+			this.max_x_vel_aim = 3
             this.y_acc = 10 // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
             this.ground_friction = 0.55
-            this.Pistol_friction = 0.05
+            this.air_friction = 0.05
             this.gravity = 0.25
             this.facing_right = true
 
@@ -582,7 +581,7 @@ Bones.World = {
 				this.move_aim_interp.push(this.move_aim)
 			}
 			this.move_Shotgun = false;
-			this.Shotgun_cooldown = 0;
+			this.fire_cooldown = 0;
             this.move_jump = false;
             this.jump_lock = false;
 			
@@ -602,48 +601,34 @@ Bones.World = {
 			
 			this.interp_cooldown = 50;
 			
-			if (this._class == 'Melee') {
-				this.x_acc = 0.1;
-				this.max_x_vel = 3.5;
-			}
-			
-			if (this._class == 'Pistol') {
-				this.x_acc = 1;
-				this.max_x_vel = 7;
-			}
-			
-			if (this._class == 'Flamethrower') {
-				this.x_acc = 0.2;
-				this.max_x_vel = 4.5;
-			}
-			
-			if (this._class == 'Shotgun') {
-				this.x_acc = 2;
-				this.max_x_vel = 7;
-			}
+			this.change_class('Pistol')
         }
 		change_class(_class) {
 			this._class = _class;
 			
-			/*if (this._class == 'Melee') {
-				this.x_acc = 0.1;
-				this.max_x_vel = 3.5;
+			if (this._class == 'Melee') {
+				this.x_acc = 3
+				this.max_x_vel = 14;
+				this.max_x_vel_aim = 14;
 			}
 			
 			if (this._class == 'Pistol') {
-				this.x_acc = 1;
-				this.max_x_vel = 7;
+				this.x_acc = 3
+				this.max_x_vel = 14;
+				this.max_x_vel_aim = 7;
 			}
 			
 			if (this._class == 'Flamethrower') {
-				this.x_acc = 0.2;
-				this.max_x_vel = 4.5;
+				this.x_acc = 3
+				this.max_x_vel = 14;
+				this.max_x_vel_aim = 14;
 			}
 			
 			if (this._class == 'Shotgun') {
-				this.x_acc = 2;
-				this.max_x_vel = 7;
-			}*/
+				this.x_acc = 3
+				this.max_x_vel = 14;
+				this.max_x_vel_aim = 14;
+			}
 		}
 		deactivate() {
 			this.active = false;
@@ -736,7 +721,7 @@ Bones.World = {
 					this.velocity = new_vec[1]
 				}
 				
-				if(this.Shotgun_cooldown <= 0){
+				if(this.fire_cooldown <= 0){
 					if (this._select == 0) {
 						this.change_class('Melee')
 					}
@@ -783,10 +768,10 @@ Bones.World = {
 							}
 						}
 						if (this.on_ground == false) {
-							if (this.x_vel < this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
-								this.x_vel = this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+							if (this.x_vel < this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+								this.x_vel = this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 							} else {
-								this.x_vel -= this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
+								this.x_vel -= this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
 							}
 						}
 					}
@@ -799,10 +784,10 @@ Bones.World = {
 							}
 						}
 						if (this.on_ground == false) {
-							if (this.x_vel > -this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
-								this.x_vel = -this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale
+							if (this.x_vel > -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
+								this.x_vel = -this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
 							} else {
-								this.x_vel += this.Pistol_friction * Bones.Timer.delta_time * Bones.Timer.timescale
+								this.x_vel += this.air_friction * Bones.Timer.delta_time * Bones.Timer.timescale
 							}
 						}
 					}
@@ -840,8 +825,14 @@ Bones.World = {
 					this.y_vel = -this.max_x_vel
 				}*/
 				
-				if (this.velocity > this.max_x_vel) {
-					this.velocity = this.max_x_vel
+				if(this.fire_cooldown > 0) {
+					if (this.velocity > this.max_x_vel_aim) {
+							this.velocity = this.max_x_vel_aim
+					}
+				} else {
+					if (this.velocity > this.max_x_vel) {
+							this.velocity = this.max_x_vel
+					}
 				}
 
 				// Commit x and y Velocities
@@ -929,29 +920,30 @@ Bones.World = {
 				}
 				this.aim_interp_calc = this.aim_interp_calc / (this.interp_strength+1)
 				
-				if (this.move_Shotgun && this.Shotgun_cooldown <= 0) {
-					this.Shotgun_cooldown = 50
+				if (this.move_Shotgun && this.fire_cooldown <= 0) {
+					this.fire_cooldown = 50
 					let size = 25
 					let offset = 15 + size / 2
 					let ttl = 40
 					let speed = 25
 					let damage = 10
+					let angle = this.move_aim
 					if (this._class == 'Melee') {
 						size = 75
 						offset = 30 + size / 2
 						ttl = 20
 						speed = 2
 						damage = 90
-						this.Shotgun_cooldown = 80
+						this.fire_cooldown = 80
 					}
 					
 					if (this._class == 'Flamethrower') {
 						size = 35
 						offset = 30 + size / 2
 						ttl = 20
-						speed = 8
+						speed = 14
 						damage = 5
-						this.Shotgun_cooldown = 2
+						this.fire_cooldown = 2
 					}
 					
 					if (this._class == 'Pistol') {
@@ -960,33 +952,38 @@ Bones.World = {
 						ttl = 40
 						speed = 25
 						damage = 50
-						this.Shotgun_cooldown = 60
+						this.fire_cooldown = 60
 					}
 					
 					if (this._class == 'Shotgun') {
 						size = 20
 						offset = 30 + size / 2
-						ttl = 7
+						ttl = 15
 						speed = 20
-						damage = 1
-						this.Shotgun_cooldown = 40
+						damage = 2
+						this.fire_cooldown = 40
 						let spread = 90
 						damage = 10
 						if(isServer || this.id == clientId){
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim - 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim - 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
 							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim + 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim - 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim + 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim + 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
 						}
 					}
 					if(isServer || this.id == clientId){
-						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size, damage, this.id, Bones.World.getBulletId()))
+						angle = this.move_aim
+						//new_vec = addVelocity(angle, speed, this.angle * Math.PI / 180, this.velocity)
+						//angle = new_vec[0]
+						//speed = new_vec[1]
+						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId()))
+						console.log(this.angle / angle)
 					}
 				}
-				this.Shotgun_cooldown -= 1 * Bones.Timer.delta_time * Bones.Timer.timescale
-				if (this.Shotgun_cooldown < 0) {
-					this.Shotgun_cooldown = 0;
+				this.fire_cooldown -= 1 * Bones.Timer.delta_time * Bones.Timer.timescale
+				if (this.fire_cooldown < 0) {
+					this.fire_cooldown = 0;
 				}
 			} // ENDIF RESPAWNING
 			
@@ -1034,7 +1031,7 @@ Bones.World = {
 					Bones.Renderer.context.font = "bold 50px Monospace";
 					Bones.Renderer.context.fillStyle = "#495664";
 					Bones.Renderer.context.textAlign = "center";
-					Bones.Renderer.context.fillText(Math.round(this.Shotgun_cooldown), Bones.Renderer.width / 2, Bones.Renderer.height - 20)
+					Bones.Renderer.context.fillText(Math.round(this.fire_cooldown), Bones.Renderer.width / 2, Bones.Renderer.height - 20)
 				}
 				
 				if (this.id != clientId) {
@@ -1075,7 +1072,7 @@ Bones.World = {
 					this.x_acc, 
 					this.y_acc, 
 					this.ground_friction, 
-					this.Pistol_friction, 
+					this.air_friction, 
 					this.gravity, 
 					this.facing_right, 
 					this.move_left, 
@@ -1088,7 +1085,7 @@ Bones.World = {
 					this.on_ground, 
 					this.jump_lock, 
 					this._class, 
-					this.Shotgun_cooldown,
+					this.fire_cooldown,
 					this._select,
 					this.active,
 					this.health,
@@ -1112,8 +1109,8 @@ Bones.World = {
             this.x_acc = state[7]
             this.y_acc = state[8] // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
             this.ground_friction = state[9]
-            this.Pistol_friction = state[10]
-            this.Pistol_friction = state[10]
+            this.air_friction = state[10]
+            this.air_friction = state[10]
             this.gravity = state[11]
             this.facing_right = state[12]
 
@@ -1129,7 +1126,7 @@ Bones.World = {
             this.jump_lock = state[21]
             this._class = state[22]
 			
-            //this.Shotgun_cooldown = state[23]
+            //this.fire_cooldown = state[23]
             this._select = state[24]
             this.active = state[25]
             this.health = state[26]
