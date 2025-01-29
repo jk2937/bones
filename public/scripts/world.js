@@ -354,7 +354,7 @@ Bones.World = {
 		}
 		for (let j = 0; j < this.bullets.length; j++) {
 			for (let i = 0; i < Bones.World.walls.length; i++){
-				if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size)){
+				if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)){
 					this.bullets[j].deactivate()
 				}
 			}
