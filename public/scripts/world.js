@@ -13,29 +13,73 @@ function circle_collision(p1x, p1y, r1, p2x, p2y, r2) {
 	return false;
   }
 }
-function addVelocity(theta1, v1, theta2, v2) {
-    // Convert angles to radians
-    let theta1InRadians = theta1 * Math.PI / 180;
-    let theta2InRadians = theta2 * Math.PI / 180;
+function removeXComponent(angle, magnitude) {
+    // Convert the angle to radians
+    let angleInRadians = angle * Math.PI / 180;
 
-    // Convert to x and y components
-    let vx1 = v1 * Math.cos(theta1InRadians);
-    let vy1 = v1 * Math.sin(theta1InRadians);
-    let vx2 = v2 * Math.cos(theta2InRadians);
-    let vy2 = v2 * Math.sin(theta2InRadians);
+    // Convert the vector to Cartesian coordinates
+    let x = magnitude * Math.cos(angleInRadians);
+    let y = magnitude * Math.sin(angleInRadians);
 
-    // Add x and y components
-    let newVx = vx1 + vx2;
-    let newVy = vy1 + vy2;
+    // Remove the x component
+    x = 0;
 
-    // Calculate new angle and magnitude
-    let newMagnitude = Math.sqrt(newVx ** 2 + newVy ** 2);
-    let newThetaInRadians = Math.atan2(newVy, newVx);
+    // Convert the vector back to polar coordinates
+    let newMagnitude = Math.sqrt(x * x + y * y);
+    let newAngleInRadians = Math.atan2(y, x);
 
-    // Convert new angle back to degrees
-    let newTheta = newThetaInRadians * 180 / Math.PI;
+    // Convert the new angle back to degrees
+    let newAngle = newAngleInRadians * 180 / Math.PI;
 
-    return [newTheta, newMagnitude];
+    // If the new magnitude is 0, set the new angle to 0
+    if (newMagnitude === 0) {
+        newAngle = 0;
+    }
+
+    // Return the new angle and magnitude
+    return [newAngle, newMagnitude];
+}
+function removeYComponent(angle, magnitude) {
+    // Convert the angle to radians
+    let angleInRadians = angle * Math.PI / 180;
+
+    // Convert the vector to Cartesian coordinates
+    let x = magnitude * Math.cos(angleInRadians);
+    let y = magnitude * Math.sin(angleInRadians);
+
+    // Remove the y component
+    y = 0;
+
+    // Convert the vector back to polar coordinates
+    let newMagnitude = Math.sqrt(x * x + y * y);
+    let newAngleInRadians = Math.atan2(y, x);
+
+    // Convert the new angle back to degrees
+    let newAngle = newAngleInRadians * 180 / Math.PI;
+
+    // If the new magnitude is 0, set the new angle to 0
+    if (newMagnitude === 0) {
+        newAngle = 0;
+    }
+
+    // Return the new angle and magnitude
+    return [newAngle, newMagnitude];
+}
+function circleBoxCollision(x1, y1, w, h, x2, y2, r) {
+  // Find the closest point to the circle within the box
+  let closestX = Math.max(x1, Math.min(x2, x1 + w));
+  let closestY = Math.max(y1, Math.min(y2, y1 + h));
+
+  // Calculate the distance between the circle and the closest point
+  let distanceX = x2 - closestX;
+  let distanceY = y2 - closestY;
+
+  // If the distance is less than or equal to the radius, there's a collision
+  if (distanceX * distanceX + distanceY * distanceY <= r * r) {
+    return true;
+  }
+
+  return false;
 }
 function addForceToVector(angle, magnitude, targetAngle, targetMagnitude, rotationSpeed = 0.1, acceleration = 0.1) {
     // Convert the angles to radians
@@ -70,6 +114,19 @@ Bones.World = {
 		
 		this.controllers = []
 		this.bullets = []
+		this.walls = []
+		
+		this.walls.push(new this.Wall(92 * 2, 153 * 2, 45 * 2, 58 * 2))
+		this.walls.push(new this.Wall(313 * 2, 158 * 2, 49 * 2, 43 * 2))
+		this.walls.push(new this.Wall(211 * 2, 310 * 2, 38 * 2, 54 * 2))
+		this.walls.push(new this.Wall(94 * 2, 432 * 2, 57 * 2, 51 * 2))
+		this.walls.push(new this.Wall(301 * 2, 436 * 2, 63 * 2, 48 * 2))
+		this.walls.push(new this.Wall(475 * 2, 0 * 2, 50 * 2, 194 * 2))
+		this.walls.push(new this.Wall(596 * 2, 169 * 2, 403 * 2, 30 * 2))
+		this.walls.push(new this.Wall(478 * 2, 445 * 2, 47 * 2, 557 * 2))
+		this.walls.push(new this.Wall(625 * 2, 574 * 2, 246 * 2, 30 * 2))
+		this.walls.push(new this.Wall(729 * 2, 603 * 2, 31 * 2, 230 * 2))
+		this.walls.push(new this.Wall(629 * 2, 832 * 2, 237 * 2, 36 * 2))
 
         this.menu_items = []
         /*this.create_menu_item(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {})
@@ -226,6 +283,9 @@ Bones.World = {
 			for (let i = 0; i < this.bullets.length; i++) {
 				this.bullets[i].render()
 			}
+			for (let i = 0; i < this.walls.length; i++) {
+				this.walls[i].render()
+			}
 		}
 
         for (let i = 0; i < this.menu_items.length; i++) {
@@ -290,6 +350,17 @@ Bones.World = {
 						this.bullets[j].deactivate()
 					}
 				}
+			}
+		}
+		for (let j = 0; j < this.bullets.length; j++) {
+			for (let i = 0; i < Bones.World.walls.length; i++){
+				if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size)){
+					this.bullets[j].deactivate()
+				}
+			}
+			if (this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
+				this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
+				this.bullets[j].deactivate()	
 			}
 		}
     }, // END FUNCTION tick
@@ -385,6 +456,22 @@ Bones.World = {
 			this.owner = state[8];
 			this.id = state[9];
 		}
+    }, // END CLASS BoxProp
+
+	Wall: class {
+        constructor(x, y, width, height) {
+            this.x = x
+            this.y = y
+            this.width = width
+			this.height = height
+        }
+        render() {
+			Bones.Renderer.context.beginPath();
+			Bones.Renderer.context.strokeStyle = "#495664";
+			Bones.Renderer.context.lineWidth = 8;
+			Bones.Renderer.context.rect(this.x - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y, this.width, this.height);
+			Bones.Renderer.context.stroke();
+        }
     }, // END CLASS BoxProp
 
 
@@ -856,10 +943,33 @@ Bones.World = {
 				}
 				if (this.y < 0) {
 					this.y = 0
-					this.y_vel = 0 - this.y_vel
+					//this.y_vel = 0 - this.y_vel
 				}
 				if (this.y > Bones.World.height - this.height) {
 					this.y = Bones.World.height - this.height
+				}
+				
+				for (let i = 0; i < Bones.World.walls.length; i++){
+					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+						console.log('collided top')
+						this.y = Bones.World.walls[i].y - this.height - 2
+						this.velocity = 0
+					}
+					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+						console.log('collided bottom')
+						this.y = Bones.World.walls[i].y + Bones.World.walls[i].height + 2
+						this.velocity = 0
+					}
+					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+						console.log('collided left')
+						this.x = Bones.World.walls[i].x - this.width - 2
+						this.velocity = 0
+					}
+					if(circleBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+						console.log('collided right')
+						this.x = Bones.World.walls[i].x + Bones.World.walls[i].width + 2
+						this.velocity = 0
+					}
 				}
 				
 				this.x_interp.push(this.x)
