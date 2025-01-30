@@ -151,7 +151,7 @@ Bones.World = {
 		
 		this.winner = -1;
 		this.win_timer = 0;
-		this.win_score = 2;
+		this.win_score = 10;
         /*this.npcs.push(new this.NPC())*/
 		
 		this.load_map()
