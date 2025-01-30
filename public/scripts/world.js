@@ -336,7 +336,6 @@ Bones.World = {
 			for (let y = 0; y < this.tilemap.length; y++) {
 				for (let x = 0; x < this.tilemap[y].length; x++) {
 					if (this.tilemap[y][x] == 1) {
-						console.log('creating wall')
 						this.walls.push(new this.Wall(this.width / this.tilemap[0].length * x, this.height / this.tilemap.length * y, this.width / this.tilemap[0].length, this.height / this.tilemap.length))
 					}
 				}
@@ -355,7 +354,6 @@ Bones.World = {
 			for (let y = 0; y < this.tilemap.length; y++) {
 				for (let x = 0; x < this.tilemap[y].length; x++) {
 					if (this.tilemap[y][x] == 1) {
-						console.log('creating wall')
 						this.walls.push(new this.Wall(this.width / this.tilemap[0].length * x, this.height / this.tilemap.length * y, this.width / this.tilemap[0].length, this.height / this.tilemap.length))
 					}
 				}
@@ -1505,7 +1503,7 @@ Bones.World = {
 					Bones.Renderer.context.fillText("You died! Respawning in " + Math.round(this.respawn_timer), Bones.Renderer.width / 2, Bones.Renderer.height / 2 - 20)
 				}
 			}
- }
+		}
 		serialize() {
 			return JSON.stringify([
 					this.movement_speed, 
