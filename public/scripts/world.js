@@ -246,6 +246,7 @@ Bones.World = {
 					this.player1.x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
 				}
 			}
+			
 			if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
 				
 				if (isServer == false) {
@@ -270,7 +271,21 @@ Bones.World = {
 							);
 						}
 					}
+				}
+			}
+			
+			if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
+				for (let i = 0; i < this.players.length; i++){
 					this.players[i].tick()
+				}
+			}
+			
+			if(!isServer) {
+				for (let i = 0; i < this.players.length; i++) {
+					if (this.players[i].id == clientId) {
+						Bones.Renderer.camera_x = this.players[0].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
+						Bones.Renderer.camera_y = this.players[0].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
+					}
 				}
 			}
 
@@ -313,15 +328,6 @@ Bones.World = {
 				}
 				for (i = 0; i < Bones.DebugDisplay.stress_loops * rand; i++) {
 					Bones.Renderer.context.fillText("", 0, 0)
-				}
-			}
-			
-			if(!isServer) {
-				for (let i = 0; i < this.players.length; i++) {
-					if (this.players[i].id == clientId) {
-						Bones.Renderer.camera_x = this.players[0].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
-						Bones.Renderer.camera_y = this.players[0].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
-					}
 				}
 			}
 			for (let j = 0; j < this.bullets.length; j++) {
@@ -795,6 +801,35 @@ Bones.World = {
                 this.move_down = false;
             }
 			this._select = _select
+				
+			if(!isServer) {
+				if (this.id == clientId) {
+					let mx = Bones.Input.Mouse.ControlStates.x + Bones.Renderer.camera_x
+					let my = Bones.Input.Mouse.ControlStates.y + Bones.Renderer.camera_y
+					
+					/*//mouse
+					Bones.Renderer.context.beginPath();
+					Bones.Renderer.context.arc(mx, my, 10, 0, 2 * Math.PI);
+					Bones.Renderer.context.stroke();*/
+					
+					let x = mx - this.x_interp_calc - this.width / 2 
+					let y = my - this.y_interp_calc - this.height / 2 
+					
+					var dAx = x;
+					var dAy = y;
+					var dBx = 0;
+					var dBy = -1;
+					var angle = Math.atan2(dAx * dBy - dAy * dBx, dAx * dBx + dAy * dBy);
+					var degree_angle = 360 - angle * (180 / Math.PI);
+					
+					this.move_aim = (degree_angle - 90) / 360
+					for (let i = 0; i < Bones.World.controllers.length; i++) {
+						if (Bones.World.controllers[i].id == this.id) {
+							Bones.World.controllers[i].aim = this.move_aim
+						}
+					}
+				}
+			}
         }
         tick() {
 			this.interp_cooldown -= 1;
@@ -1044,35 +1079,6 @@ Bones.World = {
 				this.y_interp_calc = this.y_interp_calc / (this.interp_strength+1)
 				//Bones.Renderer.context.drawImage(Bones.Assets.gfx_player, this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height)
 				//let aim = (this.move_aim - 90) / 360
-				
-				if(!isServer) {
-					if (this.id == clientId) {
-						let mx = Bones.Input.Mouse.ControlStates.x + Bones.Renderer.camera_x
-						let my = Bones.Input.Mouse.ControlStates.y + Bones.Renderer.camera_y
-						
-						/*//mouse
-						Bones.Renderer.context.beginPath();
-						Bones.Renderer.context.arc(mx, my, 10, 0, 2 * Math.PI);
-						Bones.Renderer.context.stroke();*/
-						
-						let x = mx - this.x_interp_calc - this.width / 2 
-						let y = my - this.y_interp_calc - this.height / 2 
-						
-						var dAx = x;
-						var dAy = y;
-						var dBx = 0;
-						var dBy = -1;
-						var angle = Math.atan2(dAx * dBy - dAy * dBx, dAx * dBx + dAy * dBy);
-						var degree_angle = 360 - angle * (180 / Math.PI);
-						
-						this.move_aim = (degree_angle - 90) / 360
-						for (let i = 0; i < Bones.World.controllers.length; i++) {
-							if (Bones.World.controllers[i].id == this.id) {
-								Bones.World.controllers[i].aim = this.move_aim
-							}
-						}
-					}
-				}
 				
 				this.move_aim_interp.push(this.move_aim)
 				this.move_aim_interp = this.move_aim_interp.slice(0-this.interp_strength)
