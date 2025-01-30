@@ -22,12 +22,13 @@ function netplay_init() {
     });
 	socket.on('server bullet state', function(data) {
 		let state = JSON.parse(data[1]);
-		if(state[8] != clientId) {
-			for (let i = 0; i < Bones.World.bullets.length; i++){
-				if (Bones.World.bullets[i].id == data[0]) {
-					Bones.World.bullets[i].deserialize(data[1])
-				}
+		for (let i = 0; i < Bones.World.bullets.length; i++){
+			if (Bones.World.bullets[i].id == data[0]) {
+				Bones.World.bullets[i].deserialize(data[1])
+				console.log('deserialized server bullet state ' + data[0])
 			}
+		}
+		if(state[8] != clientId) {
 			let bullet_in_world = false
 			for (let i = 0; i < Bones.World.bullets.length; i++){
 				if (Bones.World.bullets[i].id == data[0]) {
@@ -54,5 +55,5 @@ function netplay_init() {
 			}
 		}
 	}
-	setInterval(networkloop, 20)
+	setInterval(networkloop, 200)
 }

@@ -477,14 +477,37 @@ Bones.World = {
 			
 			for (let j = 0; j < this.bullets.length; j++) {
 				for (let i = 0; i < Bones.World.walls.length; i++){
-					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)){
-						this.bullets[j].deactivate()
+					if(isServer) {
+						if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)
+							|| this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
+					this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
+							this.bullets[j].deactivate()
+						}
+					}
+					else {
+						if(this.bullets[j].owner == clientId) {
+							if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x_interp_calc + this.bullets[j].size / 2, this.bullets[j].y_interp_calc + this.bullets[j].size / 2, this.bullets[j].size / 2)
+								|| this.bullets[j].x_interp_calc + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x_interp_calc + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
+					this.bullets[j].y_interp_calc + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y_interp_calc + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
+								this.bullets[j].deactivate()
+							}
+						} else {
+							if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)
+							|| this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
+					this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
+								this.bullets[j].deactivate()
+							}
+						}
 					}
 				}
-				if (this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
-					this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
-					this.bullets[j].deactivate()	
-				}
+				/*if (){
+					if(isServer) {
+							this.bullets[j].deactivate()
+						}
+					else if(this.bullets[j].owner != clientId) {
+						this.bullets[j].deactivate()	
+					}
+				}*/
 			}
 			
 			for (let i = 0; i < this.players.length; i++) {
@@ -610,7 +633,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.31!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.32!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -652,13 +675,14 @@ Bones.World = {
         this.menu_items.push(new MenuItem(x, y, width, height, text, on_activate_function, on_deactivate_function, mode=mode))
     },
 	serialize() {
-		return JSON.stringify([this.winner, this.win_timer, this.map_select])
+		return JSON.stringify([this.winner, this.win_timer, this.map_select, this.bullet_id])
 	},
 	deserialize(dumps) {
 		const state = JSON.parse(dumps);
 		this.winner = state[0];
 		this.win_timer = state[1];
 		this.map_select = state[2];
+		this.bullet_id = state[3];
 	},
     CircleProp: class {
         constructor(x, y, radius, angle, anchored) {
@@ -703,6 +727,17 @@ Bones.World = {
         constructor(x, y, velocity, angle, ttl, size, damage, owner, id) {
             this.x = x
             this.y = y
+			
+			this.interp_strength = 10
+			this.x_interp = []
+			this.y_interp = []
+			this.x_interp_calc = this.x
+			this.y_interp_calc = this.y
+			for (let i = 0; i < this.interp_strength; i++) {
+				this.x_interp.push(this.x)
+				this.y_interp.push(this.y)
+			}
+			
             this.velocity = velocity
             this.angle = angle;
             this.ttl = ttl;
@@ -724,12 +759,29 @@ Bones.World = {
 			if (this.ttl <= 0) {
 				this.deactivate()
 			}
+				
+			this.x_interp.push(this.x)
+			this.y_interp.push(this.y)
+			this.x_interp = this.x_interp.slice(0-this.interp_strength)
+			this.y_interp = this.y_interp.slice(0-this.interp_strength)
+			this.x_interp_calc = this.x
+			this.y_interp_calc = this.y
+			for (let i = 0; i < this.interp_strength; i++) {
+				this.x_interp_calc = this.x_interp_calc + this.x_interp[this.x_interp.length-1-i]
+				this.y_interp_calc = this.y_interp_calc + this.y_interp[this.y_interp.length-1-i]
+			}
+			this.x_interp_calc = this.x_interp_calc / (this.interp_strength+1)
+			this.y_interp_calc = this.y_interp_calc / (this.interp_strength+1)
 		}
         render() {
 			Bones.Renderer.context.beginPath();
 			Bones.Renderer.context.strokeStyle = Bones.World.colors[this.owner%Bones.World.colors.length]
 			Bones.Renderer.context.lineWidth = 4;
-			Bones.Renderer.context.arc(this.x + this.size / 2 - Bones.Renderer.camera_x, this.y + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
+			if(this.owner == clientId) {
+				Bones.Renderer.context.arc(this.x_interp_calc + this.size / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
+			} else {
+				Bones.Renderer.context.arc(this.x + this.size / 2 - Bones.Renderer.camera_x, this.y + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
+			}
 			Bones.Renderer.context.stroke();
         }
 		serialize() {
