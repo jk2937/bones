@@ -167,14 +167,11 @@ Bones.World = {
 				Bones.Renderer.context.lineWidth = 1;
 				Bones.Renderer.context.rect((0 - Bones.Renderer.camera_x % size + i * size) % (size * cols) - size, 0 - Bones.Renderer.camera_y % size + (Math.floor(i / cols) * size ) - size, size, size);
 				Bones.Renderer.context.stroke();
-
-				// Stroke it (Do the Drawing)
-				Bones.Renderer.context.stroke();
 			}
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.24!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.25!", Bones.Renderer.canvas.width / 2, 25)
 			
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
@@ -195,6 +192,37 @@ Bones.World = {
 			}
 			
 			Bones.DebugDisplay.render()
+			
+			Bones.Renderer.context.beginPath();
+			Bones.Renderer.context.strokeStyle = "#495664";
+			Bones.Renderer.context.lineWidth = 4;
+			let reticle_width = 15
+			Bones.Renderer.context.arc(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y, reticle_width, 0, 2 * Math.PI);
+			Bones.Renderer.context.stroke();
+			
+			Bones.Renderer.context.beginPath();
+			Bones.Renderer.context.strokeStyle = "#495664";
+			Bones.Renderer.context.lineWidth = 4;
+			Bones.Renderer.context.beginPath();
+			
+			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x + 15, Bones.Input.Mouse.ControlStates.y);
+			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x + 22, Bones.Input.Mouse.ControlStates.y);
+			
+			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x - 15, Bones.Input.Mouse.ControlStates.y);
+			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x - 22, Bones.Input.Mouse.ControlStates.y);
+			
+			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y + 15);
+			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y + 22);
+			
+			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y - 15);
+			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y - 22);
+			Bones.Renderer.context.stroke();
+			
+			
+			reticle_width = 15
+			Bones.Renderer.context.beginPath();
+			Bones.Renderer.context.arc(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y, 1, 0, 2 * Math.PI);
+			Bones.Renderer.context.stroke();
 			
 		}
 		
