@@ -8,6 +8,8 @@ app.use(express.static('public'));
 
 isServer = true
 
+server_network_queue = []
+
 function _import(file) {
 	// Read the contents of myScript.js
 	const scriptContent = fs.readFileSync(file, 'utf8');
@@ -66,6 +68,11 @@ io.on('connection', (socket) => {
 	});
 	
 	function sendloop() {
+		for (let i = 0; i < server_network_queue.length; i++) {
+			socket.emit(server_network_queue[i][0], server_network_queue[i][1])
+			socket.broadcast.emit(server_network_queue[i][0], server_network_queue[i][1])
+		}
+		server_network_queue = []
 		for (i = 0; i < Bones.World.players.length; i++) {
 			socket.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
 			socket.broadcast.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
@@ -81,7 +88,7 @@ io.on('connection', (socket) => {
 		}
 	}
 	
-	setInterval(sendloop, 200);
+	setInterval(sendloop, 20);
 
 	socket.on('disconnect', () => {
 		for (let i = 0; i < Bones.World.players.length; i++) {

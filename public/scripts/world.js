@@ -513,28 +513,81 @@ Bones.World = {
 			for (let i = 0; i < this.players.length; i++) {
 				for (let j = 0; j < this.bullets.length; j++) {
 					if(this.players[i].id != this.bullets[j].owner/* || this.bullets[j].size > 70*/) {
-						if (circle_collision(
-							this.players[i].x + this.players[i].width / 2, 
-							this.players[i].y + this.players[i].height / 2,
-							this.players[i].width / 2,
-							this.bullets[j].x + this.bullets[j].size / 2,
-							this.bullets[j].y + this.bullets[j].size / 2,
-							this.bullets[j].size / 2
-						) && this.players[i].respawning == false) {
-							this.players[i].health -= this.bullets[j].damage
-							if (this.players[i].health <= 0) {
-								this.players[i].health = 0
-								for (let k = 0; k < this.players.length; k++) {
-									if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
-										this.players[k].score ++
-										if (this.players[i].health <= 0) {
-											this.players[i].respawn_timer = 175;
-											this.players[i].respawning = true;
+						
+						if(isServer) {
+							if (circle_collision(
+								this.players[i].x + this.players[i].width / 2, 
+								this.players[i].y + this.players[i].height / 2,
+								this.players[i].width / 2,
+								this.bullets[j].x + this.bullets[j].size / 2,
+								this.bullets[j].y + this.bullets[j].size / 2,
+								this.bullets[j].size / 2
+							) && this.players[i].respawning == false) {
+								this.players[i].health -= this.bullets[j].damage
+								if (this.players[i].health <= 0) {
+									this.players[i].health = 0
+									for (let k = 0; k < this.players.length; k++) {
+										if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
+											this.players[k].score ++
+											if (this.players[i].health <= 0) {
+												this.players[i].respawn_timer = 175;
+												this.players[i].respawning = true;
+											}
 										}
 									}
 								}
+								this.bullets[j].deactivate()
 							}
-							this.bullets[j].deactivate()
+						} else {
+							if(this.bullets[j].owner == clientId) {
+								if (circle_collision(
+								this.players[i].x + this.players[i].width / 2, 
+								this.players[i].y + this.players[i].height / 2,
+								this.players[i].width / 2,
+								this.bullets[j].x_interp_calc + this.bullets[j].size / 2,
+								this.bullets[j].y_interp_calc + this.bullets[j].size / 2,
+								this.bullets[j].size / 2
+								) && this.players[i].respawning == false) {
+									/*this.players[i].health -= this.bullets[j].damage
+									if (this.players[i].health <= 0) {
+										this.players[i].health = 0
+										for (let k = 0; k < this.players.length; k++) {
+											if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
+												this.players[k].score ++
+												if (this.players[i].health <= 0) {
+													this.players[i].respawn_timer = 175;
+													this.players[i].respawning = true;
+												}
+											}
+										}
+									}*/
+									this.bullets[j].deactivate()
+								}
+							} else {
+								if (circle_collision(
+								this.players[i].x + this.players[i].width / 2, 
+								this.players[i].y + this.players[i].height / 2,
+								this.players[i].width / 2,
+								this.bullets[j].x + this.bullets[j].size / 2,
+								this.bullets[j].y + this.bullets[j].size / 2,
+								this.bullets[j].size / 2
+								) && this.players[i].respawning == false) {
+									/*this.players[i].health -= this.bullets[j].damage
+									if (this.players[i].health <= 0) {
+										this.players[i].health = 0
+										for (let k = 0; k < this.players.length; k++) {
+											if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
+												this.players[k].score ++
+												if (this.players[i].health <= 0) {
+													this.players[i].respawn_timer = 175;
+													this.players[i].respawning = true;
+												}
+											}
+										}
+									}*/
+									this.bullets[j].deactivate()
+								}
+							}
 						}
 					}
 				}
@@ -633,7 +686,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.32!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.33!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -728,7 +781,7 @@ Bones.World = {
             this.x = x
             this.y = y
 			
-			this.interp_strength = 10
+			this.interp_strength = 3
 			this.x_interp = []
 			this.y_interp = []
 			this.x_interp_calc = this.x
@@ -751,6 +804,9 @@ Bones.World = {
 			this.active = false
 			this.velocity = 0
 			this.damage = 0
+			if(isServer) {
+				server_network_queue.push(["server bullet deactivate", this.id])
+			}
 		}
 		tick () {
 			this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * Bones.Timer.delta_time * Bones.Timer.timescale

@@ -43,6 +43,14 @@ function netplay_init() {
 			}
 		}
     });
+	socket.on('server bullet deactivate', function(data) {
+		for(i = 0; i < Bones.World.bullets.length; i++) {
+			if(Bones.World.bullets[i].id == data) {
+				Bones.World.bullets[i].deactivate()
+				console.log('deactivated bulled')
+			}
+		}
+    });
 	socket.on('server world state', function(data) {
 		Bones.World.deserialize(data)
 		Bones.World.load_map()
