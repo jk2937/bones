@@ -170,7 +170,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.20!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.21!", Bones.Renderer.canvas.width / 2, 25)
 			
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
@@ -647,9 +647,9 @@ Bones.World = {
             this.y_vel = 0;
 			this.velocity = 7;
 			this.angle = 90;
-            this.max_x_vel = 14
+            this.max_x_vel = 7
             this.max_y_vel = 70
-            this.x_acc = 3
+            this.x_acc = 1.5
 			this.max_x_vel_aim = 3
             this.y_acc = 10 // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
             this.ground_friction = 0.55
@@ -694,27 +694,27 @@ Bones.World = {
 			this._class = _class;
 			
 			if (this._class == 'Melee') {
-				this.x_acc = 3
-				this.max_x_vel = 14;
-				this.max_x_vel_aim = 14;
-			}
-			
-			if (this._class == 'Pistol') {
-				this.x_acc = 3
-				this.max_x_vel = 14;
+				this.x_acc = 1.5
+				this.max_x_vel = 7;
 				this.max_x_vel_aim = 7;
 			}
 			
+			if (this._class == 'Pistol') {
+				this.x_acc = 1.5
+				this.max_x_vel = 7;
+				this.max_x_vel_aim = 3.5;
+			}
+			
 			if (this._class == 'Flamethrower') {
-				this.x_acc = 3
-				this.max_x_vel = 14;
-				this.max_x_vel_aim = 14;
+				this.x_acc = 1.5
+				this.max_x_vel = 7;
+				this.max_x_vel_aim = 7;
 			}
 			
 			if (this._class == 'Shotgun') {
-				this.x_acc = 3
-				this.max_x_vel = 14;
-				this.max_x_vel_aim = 14;
+				this.x_acc = 1.5
+				this.max_x_vel = 7;
+				this.max_x_vel_aim = 7;
 			}
 		}
 		deactivate() {
@@ -954,24 +954,24 @@ Bones.World = {
 				}
 				
 				for (let i = 0; i < Bones.World.walls.length; i++){
-					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
 						console.log('collided top')
-						this.y = Bones.World.walls[i].y - this.height - 2
+						this.y--
 						this.velocity = 0
 					}
-					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
 						console.log('collided bottom')
-						this.y = Bones.World.walls[i].y + Bones.World.walls[i].height + 2
+						this.y++
 						this.velocity = 0
 					}
-					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
 						console.log('collided left')
-						this.x = Bones.World.walls[i].x - this.width - 2
+						this.x--
 						this.velocity = 0
 					}
-					if(circleBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+					while(circleBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
 						console.log('collided right')
-						this.x = Bones.World.walls[i].x + Bones.World.walls[i].width + 2
+						this.x++
 						this.velocity = 0
 					}
 				}
@@ -1074,7 +1074,7 @@ Bones.World = {
 						offset = 30 + size / 2
 						ttl = 15
 						speed = 20
-						damage = 2
+						damage = 4
 						this.fire_cooldown = 40
 						let spread = 90
 						damage = 10
@@ -1208,6 +1208,7 @@ Bones.World = {
 					this.score,
 					this.angle,
 					this.velocity,
+					this.just_respawned,
 				])
 		}
 		deserialize(dumps) {
@@ -1249,6 +1250,7 @@ Bones.World = {
 			this.score = state[29]
 			this.angle = state[30]
 			this.velocity = state[31]
+			this.just_respawned = state[32]
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
