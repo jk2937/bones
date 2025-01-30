@@ -781,7 +781,7 @@ Bones.World = {
             this.x = x
             this.y = y
 			
-			this.interp_strength = 3
+			this.interp_strength = 10
 			this.x_interp = []
 			this.y_interp = []
 			this.x_interp_calc = this.x
