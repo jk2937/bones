@@ -149,7 +149,7 @@ Bones.World = {
 		
 		this.winner = -1;
 		this.win_timer = 0;
-		this.win_score = 3;
+		this.win_score = 10;
         /*this.npcs.push(new this.NPC())*/
 
 		this.colors = [
@@ -570,7 +570,12 @@ Bones.World = {
 				Bones.Renderer.context.font = "bold 24px Monospace";
 				Bones.Renderer.context.fillStyle = "#495664";
 				Bones.Renderer.context.textAlign = "center";
-				Bones.Renderer.context.fillText("Game over! Player " + (this.winner + 1) + " wins!", Bones.Renderer.width / 2, Bones.Renderer.height / 2 - 20)
+				Bones.Renderer.context.fillText("Game over!", Bones.Renderer.width / 2, Bones.Renderer.height / 2 - 80)
+				Bones.Renderer.context.fillText("Congradulations", Bones.Renderer.width / 2, Bones.Renderer.height / 2 - 50)
+				Bones.Renderer.context.fillStyle = Bones.World.colors[this.winner%Bones.World.colors.length];
+				Bones.Renderer.context.fillText("Player " + (this.winner + 1), Bones.Renderer.width / 2, Bones.Renderer.height / 2 - 20)
+				Bones.Renderer.context.fillStyle = "#495664";
+				Bones.Renderer.context.fillText("You win!", Bones.Renderer.width / 2, Bones.Renderer.height / 2 + 10)
 			}
 			this.win_timer += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
 			if(this.win_timer > 400) {
