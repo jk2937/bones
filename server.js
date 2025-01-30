@@ -74,6 +74,8 @@ io.on('connection', (socket) => {
 			socket.emit('server bullet state', [Bones.World.bullets[i].id, Bones.World.bullets[i].serialize()])
 			socket.broadcast.emit('server bullet state', [Bones.World.bullets[i].id, Bones.World.bullets[i].serialize()])
 		}
+		socket.emit('server world state', Bones.World.serialize())
+		socket.broadcast.emit('server world state', Bones.World.serialize())
 	}
 	
 	setInterval(sendloop, 20);

@@ -121,6 +121,7 @@ Bones.World = {
 		this.bullets = []
 		this.walls = []
 		
+		/*
 		this.walls.push(new this.Wall(92 * 2, 153 * 2, 45 * 2, 58 * 2))
 		this.walls.push(new this.Wall(313 * 2, 158 * 2, 49 * 2, 43 * 2))
 		this.walls.push(new this.Wall(211 * 2, 310 * 2, 38 * 2, 54 * 2))
@@ -132,6 +133,7 @@ Bones.World = {
 		this.walls.push(new this.Wall(625 * 2, 574 * 2, 246 * 2, 30 * 2))
 		this.walls.push(new this.Wall(729 * 2, 603 * 2, 31 * 2, 230 * 2))
 		this.walls.push(new this.Wall(629 * 2, 832 * 2, 237 * 2, 36 * 2))
+		*/
 
         this.menu_items = []
         /*this.create_menu_item(Bones.Renderer.width - 280, 50, 250, 300, "Menu", function() {})
@@ -144,13 +146,15 @@ Bones.World = {
 
         this.npcs = []
 		
-		this.width = 2000
-		this.height = 2000
+		this.map_select = 0
+		this.num_maps = 2
 		
 		this.winner = -1;
 		this.win_timer = 0;
-		this.win_score = 10;
+		this.win_score = 2;
         /*this.npcs.push(new this.NPC())*/
+		
+		this.load_map()
 
 		this.colors = [
 			//'AliceBlue',
@@ -302,6 +306,62 @@ Bones.World = {
 			//'YellowGreen',
 		]
     }, // END FUNCTION init
+	load_map() {
+		if(this.map_select == 0){
+			this.width = 2000
+			this.height = 2000
+			this.tilemap = [
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+				[0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+			]
+			this.walls = []
+			for (let y = 0; y < this.tilemap.length; y++) {
+				for (let x = 0; x < this.tilemap[y].length; x++) {
+					if (this.tilemap[y][x] == 1) {
+						console.log('creating wall')
+						this.walls.push(new this.Wall(this.width / this.tilemap[0].length * x, this.height / this.tilemap.length * y, this.width / this.tilemap[0].length, this.height / this.tilemap.length))
+					}
+				}
+			}
+		} else {
+			this.width = 3000
+			this.height = 800
+			this.tilemap = [
+				[0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+				[0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+				[0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+			]
+			this.walls = []
+			for (let y = 0; y < this.tilemap.length; y++) {
+				for (let x = 0; x < this.tilemap[y].length; x++) {
+					if (this.tilemap[y][x] == 1) {
+						console.log('creating wall')
+						this.walls.push(new this.Wall(this.width / this.tilemap[0].length * x, this.height / this.tilemap.length * y, this.width / this.tilemap[0].length, this.height / this.tilemap.length))
+					}
+				}
+			}
+		}
+	},
     tick() {
 		if (isServer == false) {
 			Bones.DebugDisplay.render()
@@ -552,7 +612,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.28!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.29!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -581,6 +641,8 @@ Bones.World = {
 			if(this.win_timer > 400) {
 				this.win_timer = 0;
 				this.winner = -1;
+				this.map_select = (this.map_select + 1) % this.num_maps
+				this.load_map()
 				for (let i = 0; i < this.players.length; i++) {
 					this.players[i].score = 0;
 					this.players[i].respawn()
@@ -591,7 +653,15 @@ Bones.World = {
     create_menu_item(x, y, width, height, text, on_activate_function, on_deactivate_function, mode='default') {
         this.menu_items.push(new MenuItem(x, y, width, height, text, on_activate_function, on_deactivate_function, mode=mode))
     },
-     
+	serialize() {
+		return JSON.stringify([this.winner, this.win_timer, this.map_select])
+	},
+	deserialize(dumps) {
+		const state = JSON.parse(dumps);
+		this.winner = state[0];
+		this.win_timer = state[1];
+		this.map_select = state[2];
+	},
     CircleProp: class {
         constructor(x, y, radius, angle, anchored) {
             this.x = x

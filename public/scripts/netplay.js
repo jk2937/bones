@@ -42,6 +42,10 @@ function netplay_init() {
 			}
 		}
     });
+	socket.on('server world state', function(data) {
+		Bones.World.deserialize(data)
+		Bones.World.load_map()
+    });
 	
 	function networkloop() {
 		for (let i = 0; i < Bones.World.controllers.length; i++) {
