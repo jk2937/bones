@@ -170,7 +170,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.21!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.22!", Bones.Renderer.canvas.width / 2, 25)
 			
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
@@ -269,25 +269,6 @@ Bones.World = {
 			}
 		}*/
 
-        for (let i = 0; i < this.bullets.length; i++) {
-            this.bullets[i].tick()
-			if (this.bullets[i].active == false) {
-				this.bullets.splice(i, 1)
-			}
-        }
-
-
-        // Todo: move this
-
-		if(!isServer) {
-			for (let i = 0; i < this.bullets.length; i++) {
-				this.bullets[i].render()
-			}
-			for (let i = 0; i < this.walls.length; i++) {
-				this.walls[i].render()
-			}
-		}
-
         for (let i = 0; i < this.menu_items.length; i++) {
             this.menu_items[i].read_input()
             this.menu_items[i].render()
@@ -321,6 +302,17 @@ Bones.World = {
 				}
 			}
 		}
+		for (let j = 0; j < this.bullets.length; j++) {
+			for (let i = 0; i < Bones.World.walls.length; i++){
+				if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)){
+					this.bullets[j].deactivate()
+				}
+			}
+			if (this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
+				this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
+				this.bullets[j].deactivate()	
+			}
+		}
 		
 		for (let i = 0; i < this.players.length; i++) {
 			for (let j = 0; j < this.bullets.length; j++) {
@@ -352,15 +344,20 @@ Bones.World = {
 				}
 			}
 		}
-		for (let j = 0; j < this.bullets.length; j++) {
-			for (let i = 0; i < Bones.World.walls.length; i++){
-				if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)){
-					this.bullets[j].deactivate()
-				}
+
+        for (let i = 0; i < this.bullets.length; i++) {
+            this.bullets[i].tick()
+			if (this.bullets[i].active == false) {
+				this.bullets.splice(i, 1)
 			}
-			if (this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
-				this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
-				this.bullets[j].deactivate()	
+        }
+
+		if(!isServer) {
+			for (let i = 0; i < this.bullets.length; i++) {
+				this.bullets[i].render()
+			}
+			for (let i = 0; i < this.walls.length; i++) {
+				this.walls[i].render()
 			}
 		}
     }, // END FUNCTION tick
