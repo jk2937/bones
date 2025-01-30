@@ -13,6 +13,11 @@ function circle_collision(p1x, p1y, r1, p2x, p2y, r2) {
 	return false;
   }
 }
+function seeded_random(seed) {
+	let state = seed;
+	state = (1103515245 * state + 12345) % 2**31;
+    return state / 2**31;
+}
 function removeXComponent(angle, magnitude) {
     // Convert the angle to radians
     let angleInRadians = angle * Math.PI / 180;
@@ -144,71 +149,163 @@ Bones.World = {
 		
 		this.winner = -1;
 		this.win_timer = 0;
-		this.win_score = 10;
+		this.win_score = 3;
         /*this.npcs.push(new this.NPC())*/
 
-
+		this.colors = [
+			//'AliceBlue',
+			//'AntiqueWhite',
+			//'Aqua',
+			//'Aquamarine',
+			//'Azure',
+			//'Beige',
+			//'Bisque',
+			//'Black',
+			//'BlanchedAlmond',
+			'Blue',
+			'BlueViolet',
+			'Brown',
+			//'BurlyWood',
+			//'CadetBlue',
+			//'Chartreuse',
+			//'Chocolate',
+			//'Coral',
+			//'CornflowerBlue',
+			'Crimson',
+			//'Cyan',
+			'DarkBlue',
+			//'DarkCyan',
+			//'DarkGoldenRod',
+			//'DarkGray',
+			//'DarkGrey',
+			'DarkGreen',
+			//'DarkKhaki',
+			'DarkMagenta',
+			//'DarkOliveGreen',
+			//'DarkOrange',
+			//'DarkOrchid',
+			'DarkRed',
+			//'DarkSalmon',
+			//'DarkSeaGreen',
+			'DarkSlateBlue',
+			//'DarkSlateGray',
+			//'DarkSlateGrey',
+			//'DarkTurquoise',
+			'DarkViolet',
+			'DeepPink',
+			//'DeepSkyBlue',
+			//'DimGray',
+			//'DimGrey',
+			//'DodgerBlue',
+			'FireBrick',
+			//'FloralWhite',
+			'ForestGreen',
+			'Fuchsia',
+			//'Gainsboro',
+			//'GhostWhite',
+			//'Gold',
+			'GoldenRod',
+			//'Gray',
+			//'Grey',
+			'Green',
+			//'GreenYellow',
+			//'HoneyDew',
+			'HotPink',
+			'IndianRed',
+			'Indigo',
+			//Ivory',
+			//'Khaki',
+			//'Lavender',
+			//'LavenderBlush',
+			//'LawnGreen',
+			//'LemonChiffon',
+			//'LightBlue',
+			//'LightCoral',
+			//'LightCyan',
+			//'LightGoldenRodYellow',
+			//'LightGray',
+			//'LightGrey',
+			//'LightGreen',
+			//'LightPink',
+			//'LightSalmon',
+			//'LightSeaGreen',
+			//'LightSkyBlue',
+			//'LightSlateGray',
+			//'LightSlateGrey',
+			//'LightSteelBlue',
+			//'LightYellow',
+			//'Lime',
+			//'LimeGreen',
+			//'Linen',
+			'Magenta',
+			'Maroon',
+			//'MediumAquaMarine',
+			'MediumBlue',
+			//'MediumOrchid',
+			//'MediumPurple',
+			//'MediumSeaGreen',
+			//'MediumSlateBlue',
+			//'MediumSpringGreen',
+			//'MediumTurquoise',
+			'MediumVioletRed',
+			'MidnightBlue',
+			//'MintCream',
+			//'MistyRose',
+			//'Moccasin',
+			//'NavajoWhite',
+			//'Navy',
+			//'OldLace',
+			//'Olive',
+			//'OliveDrab',
+			//'Orange',
+			'OrangeRed',
+			//'Orchid',
+			//'PaleGoldenRod',
+			//'PaleGreen',
+			//'PaleTurquoise',
+			//'PaleVioletRed',
+			//'PapayaWhip',
+			//'PeachPuff',
+			//'Peru',
+			//'Pink',
+			//'Plum',
+			//'PowderBlue',
+			'Purple',
+			//'RebeccaPurple',
+			'Red',
+			//'RosyBrown',
+			//'RoyalBlue',
+			//'SaddleBrown',
+			//'Salmon',
+			//'SandyBrown',
+			//'SeaGreen',
+			//'SeaShell',
+			'Sienna',
+			//'Silver',
+			//'SkyBlue',
+			//'SlateBlue',
+			//'SlateGray',
+			//'SlateGrey',
+			//'Snow',
+			//'SpringGreen',
+			//'SteelBlue',
+			//'Tan',
+			'Teal',
+			//'Thistle',
+			//'Tomato',
+			//'Turquoise',
+			//'Violet',
+			//'Wheat',
+			//'White',
+			//'WhiteSmoke',
+			//'Yellow',
+			//'YellowGreen',
+		]
     }, // END FUNCTION init
     tick() {
 		if (isServer == false) {
-
-			Bones.Input.process_buffers()
-			
-			Bones.Renderer.context.font = "bold 24px Monospace";
-			Bones.Renderer.context.fillStyle = "#495664";
-			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.27!", Bones.Renderer.canvas.width / 2, 25)
-			
-			Bones.Renderer.context.font = "bold 24px Monospace";
-			Bones.Renderer.context.fillStyle = "#495664";
-			Bones.Renderer.context.textAlign = "left";
-			Bones.Renderer.context.fillText("1. Mine", 30, Bones.Renderer.height - 100)
-			Bones.Renderer.context.fillText("2. Flamethrower", 30, Bones.Renderer.height - 75)
-			Bones.Renderer.context.fillText("3. Shotgun", 30, Bones.Renderer.height - 50)
-			Bones.Renderer.context.fillText("4. Pistol", 30, Bones.Renderer.height - 25)
-
-			Bones.Renderer.context.stroke();
-			
-			for (let i = 0; i < this.players.length; i++) {
-				Bones.Renderer.context.font = "bold 24px Monospace";
-				Bones.Renderer.context.fillStyle = "#495664";
-				Bones.Renderer.context.textAlign = "left";
-				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 50)
-			}
-			
 			Bones.DebugDisplay.render()
-			
-			Bones.Renderer.context.beginPath();
-			Bones.Renderer.context.strokeStyle = "#495664";
-			Bones.Renderer.context.lineWidth = 4;
-			let reticle_width = 15
-			Bones.Renderer.context.arc(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y, reticle_width, 0, 2 * Math.PI);
-			Bones.Renderer.context.stroke();
-			
-			Bones.Renderer.context.beginPath();
-			Bones.Renderer.context.strokeStyle = "#495664";
-			Bones.Renderer.context.lineWidth = 4;
-			Bones.Renderer.context.beginPath();
-			
-			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x + 15, Bones.Input.Mouse.ControlStates.y);
-			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x + 22, Bones.Input.Mouse.ControlStates.y);
-			
-			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x - 15, Bones.Input.Mouse.ControlStates.y);
-			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x - 22, Bones.Input.Mouse.ControlStates.y);
-			
-			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y + 15);
-			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y + 22);
-			
-			Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y - 15);
-			Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y - 22);
-			Bones.Renderer.context.stroke();
-			
-			
-			reticle_width = 15
-			Bones.Renderer.context.beginPath();
-			Bones.Renderer.context.arc(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y, 1, 0, 2 * Math.PI);
-			Bones.Renderer.context.stroke();
-			
+			Bones.Input.process_buffers()
 		}
 		
 		for (let i = 0; i < this.players.length; i++) {
@@ -305,26 +402,20 @@ Bones.World = {
 					}
 				}
 			}*/
-			if(!isServer){
-				let size = 35
-				let cols = Math.floor( Bones.Renderer.width / size ) + 2
-				let grids = Math.floor( Bones.Renderer.height / size ) * cols + 3 * cols
-				for (let i = 0; i < grids; i++){
-					Bones.Renderer.context.beginPath();
-					Bones.Renderer.context.strokeStyle = "#8c97a2";
-					Bones.Renderer.context.lineWidth = 1;
-					Bones.Renderer.context.rect((0 - Bones.Renderer.camera_x % size + i * size) % (size * cols) - size, 0 - Bones.Renderer.camera_y % size + (Math.floor(i / cols) * size ) - size, size, size);
-					Bones.Renderer.context.stroke();
-				}
-			}
-			
-			if(!isServer){
+		}
+		if(!isServer){
+			let size = 35
+			let cols = Math.floor( Bones.Renderer.width / size ) + 2
+			let grids = Math.floor( Bones.Renderer.height / size ) * cols + 3 * cols
+			for (let i = 0; i < grids; i++){
 				Bones.Renderer.context.beginPath();
-				Bones.Renderer.context.strokeStyle = "#495664";
-				Bones.Renderer.context.lineWidth = 8;
-				Bones.Renderer.context.rect(0 - Bones.Renderer.camera_x, 0 - Bones.Renderer.camera_y, this.width, this.height);
+				Bones.Renderer.context.strokeStyle = "#8c97a2";
+				Bones.Renderer.context.lineWidth = 1;
+				Bones.Renderer.context.rect((0 - Bones.Renderer.camera_x % size + i * size) % (size * cols) - size, 0 - Bones.Renderer.camera_y % size + (Math.floor(i / cols) * size ) - size, size, size);
 				Bones.Renderer.context.stroke();
 			}
+		}
+		if(this.winner == -1){
 			
 			for (let j = 0; j < this.bullets.length; j++) {
 				for (let i = 0; i < Bones.World.walls.length; i++){
@@ -382,20 +473,68 @@ Bones.World = {
 			}
 			
 			if (isServer == false) {
-				for (let i = 0; i < this.players.length; i++){
-					this.players[i].render()
-				}
-			}
-
-			if(!isServer) {
-				for (let i = 0; i < this.bullets.length; i++) {
-					this.bullets[i].render()
-				}
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.lineWidth = 8;
+				Bones.Renderer.context.rect(0 - Bones.Renderer.camera_x, 0 - Bones.Renderer.camera_y, this.width, this.height);
+				Bones.Renderer.context.stroke();
 				for (let i = 0; i < this.walls.length; i++) {
 					this.walls[i].render()
 				}
-			}
+				
+				for (let i = 0; i < this.players.length; i++){
+					this.players[i].render()
+				}
+				for (let i = 0; i < this.bullets.length; i++) {
+					this.bullets[i].render()
+				}
 			
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.lineWidth = 4;
+				let reticle_width = 15
+				Bones.Renderer.context.arc(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y, reticle_width, 0, 2 * Math.PI);
+				Bones.Renderer.context.stroke();
+				
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.lineWidth = 4;
+				Bones.Renderer.context.beginPath();
+				
+				Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x + 15, Bones.Input.Mouse.ControlStates.y);
+				Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x + 22, Bones.Input.Mouse.ControlStates.y);
+				
+				Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x - 15, Bones.Input.Mouse.ControlStates.y);
+				Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x - 22, Bones.Input.Mouse.ControlStates.y);
+				
+				Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y + 15);
+				Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y + 22);
+				
+				Bones.Renderer.context.moveTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y - 15);
+				Bones.Renderer.context.lineTo(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y - 22);
+				Bones.Renderer.context.stroke();
+				
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.arc(Bones.Input.Mouse.ControlStates.x, Bones.Input.Mouse.ControlStates.y, 1, 0, 2 * Math.PI);
+				Bones.Renderer.context.stroke();
+				
+				Bones.Renderer.context.font = "bold 24px Monospace";
+				Bones.Renderer.context.fillStyle = "#495664";
+				Bones.Renderer.context.textAlign = "left";
+				Bones.Renderer.context.fillText("1. Mine", 30, Bones.Renderer.height - 100)
+				Bones.Renderer.context.fillText("2. Flamethrower", 30, Bones.Renderer.height - 75)
+				Bones.Renderer.context.fillText("3. Shotgun", 30, Bones.Renderer.height - 50)
+				Bones.Renderer.context.fillText("4. Pistol", 30, Bones.Renderer.height - 25)
+
+				Bones.Renderer.context.stroke();
+				
+				for (let i = 0; i < this.players.length; i++) {
+					Bones.Renderer.context.font = "bold 24px Monospace";
+					Bones.Renderer.context.fillStyle = Bones.World.colors[this.players[i].id%Bones.World.colors.length];
+					Bones.Renderer.context.textAlign = "left";
+					Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 50)
+				}
+			}
 			if (Bones.DebugDisplay.stress_test == true) {
 				rand = 1
 				if (Bones.DebugDisplay.stress_random) {
@@ -406,7 +545,27 @@ Bones.World = {
 				}
 			}
 			
-		} else {
+		}
+		
+		if (isServer == false) {
+					
+			Bones.Renderer.context.font = "bold 24px Monospace";
+			Bones.Renderer.context.fillStyle = "#495664";
+			Bones.Renderer.context.textAlign = "center";
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.28!", Bones.Renderer.canvas.width / 2, 25)
+			
+			
+			
+			
+			for (let i = 0; i < this.players.length; i++) {
+				Bones.Renderer.context.font = "bold 24px Monospace";
+				Bones.Renderer.context.fillStyle = Bones.World.colors[this.players[i].id%Bones.World.colors.length];
+				Bones.Renderer.context.textAlign = "left";
+				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 50)
+			}
+		}
+				
+		if(this.winner != -1) {
 			if(!isServer){
 				Bones.Renderer.context.font = "bold 24px Monospace";
 				Bones.Renderer.context.fillStyle = "#495664";
@@ -419,7 +578,6 @@ Bones.World = {
 				this.winner = -1;
 				for (let i = 0; i < this.players.length; i++) {
 					this.players[i].score = 0;
-					this.players[i].respawn_timer = 0;
 					this.players[i].respawn()
 				}
 			}
@@ -496,7 +654,7 @@ Bones.World = {
 		}
         render() {
 			Bones.Renderer.context.beginPath();
-			Bones.Renderer.context.strokeStyle = "#495664";
+			Bones.Renderer.context.strokeStyle = Bones.World.colors[this.owner%Bones.World.colors.length]
 			Bones.Renderer.context.lineWidth = 4;
 			Bones.Renderer.context.arc(this.x + this.size / 2 - Bones.Renderer.camera_x, this.y + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
 			Bones.Renderer.context.stroke();
@@ -698,7 +856,6 @@ Bones.World = {
 			this._select = state[7];
 		}
 	}, // END CONTROLLER CLASS
-
     Player: class {
         constructor(id) {
             //player init
@@ -771,6 +928,8 @@ Bones.World = {
 			this.change_class('Pistol')
         }
 		respawn() {
+			this.fire_cooldown = 0;
+			this.respawn_timer = 0;
 			let collide_with_wall_or_bullet = true
 			while(collide_with_wall_or_bullet){
 				collide_with_wall_or_bullet = false
@@ -1218,19 +1377,19 @@ Bones.World = {
 				
 				//
 				Bones.Renderer.context.beginPath();
-				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
 				Bones.Renderer.context.lineWidth = 4;
 				Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 - Bones.Renderer.camera_y, this.height / 2, 0, 2 * Math.PI);
 				Bones.Renderer.context.stroke();
 				
 				
 				Bones.Renderer.context.font = "bold 24px Monospace";
-				Bones.Renderer.context.fillStyle = "#495664";
+				Bones.Renderer.context.fillStyle = Bones.World.colors[this.id%Bones.World.colors.length];
 				Bones.Renderer.context.textAlign = "center";
 				Bones.Renderer.context.fillText(this.health, this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 40)
 				
 				Bones.Renderer.context.font = "bold 24px Monospace";
-				Bones.Renderer.context.fillStyle = "#495664";
+				//Bones.Renderer.context.fillStyle = "#495664";
 				Bones.Renderer.context.textAlign = "center";
 				Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
 				
@@ -1249,7 +1408,7 @@ Bones.World = {
 				if (this.id != clientId) {
 					//reticle
 					Bones.Renderer.context.beginPath();
-					Bones.Renderer.context.strokeStyle = "#495664";
+					//Bones.Renderer.context.strokeStyle = "#495664";
 					Bones.Renderer.context.lineWidth = 4;
 					let reticle_width = 15
 					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
@@ -1257,7 +1416,7 @@ Bones.World = {
 				} else {
 					//reticle
 					Bones.Renderer.context.beginPath();
-					Bones.Renderer.context.strokeStyle = "#495664";
+					//Bones.Renderer.context.strokeStyle = "#495664";
 					Bones.Renderer.context.lineWidth = 4;
 					let reticle_width = 15
 					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
