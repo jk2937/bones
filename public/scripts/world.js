@@ -337,7 +337,6 @@ Bones.World = {
 						this.players[i].health -= this.bullets[j].damage
 						if (this.players[i].health <= 0) {
 							this.players[i].health = 0
-							console.log('last hit')
 							for (let k = 0; k < this.players.length; k++) {
 								if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
 									this.players[k].score ++
@@ -629,6 +628,31 @@ Bones.World = {
             this.movement_speed = 1;
             this.x = Math.random() * Bones.World.width;
             this.y = Math.random() * Bones.World.height;
+			
+			let collide_with_wall_or_bullet = true
+			while(collide_with_wall_or_bullet){
+				collide_with_wall_or_bullet = false
+				this.x = Math.random() * Bones.World.width;
+				this.y = Math.random() * Bones.World.height;
+				for (let i = 0; i < Bones.World.walls.length; i++){
+					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
+						collide_with_wall_or_bullet = true;
+					}
+				}
+				for (let j = 0; j < Bones.World.bullets.length; j++) {
+					if (circle_collision(
+						this.x + Bones.World.players[i].width / 2, 
+						this.y + Bones.World.players[i].height / 2,
+						this.width / 2,
+						Bones.World.bullets[j].x + Bones.World.bullets[j].size / 2,
+						Bones.World.bullets[j].y + Bones.World.bullets[j].size / 2,
+						Bones.World.bullets[j].size / 2
+					)) {
+						collide_with_wall_or_bullet = true;
+					}
+				}
+			}
+			
 			this.width = 65;
 			this.height = 65;
 			this.interp_strength = 10
@@ -952,22 +976,18 @@ Bones.World = {
 				
 				for (let i = 0; i < Bones.World.walls.length; i++){
 					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						console.log('collided top')
 						this.y--
 						this.velocity = 0
 					}
 					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						console.log('collided bottom')
 						this.y++
 						this.velocity = 0
 					}
 					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						console.log('collided left')
 						this.x--
 						this.velocity = 0
 					}
 					while(circleBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						console.log('collided right')
 						this.x++
 						this.velocity = 0
 					}
@@ -1088,7 +1108,6 @@ Bones.World = {
 						//angle = new_vec[0]
 						//speed = new_vec[1]
 						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId()))
-						console.log(this.angle / angle)
 					}
 				}
 				this.fire_cooldown -= 1 * Bones.Timer.delta_time * Bones.Timer.timescale
@@ -1104,8 +1123,29 @@ Bones.World = {
 					if(isServer){
 						this.respawning = false;
 						this.health = 100;
-						this.x = Math.random() * Bones.World.width;
-						this.y = Math.random() * Bones.World.height;
+						let collide_with_wall_or_bullet = true
+						while(collide_with_wall_or_bullet){
+							collide_with_wall_or_bullet = false
+							this.x = Math.random() * Bones.World.width;
+							this.y = Math.random() * Bones.World.height;
+							for (let i = 0; i < Bones.World.walls.length; i++){
+								if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
+									collide_with_wall_or_bullet = true;
+								}
+							}
+							for (let j = 0; j < Bones.World.bullets.length; j++) {
+								if (circle_collision(
+									this.x + this.x / 2, 
+									this.y + this.y / 2,
+									this.width / 2,
+									Bones.World.bullets[j].x + Bones.World.bullets[j].size / 2,
+									Bones.World.bullets[j].y + Bones.World.bullets[j].size / 2,
+									Bones.World.bullets[j].size / 2
+								)) {
+									collide_with_wall_or_bullet = true;
+								}
+							}
+						}
 					}
 					this.just_respawned = true;
 				}
