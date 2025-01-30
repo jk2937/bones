@@ -141,6 +141,10 @@ Bones.World = {
 		
 		this.width = 2000
 		this.height = 2000
+		
+		this.winner = -1;
+		this.win_timer = 0;
+		this.win_score = 10;
         /*this.npcs.push(new this.NPC())*/
 
 
@@ -179,12 +183,6 @@ Bones.World = {
 			Bones.Renderer.context.fillText("2. Flamethrower", 30, Bones.Renderer.height - 75)
 			Bones.Renderer.context.fillText("3. Shotgun", 30, Bones.Renderer.height - 50)
 			Bones.Renderer.context.fillText("4. Pistol", 30, Bones.Renderer.height - 25)
-			
-			Bones.Renderer.context.beginPath();
-			Bones.Renderer.context.strokeStyle = "#495664";
-			Bones.Renderer.context.lineWidth = 8;
-			Bones.Renderer.context.rect(0 - Bones.Renderer.camera_x, 0 - Bones.Renderer.camera_y, this.width, this.height);
-			Bones.Renderer.context.stroke();
 
 			// Stroke it (Do the Drawing)
 			Bones.Renderer.context.stroke();
@@ -195,170 +193,203 @@ Bones.World = {
 				Bones.Renderer.context.textAlign = "left";
 				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 50)
 			}
-		}
-
-        // Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
-
-        if (Bones.DebugDisplay.test_camera == true) {
-            if (Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame) {
-                Bones.Renderer.camera_x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            }
-            if (Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame) {
-                Bones.Renderer.camera_x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            } 
-            if (Bones.Input.Keyboard.ControlStates["up"].pressed || Bones.Input.Keyboard.ControlStates["up"].pressed_this_frame) {
-                Bones.Renderer.camera_y -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            }
-            if (Bones.Input.Keyboard.ControlStates["down"].pressed || Bones.Input.Keyboard.ControlStates["down"].pressed_this_frame) {
-                Bones.Renderer.camera_y += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            } 
-            //this.player1.tick()
-        }
-
-        if (Bones.DebugDisplay.debug_simple_player_movement == true) {
-            if (move_right) {
-                this.player1.x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            }
-            if (move_left) {
-                this.player1.x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
-            }
-        }
-        if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
 			
-			if (isServer == false) {
-				for (let i = 0; i < this.controllers.length; i++) {
-					if(clientId == this.controllers[i].id){
-						this.controllers[i].update()
-					}
-				}
-			}
-			for (let i = 0; i < this.players.length; i++){
-				for (let j = 0; j < this.controllers.length; j++) {
-					if (this.controllers[j].id == this.players[i].id) {
-						this.players[i].read_keyboard_controls(
-							this.controllers[j].left,
-							this.controllers[j].right,
-							this.controllers[j].up,
-							this.controllers[j].down,
-							this.controllers[j].aim,
-							this.controllers[j].Shotgun,
-							this.controllers[j].jump,
-							this.controllers[j]._select,
-						);
-					}
-				}
-				this.players[i].tick()
-			}
-        }
-        for (let i = 0; i < this.players.length; i++) {
+			Bones.DebugDisplay.render()
+			
+		}
+		
+		for (let i = 0; i < this.players.length; i++) {
 			if (this.players[i].active == false) {
 				this.players.splice(i, 1)
 				console.log('player deactivated')
 			}
-        }
+		}
+		
+		if(this.winner == -1) {
+			for (let i = 0; i < this.players.length; i++) {
+				if(this.players[i].active == true && this.players[i].score >= this.win_score) {
+					this.winner = this.players[i].id
+				}
+			}
+			
+			if(!isServer){
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.lineWidth = 8;
+				Bones.Renderer.context.rect(0 - Bones.Renderer.camera_x, 0 - Bones.Renderer.camera_y, this.width, this.height);
+				Bones.Renderer.context.stroke();
+			}
 
-		/*if(!isServer) {
-			if(Bones.Input.Mouse.ControlStates.click_this_frame) {
+			// Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
+
+			if (Bones.DebugDisplay.test_camera == true) {
+				if (Bones.Input.Keyboard.ControlStates["right"].pressed || Bones.Input.Keyboard.ControlStates["right"].pressed_this_frame) {
+					Bones.Renderer.camera_x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+				}
+				if (Bones.Input.Keyboard.ControlStates["left"].pressed || Bones.Input.Keyboard.ControlStates["left"].pressed_this_frame) {
+					Bones.Renderer.camera_x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+				} 
+				if (Bones.Input.Keyboard.ControlStates["up"].pressed || Bones.Input.Keyboard.ControlStates["up"].pressed_this_frame) {
+					Bones.Renderer.camera_y -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+				}
+				if (Bones.Input.Keyboard.ControlStates["down"].pressed || Bones.Input.Keyboard.ControlStates["down"].pressed_this_frame) {
+					Bones.Renderer.camera_y += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+				} 
+				//this.player1.tick()
+			}
+
+			if (Bones.DebugDisplay.debug_simple_player_movement == true) {
+				if (move_right) {
+					this.player1.x += 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+				}
+				if (move_left) {
+					this.player1.x -= 5 * Bones.Timer.delta_time * Bones.Timer.timescale
+				}
+			}
+			if (Bones.DebugDisplay.test_simple_player_movement != true && Bones.DebugDisplay.test_camera != true) {
+				
+				if (isServer == false) {
+					for (let i = 0; i < this.controllers.length; i++) {
+						if(clientId == this.controllers[i].id){
+							this.controllers[i].update()
+						}
+					}
+				}
 				for (let i = 0; i < this.players.length; i++){
+					for (let j = 0; j < this.controllers.length; j++) {
+						if (this.controllers[j].id == this.players[i].id) {
+							this.players[i].read_keyboard_controls(
+								this.controllers[j].left,
+								this.controllers[j].right,
+								this.controllers[j].up,
+								this.controllers[j].down,
+								this.controllers[j].aim,
+								this.controllers[j].Shotgun,
+								this.controllers[j].jump,
+								this.controllers[j]._select,
+							);
+						}
+					}
+					this.players[i].tick()
+				}
+			}
+
+			/*if(!isServer) {
+				if(Bones.Input.Mouse.ControlStates.click_this_frame) {
+					for (let i = 0; i < this.players.length; i++){
+						if (this.players[i].id == clientId) {
+							size = 100
+							offset = 30 + size / 2
+							this.bullets.push(new this.Bullet(this.players[i].x + this.players[i].width / 2 + Math.cos(this.players[i].move_aim * 2 * Math.PI) * (this.players[i].width / 2 + offset) - size / 2, this.players[i].y + this.players[i].height / 2 + Math.sin(this.players[i].move_aim * 2 * Math.PI) * (this.players[i].height / 2 + offset) - size / 2, 10, this.players[i].move_aim, 5000, size))
+						}
+					}
+				}
+			}*/
+
+			for (let i = 0; i < this.menu_items.length; i++) {
+				this.menu_items[i].read_input()
+				this.menu_items[i].render()
+			}
+			
+			if (isServer == false) {
+				for (let i = 0; i < this.players.length; i++){
+					this.players[i].render()
+				}
+			}
+
+			if(!isServer) {
+				for (let i = 0; i < this.bullets.length; i++) {
+					this.bullets[i].render()
+				}
+				for (let i = 0; i < this.walls.length; i++) {
+					this.walls[i].render()
+				}
+			}
+			
+			if (Bones.DebugDisplay.stress_test == true) {
+				rand = 1
+				if (Bones.DebugDisplay.stress_random) {
+					rand = Math.random() * Bones.DebugDisplay.stress_loops;
+				}
+				for (i = 0; i < Bones.DebugDisplay.stress_loops * rand; i++) {
+					Bones.Renderer.context.fillText("", 0, 0)
+				}
+			}
+			
+			if(!isServer) {
+				for (let i = 0; i < this.players.length; i++) {
 					if (this.players[i].id == clientId) {
-						size = 100
-						offset = 30 + size / 2
-						this.bullets.push(new this.Bullet(this.players[i].x + this.players[i].width / 2 + Math.cos(this.players[i].move_aim * 2 * Math.PI) * (this.players[i].width / 2 + offset) - size / 2, this.players[i].y + this.players[i].height / 2 + Math.sin(this.players[i].move_aim * 2 * Math.PI) * (this.players[i].height / 2 + offset) - size / 2, 10, this.players[i].move_aim, 5000, size))
+						Bones.Renderer.camera_x = this.players[0].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
+						Bones.Renderer.camera_y = this.players[0].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
 					}
 				}
 			}
-		}*/
-
-        for (let i = 0; i < this.menu_items.length; i++) {
-            this.menu_items[i].read_input()
-            this.menu_items[i].render()
-        }
-
-		if(isServer == false) {
-			Bones.DebugDisplay.render()
-		}
-		
-		if (isServer == false) {
-			for (let i = 0; i < this.players.length; i++){
-				this.players[i].render()
-			}
-		}
-
-		if(!isServer) {
-			for (let i = 0; i < this.bullets.length; i++) {
-				this.bullets[i].render()
-			}
-			for (let i = 0; i < this.walls.length; i++) {
-				this.walls[i].render()
-			}
-		}
-		
-        if (Bones.DebugDisplay.stress_test == true) {
-            rand = 1
-            if (Bones.DebugDisplay.stress_random) {
-                rand = Math.random() * Bones.DebugDisplay.stress_loops;
-            }
-            for (i = 0; i < Bones.DebugDisplay.stress_loops * rand; i++) {
-                Bones.Renderer.context.fillText("", 0, 0)
-            }
-        }
-		
-		if(!isServer) {
-			for (let i = 0; i < this.players.length; i++) {
-				if (this.players[i].id == clientId) {
-					Bones.Renderer.camera_x = this.players[0].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
-					Bones.Renderer.camera_y = this.players[0].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
-				}
-			}
-		}
-		for (let j = 0; j < this.bullets.length; j++) {
-			for (let i = 0; i < Bones.World.walls.length; i++){
-				if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)){
-					this.bullets[j].deactivate()
-				}
-			}
-			if (this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
-				this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
-				this.bullets[j].deactivate()	
-			}
-		}
-		
-		for (let i = 0; i < this.players.length; i++) {
 			for (let j = 0; j < this.bullets.length; j++) {
-				if(this.players[i].id != this.bullets[j].owner/* || this.bullets[j].size > 70*/) {
-					if (circle_collision(
-						this.players[i].x + this.players[i].width / 2, 
-						this.players[i].y + this.players[i].height / 2,
-						this.players[i].width / 2,
-						this.bullets[j].x + this.bullets[j].size / 2,
-						this.bullets[j].y + this.bullets[j].size / 2,
-						this.bullets[j].size / 2
-					) && this.players[i].respawning == false) {
-						this.players[i].health -= this.bullets[j].damage
-						if (this.players[i].health <= 0) {
-							this.players[i].health = 0
-							for (let k = 0; k < this.players.length; k++) {
-								if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
-									this.players[k].score ++
-									if (this.players[i].health <= 0) {
-										this.players[i].respawn_timer = 175;
-										this.players[i].respawning = true;
-									}
-								}
-							}
-						}
+				for (let i = 0; i < Bones.World.walls.length; i++){
+					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)){
 						this.bullets[j].deactivate()
 					}
 				}
+				if (this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
+					this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
+					this.bullets[j].deactivate()	
+				}
+			}
+			
+			for (let i = 0; i < this.players.length; i++) {
+				for (let j = 0; j < this.bullets.length; j++) {
+					if(this.players[i].id != this.bullets[j].owner/* || this.bullets[j].size > 70*/) {
+						if (circle_collision(
+							this.players[i].x + this.players[i].width / 2, 
+							this.players[i].y + this.players[i].height / 2,
+							this.players[i].width / 2,
+							this.bullets[j].x + this.bullets[j].size / 2,
+							this.bullets[j].y + this.bullets[j].size / 2,
+							this.bullets[j].size / 2
+						) && this.players[i].respawning == false) {
+							this.players[i].health -= this.bullets[j].damage
+							if (this.players[i].health <= 0) {
+								this.players[i].health = 0
+								for (let k = 0; k < this.players.length; k++) {
+									if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
+										this.players[k].score ++
+										if (this.players[i].health <= 0) {
+											this.players[i].respawn_timer = 175;
+											this.players[i].respawning = true;
+										}
+									}
+								}
+							}
+							this.bullets[j].deactivate()
+						}
+					}
+				}
+			}
+
+			for (let i = 0; i < this.bullets.length; i++) {
+				this.bullets[i].tick()
+				if (this.bullets[i].active == false) {
+					this.bullets.splice(i, 1)
+				}
+			}
+		} else {
+			if(!isServer){
+				Bones.Renderer.context.font = "bold 24px Monospace";
+				Bones.Renderer.context.fillStyle = "#495664";
+				Bones.Renderer.context.textAlign = "center";
+				Bones.Renderer.context.fillText("Game over! Player " + (this.winner + 1) + " wins!", Bones.Renderer.width / 2, Bones.Renderer.height / 2 - 20)
+			}
+			this.win_timer += 1 * Bones.Timer.delta_time * Bones.Timer.timescale
+			if(this.win_timer > 400) {
+				this.win_timer = 0;
+				this.winner = -1;
+				for (let i = 0; i < this.players.length; i++) {
+					this.players[i].score = 0;
+					this.players[i].respawn_timer = 0;
+					this.players[i].respawn()
+				}
 			}
 		}
-
-        for (let i = 0; i < this.bullets.length; i++) {
-            this.bullets[i].tick()
-			if (this.bullets[i].active == false) {
-				this.bullets.splice(i, 1)
-			}
-        }
     }, // END FUNCTION tick
     create_menu_item(x, y, width, height, text, on_activate_function, on_deactivate_function, mode='default') {
         this.menu_items.push(new MenuItem(x, y, width, height, text, on_activate_function, on_deactivate_function, mode=mode))
@@ -629,32 +660,13 @@ Bones.World = {
             this.x = Math.random() * Bones.World.width;
             this.y = Math.random() * Bones.World.height;
 			
-			let collide_with_wall_or_bullet = true
-			while(collide_with_wall_or_bullet){
-				collide_with_wall_or_bullet = false
-				this.x = Math.random() * Bones.World.width;
-				this.y = Math.random() * Bones.World.height;
-				for (let i = 0; i < Bones.World.walls.length; i++){
-					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
-						collide_with_wall_or_bullet = true;
-					}
-				}
-				for (let j = 0; j < Bones.World.bullets.length; j++) {
-					if (circle_collision(
-						this.x + Bones.World.players[i].width / 2, 
-						this.y + Bones.World.players[i].height / 2,
-						this.width / 2,
-						Bones.World.bullets[j].x + Bones.World.bullets[j].size / 2,
-						Bones.World.bullets[j].y + Bones.World.bullets[j].size / 2,
-						Bones.World.bullets[j].size / 2
-					)) {
-						collide_with_wall_or_bullet = true;
-					}
-				}
-			}
-			
 			this.width = 65;
 			this.height = 65;
+			
+			
+			
+			this.respawn()
+			
 			this.interp_strength = 10
 			this.x_interp = []
 			this.y_interp = []
@@ -711,6 +723,31 @@ Bones.World = {
 			
 			this.change_class('Pistol')
         }
+		respawn() {
+			let collide_with_wall_or_bullet = true
+			while(collide_with_wall_or_bullet){
+				collide_with_wall_or_bullet = false
+				this.x = Math.random() * Bones.World.width;
+				this.y = Math.random() * Bones.World.height;
+				for (let i = 0; i < Bones.World.walls.length; i++){
+					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
+						collide_with_wall_or_bullet = true;
+					}
+				}
+				for (let j = 0; j < Bones.World.bullets.length; j++) {
+					if (circle_collision(
+						this.x + this.width / 2, 
+						this.y + this.height / 2,
+						this.width / 2,
+						Bones.World.bullets[j].x + Bones.World.bullets[j].size / 2,
+						Bones.World.bullets[j].y + Bones.World.bullets[j].size / 2,
+						Bones.World.bullets[j].size / 2
+					)) {
+						collide_with_wall_or_bullet = true;
+					}
+				}
+			}
+		}
 		change_class(_class) {
 			this._class = _class;
 			
@@ -1123,29 +1160,7 @@ Bones.World = {
 					if(isServer){
 						this.respawning = false;
 						this.health = 100;
-						let collide_with_wall_or_bullet = true
-						while(collide_with_wall_or_bullet){
-							collide_with_wall_or_bullet = false
-							this.x = Math.random() * Bones.World.width;
-							this.y = Math.random() * Bones.World.height;
-							for (let i = 0; i < Bones.World.walls.length; i++){
-								if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
-									collide_with_wall_or_bullet = true;
-								}
-							}
-							for (let j = 0; j < Bones.World.bullets.length; j++) {
-								if (circle_collision(
-									this.x + this.x / 2, 
-									this.y + this.y / 2,
-									this.width / 2,
-									Bones.World.bullets[j].x + Bones.World.bullets[j].size / 2,
-									Bones.World.bullets[j].y + Bones.World.bullets[j].size / 2,
-									Bones.World.bullets[j].size / 2
-								)) {
-									collide_with_wall_or_bullet = true;
-								}
-							}
-						}
+						this.respawn()
 					}
 					this.just_respawned = true;
 				}
