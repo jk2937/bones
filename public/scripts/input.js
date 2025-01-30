@@ -47,7 +47,6 @@ Bones.Input = {
 
         for (let i = 0; i < entries.length; i++) {
             let entry = entries[i]
-            // out: entry = ["up", "w"]
             this.Keyboard.ControlStates = Object.assign({ [entry[0]]: { key: entry[1], pressed: false, pressed_this_frame: false } }, this.Keyboard.ControlStates)
         }
 
@@ -55,6 +54,9 @@ Bones.Input = {
 
         this.Mouse.ControlStates.click = false;
         this.Mouse.ControlStates.click_this_frame = false;
+        this.Mouse.ControlStates.scroll_up_this_frame = false;
+        this.Mouse.ControlStates.scroll_down_this_frame = false;
+		this.Mouse.ControlStates.scroll_delta = 0;
         this.Mouse.ControlStates.x = window.innerWidth / 2;
         this.Mouse.ControlStates.y = window.innerHeight / 2;
 
@@ -70,6 +72,9 @@ Bones.Input = {
 
         process_buffers: function(){
             this.Mouse.ControlStates.click_this_frame = false;
+            this.Mouse.ControlStates.scroll_up_this_frame = false;
+            this.Mouse.ControlStates.scroll_down_this_frame = false;
+            this.Mouse.ControlStates.scroll_delta = 0;
             if (this.Mouse.Buffers.frame_events.length > 0) {
                 let _event = this.Mouse.Buffers.frame_events[this.Mouse.Buffers.frame_events.length - 1];
                 this.Mouse.ControlStates.x = (_event.pageX - Bones.Renderer.canvas.offsetLeft) * (Bones.Renderer.width / Bones.Renderer.canvas.offsetWidth) 
@@ -85,6 +90,15 @@ Bones.Input = {
                 if (_event.type == "mouseup") {
                     this.Mouse.ControlStates.click = false;
                     this.Mouse.Buffers.gesture_events = []
+                }
+                if (_event.type == "wheel") {
+					this.Mouse.ControlStates.scroll_delta += _event.deltaY;
+					if(_event.deltaY > 0) {
+						this.Mouse.ControlStates.scroll_down_this_frame = true;
+					}
+					if(_event.deltaY < 0) {
+						this.Mouse.ControlStates.scroll_up_this_frame = true;
+					}
                 }
             }
             this.Touch.ControlStates.click_this_frame = false;
@@ -183,6 +197,10 @@ document.addEventListener("mouseup", function(_event) { // Note: Using "document
 });
 
 Bones.Renderer.canvas.addEventListener("mousemove", function(_event) {
+    Bones.Input.Mouse.Buffers.frame_events.push(_event)
+});
+
+Bones.Renderer.canvas.addEventListener("wheel", function(_event) {
     Bones.Input.Mouse.Buffers.frame_events.push(_event)
 });
 

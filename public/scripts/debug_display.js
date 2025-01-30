@@ -16,7 +16,7 @@ Bones.DebugDisplay = {
         this.test_simple_player_movement = false
         this.test_camera = false
 
-        this.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.Input.Keyboard.ControlStates[\"left\"].pressed", "Bones.Input.Keyboard.ControlStates[\"right\"].pressed", "Bones.Input.Keyboard.ControlStates[\"up\"].pressed", "Bones.Input.Keyboard.ControlStates[\"down\"].pressed", "Bones.Input.Keyboard.ControlStates[\"jump\"].pressed", "", "Bones.Input.Keyboard.ControlStates[\"left\"].pressed_this_frame", "Bones.Input.Keyboard.ControlStates[\"right\"].pressed_this_frame", "Bones.Input.Keyboard.ControlStates[\"jump\"].pressed_this_frame", "", "Bones.Input.Mouse.ControlStates.x", "Bones.Input.Mouse.ControlStates.y", "", "Bones.Input.Mouse.ControlStates.click", "Bones.Input.Mouse.ControlStates.click_this_frame", "", "Bones.Input.Touch.ControlStates.x", "Bones.Input.Touch.ControlStates.y", "", "Bones.Input.Touch.ControlStates.click", "Bones.Input.Touch.ControlStates.click_this_frame"]
+        this.variables = ["Bones.Timer.fps", "Bones.Timer.total_lag_frames", "", "Bones.Input.Keyboard.ControlStates[\"left\"].pressed", "Bones.Input.Keyboard.ControlStates[\"right\"].pressed", "Bones.Input.Keyboard.ControlStates[\"up\"].pressed", "Bones.Input.Keyboard.ControlStates[\"down\"].pressed", "Bones.Input.Keyboard.ControlStates[\"jump\"].pressed", "", "Bones.Input.Keyboard.ControlStates[\"left\"].pressed_this_frame", "Bones.Input.Keyboard.ControlStates[\"right\"].pressed_this_frame", "Bones.Input.Keyboard.ControlStates[\"jump\"].pressed_this_frame", "", "Bones.Input.Mouse.ControlStates.x", "Bones.Input.Mouse.ControlStates.y", "", "Bones.Input.Mouse.ControlStates.click", "Bones.Input.Mouse.ControlStates.click_this_frame", "Bones.Input.Mouse.ControlStates.scroll_up_this_frame", "Bones.Input.Mouse.ControlStates.scroll_down_this_frame", "Bones.Input.Mouse.ControlStates.scroll_delta", "", "Bones.Input.Touch.ControlStates.x", "Bones.Input.Touch.ControlStates.y", "", "Bones.Input.Touch.ControlStates.click", "Bones.Input.Touch.ControlStates.click_this_frame"]
         this.stress_test = false;
         this.stress_loops = 999999;
         this.stress_random = false;
@@ -24,13 +24,13 @@ Bones.DebugDisplay = {
         this.render = function() {
             if (this.visible == true) {
                 Bones.Renderer.context.font = "12px Monospace";
-                Bones.Renderer.context.fillStyle = "Gray"
+                Bones.Renderer.context.fillStyle = "#495664"
                 Bones.Renderer.context.textAlign = "left";
 
                 for (let i = 0; i < this.variables.length; i++) {
                     if (this.variables[i] != "") {
-                        Bones.Renderer.context.fillText(this.variables[i], 10, 50 + i * 15)
-                        Bones.Renderer.context.fillText(eval(this.variables[i]), 400, 50 + i * 15)
+                        Bones.Renderer.context.fillText(this.variables[i], 10, 250 + i * 15)
+                        Bones.Renderer.context.fillText(eval(this.variables[i]), Bones.Renderer.width / 2, 250 + i * 15)
                     }
                 }
             }

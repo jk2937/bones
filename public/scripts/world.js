@@ -171,7 +171,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.25!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.26!", Bones.Renderer.canvas.width / 2, 25)
 			
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
@@ -668,6 +668,19 @@ Bones.World = {
 			}
 			if(Bones.Input.Keyboard.ControlStates["select3"].pressed || Bones.Input.Keyboard.ControlStates["select3"].pressed_this_frame) {
 				this._select = 3;
+			}
+			if(Bones.Input.Mouse.ControlStates.scroll_up_this_frame) {
+				this._select = (this._select + 1) % 4
+				console.log('select up')
+				console.log(this._select)
+			}
+			if(Bones.Input.Mouse.ControlStates.scroll_down_this_frame) {
+				this._select = (this._select - 1) % 4
+				if(this._select < 0){
+					this._select += 4
+				}
+				console.log('select down')
+				console.log(this._select)
 			}
 		}
 		serialize() {
