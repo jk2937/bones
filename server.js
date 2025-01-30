@@ -76,6 +76,9 @@ io.on('connection', (socket) => {
 		}
 		socket.emit('server world state', Bones.World.serialize())
 		socket.broadcast.emit('server world state', Bones.World.serialize())
+		if(Bones.World.players.length == 0) {
+			id = 0
+		}
 	}
 	
 	setInterval(sendloop, 20);
