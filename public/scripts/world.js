@@ -175,7 +175,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "left";
-			Bones.Renderer.context.fillText("1. Melee", 30, Bones.Renderer.height - 100)
+			Bones.Renderer.context.fillText("1. Mine", 30, Bones.Renderer.height - 100)
 			Bones.Renderer.context.fillText("2. Flamethrower", 30, Bones.Renderer.height - 75)
 			Bones.Renderer.context.fillText("3. Shotgun", 30, Bones.Renderer.height - 50)
 			Bones.Renderer.context.fillText("4. Pistol", 30, Bones.Renderer.height - 25)
@@ -283,6 +283,15 @@ Bones.World = {
 				this.players[i].render()
 			}
 		}
+
+		if(!isServer) {
+			for (let i = 0; i < this.bullets.length; i++) {
+				this.bullets[i].render()
+			}
+			for (let i = 0; i < this.walls.length; i++) {
+				this.walls[i].render()
+			}
+		}
 		
         if (Bones.DebugDisplay.stress_test == true) {
             rand = 1
@@ -316,7 +325,7 @@ Bones.World = {
 		
 		for (let i = 0; i < this.players.length; i++) {
 			for (let j = 0; j < this.bullets.length; j++) {
-				if(this.players[i].id != this.bullets[j].owner) {
+				if(this.players[i].id != this.bullets[j].owner || this.bullets[j].size > 70) {
 					if (circle_collision(
 						this.players[i].x + this.players[i].width / 2, 
 						this.players[i].y + this.players[i].height / 2,
@@ -351,15 +360,6 @@ Bones.World = {
 				this.bullets.splice(i, 1)
 			}
         }
-
-		if(!isServer) {
-			for (let i = 0; i < this.bullets.length; i++) {
-				this.bullets[i].render()
-			}
-			for (let i = 0; i < this.walls.length; i++) {
-				this.walls[i].render()
-			}
-		}
     }, // END FUNCTION tick
     create_menu_item(x, y, width, height, text, on_activate_function, on_deactivate_function, mode='default') {
         this.menu_items.push(new MenuItem(x, y, width, height, text, on_activate_function, on_deactivate_function, mode=mode))
@@ -690,7 +690,7 @@ Bones.World = {
 		change_class(_class) {
 			this._class = _class;
 			
-			if (this._class == 'Melee') {
+			if (this._class == 'Mine') {
 				this.x_acc = 1.5
 				this.max_x_vel = 7;
 				this.max_x_vel_aim = 7;
@@ -807,7 +807,7 @@ Bones.World = {
 				
 				if(this.fire_cooldown <= 0){
 					if (this._select == 0) {
-						this.change_class('Melee')
+						this.change_class('Mine')
 					}
 					if (this._select == 1) {
 						this.change_class('Flamethrower')
@@ -1039,12 +1039,12 @@ Bones.World = {
 					let speed = 25
 					let damage = 10
 					let angle = this.move_aim
-					if (this._class == 'Melee') {
+					if (this._class == 'Mine') {
 						size = 75
 						offset = 30 + size / 2
-						ttl = 20
-						speed = 2
-						damage = 90
+						ttl = 500
+						speed = 0
+						damage = 100
 						this.fire_cooldown = 80
 					}
 					
@@ -1071,10 +1071,9 @@ Bones.World = {
 						offset = 30 + size / 2
 						ttl = 15
 						speed = 20
-						damage = 4
+						damage = 20
 						this.fire_cooldown = 40
 						let spread = 90
-						damage = 10
 						if(isServer || this.id == clientId){
 							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim - 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
 							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim - 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
