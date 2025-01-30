@@ -610,7 +610,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.29!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.30!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -936,6 +936,8 @@ Bones.World = {
             this.movement_speed = 1;
             this.x = Math.random() * Bones.World.width;
             this.y = Math.random() * Bones.World.height;
+			this.old_x = this.x
+			this.old_y = this.y
 			
 			this.width = 65;
 			this.height = 65;
@@ -1105,6 +1107,8 @@ Bones.World = {
 			}
         }
         tick() {
+			this.old_x = this.x;
+			this.old_y = this.y;
 			this.interp_cooldown -= 1;
 			if (this.interp_cooldown <= 0){
 				this.interp_cooldown = 0
@@ -1303,38 +1307,56 @@ Bones.World = {
 
 				if (this.x < 0) {
 					this.x = 2
-					this.velocity = 0
+					//this.velocity = 0
 				}
 				if (this.x > Bones.World.width - this.width) {
 					this.x = Bones.World.width - this.width - 2
-					this.velocity = 0
+					//this.velocity = 0
 				}
 				if (this.y < 0) {
 					this.y = 2
 					//this.y_vel = 0 - this.y_vel
-					this.velocity = 0
+					//this.velocity = 0
 				}
 				if (this.y > Bones.World.height - this.height) {
 					this.y = Bones.World.height - this.height - 2
-					this.velocity = 0
+					//this.velocity = 0
 				}
 				
 				for (let i = 0; i < Bones.World.walls.length; i++){
-					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						this.y--
-						this.velocity = 0
+					let j = 0
+					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.old_x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
+						if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.old_x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+							// collide top
+							this.y--
+							//this.velocity = 0
+						}
+						else if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.old_x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+							// collide bottom
+							this.y++
+							//this.velocity = 0
+						}
+						if (j > 1000){
+							break
+						}
+						j++
 					}
-					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						this.y++
-						this.velocity = 0
-					}
-					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						this.x--
-						this.velocity = 0
-					}
-					while(circleBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)){
-						this.x++
-						this.velocity = 0
+					j = 0
+					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.old_y + this.height / 2, this.width / 2)) {
+						if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.old_y + this.height / 2, this.width / 2)){
+							// collide right
+							this.x--
+							//this.velocity = 0
+						}
+						else if(circleBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.old_y + this.height / 2, this.width / 2)){
+							// collide left
+							this.x++
+							//this.velocity = 0
+						}
+						if (j > 1000){
+							break
+						}
+						j++
 					}
 				}
 				
