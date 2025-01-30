@@ -10,7 +10,7 @@ Bones.Renderer = {
 
 			this.canvas.style.border = "none";
 
-			this.display_mode = "dynamic_fullscreen"; 
+			this.display_mode = "stretched_fullscreen_ratio"; 
 			this.canvas.style.cursor = "none";
 
 			this.set_display_mode()
