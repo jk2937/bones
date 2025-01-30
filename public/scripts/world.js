@@ -154,24 +154,10 @@ Bones.World = {
 
 			Bones.Input.process_buffers()
 			
-			
-			
-		
-			// Define a new path
-			let size = 35
-			let cols = Math.floor( Bones.Renderer.width / size ) + 2
-			let grids = Math.floor( Bones.Renderer.height / size ) * cols + 3 * cols
-			for (let i = 0; i < grids; i++){
-				Bones.Renderer.context.beginPath();
-				Bones.Renderer.context.strokeStyle = "#8c97a2";
-				Bones.Renderer.context.lineWidth = 1;
-				Bones.Renderer.context.rect((0 - Bones.Renderer.camera_x % size + i * size) % (size * cols) - size, 0 - Bones.Renderer.camera_y % size + (Math.floor(i / cols) * size ) - size, size, size);
-				Bones.Renderer.context.stroke();
-			}
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.26!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.1.27!", Bones.Renderer.canvas.width / 2, 25)
 			
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
@@ -181,7 +167,6 @@ Bones.World = {
 			Bones.Renderer.context.fillText("3. Shotgun", 30, Bones.Renderer.height - 50)
 			Bones.Renderer.context.fillText("4. Pistol", 30, Bones.Renderer.height - 25)
 
-			// Stroke it (Do the Drawing)
 			Bones.Renderer.context.stroke();
 			
 			for (let i = 0; i < this.players.length; i++) {
@@ -238,14 +223,6 @@ Bones.World = {
 				if(this.players[i].active == true && this.players[i].score >= this.win_score) {
 					this.winner = this.players[i].id
 				}
-			}
-			
-			if(!isServer){
-				Bones.Renderer.context.beginPath();
-				Bones.Renderer.context.strokeStyle = "#495664";
-				Bones.Renderer.context.lineWidth = 8;
-				Bones.Renderer.context.rect(0 - Bones.Renderer.camera_x, 0 - Bones.Renderer.camera_y, this.width, this.height);
-				Bones.Renderer.context.stroke();
 			}
 
 			// Todo: Combine player code into Bones.Input.keys_read_controls, read all keystates with || keystate_this_frame
@@ -328,36 +305,27 @@ Bones.World = {
 					}
 				}
 			}*/
-
-			for (let i = 0; i < this.menu_items.length; i++) {
-				this.menu_items[i].read_input()
-				this.menu_items[i].render()
-			}
-			
-			if (isServer == false) {
-				for (let i = 0; i < this.players.length; i++){
-					this.players[i].render()
-				}
-			}
-
-			if(!isServer) {
-				for (let i = 0; i < this.bullets.length; i++) {
-					this.bullets[i].render()
-				}
-				for (let i = 0; i < this.walls.length; i++) {
-					this.walls[i].render()
+			if(!isServer){
+				let size = 35
+				let cols = Math.floor( Bones.Renderer.width / size ) + 2
+				let grids = Math.floor( Bones.Renderer.height / size ) * cols + 3 * cols
+				for (let i = 0; i < grids; i++){
+					Bones.Renderer.context.beginPath();
+					Bones.Renderer.context.strokeStyle = "#8c97a2";
+					Bones.Renderer.context.lineWidth = 1;
+					Bones.Renderer.context.rect((0 - Bones.Renderer.camera_x % size + i * size) % (size * cols) - size, 0 - Bones.Renderer.camera_y % size + (Math.floor(i / cols) * size ) - size, size, size);
+					Bones.Renderer.context.stroke();
 				}
 			}
 			
-			if (Bones.DebugDisplay.stress_test == true) {
-				rand = 1
-				if (Bones.DebugDisplay.stress_random) {
-					rand = Math.random() * Bones.DebugDisplay.stress_loops;
-				}
-				for (i = 0; i < Bones.DebugDisplay.stress_loops * rand; i++) {
-					Bones.Renderer.context.fillText("", 0, 0)
-				}
+			if(!isServer){
+				Bones.Renderer.context.beginPath();
+				Bones.Renderer.context.strokeStyle = "#495664";
+				Bones.Renderer.context.lineWidth = 8;
+				Bones.Renderer.context.rect(0 - Bones.Renderer.camera_x, 0 - Bones.Renderer.camera_y, this.width, this.height);
+				Bones.Renderer.context.stroke();
 			}
+			
 			for (let j = 0; j < this.bullets.length; j++) {
 				for (let i = 0; i < Bones.World.walls.length; i++){
 					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)){
@@ -406,6 +374,38 @@ Bones.World = {
 					this.bullets.splice(i, 1)
 				}
 			}
+			
+
+			for (let i = 0; i < this.menu_items.length; i++) {
+				this.menu_items[i].read_input()
+				this.menu_items[i].render()
+			}
+			
+			if (isServer == false) {
+				for (let i = 0; i < this.players.length; i++){
+					this.players[i].render()
+				}
+			}
+
+			if(!isServer) {
+				for (let i = 0; i < this.bullets.length; i++) {
+					this.bullets[i].render()
+				}
+				for (let i = 0; i < this.walls.length; i++) {
+					this.walls[i].render()
+				}
+			}
+			
+			if (Bones.DebugDisplay.stress_test == true) {
+				rand = 1
+				if (Bones.DebugDisplay.stress_random) {
+					rand = Math.random() * Bones.DebugDisplay.stress_loops;
+				}
+				for (i = 0; i < Bones.DebugDisplay.stress_loops * rand; i++) {
+					Bones.Renderer.context.fillText("", 0, 0)
+				}
+			}
+			
 		} else {
 			if(!isServer){
 				Bones.Renderer.context.font = "bold 24px Monospace";
