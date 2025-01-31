@@ -695,7 +695,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.7!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.8!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -817,8 +817,8 @@ Bones.World = {
 				server_network_queue.push(["server bullet deactivate", this.id])
 			}
 		}
-		tick (delta_time) {
-			if(isServer) {
+		tick (delta_time, physics=false) {
+			if(isServer || physics) {
 				this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
 				this.y += this.velocity * Math.sin(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
 				this.ttl -= 1 * delta_time * Bones.Timer.timescale
@@ -881,7 +881,7 @@ Bones.World = {
 			this.damage = state[7];
 			this.owner = state[8];
 			this.id = state[9];
-			this.tick(ping / 2)
+			this.tick(ping / 2, true) //this doesn't do anything
 		}
     }, // END CLASS BoxProp
 
@@ -1234,7 +1234,7 @@ Bones.World = {
 				
 			}*/
         }
-        tick(delta_time) {
+        tick(delta_time, physics=false) {
 			this.old_x = this.x;
 			this.old_y = this.y;
 			this.interp_cooldown -= 1;
@@ -1425,7 +1425,7 @@ Bones.World = {
 				/*this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
 				this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;*/
 				
-				if(isServer){
+				if(isServer || physics){
 					this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
 					this.y += this.velocity * Math.sin(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
 				}
@@ -1754,7 +1754,7 @@ Bones.World = {
 			this.angle = state[30]
 			//this.velocity = state[31]
 			this.just_respawned = state[32]
-			this.tick(ping / 2)
+			this.tick(ping / 2, true) //this doesn't do anything
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
