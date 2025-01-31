@@ -695,7 +695,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.9!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.10!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -1577,8 +1577,9 @@ Bones.World = {
 				let x = delta_time
 				if(x == 0) {
 					x = 1
+					//console.log('delta time corrected from 0 to 1')
 				}
-				this.afk_timer += 1000 / x * Bones.Timer.timescale / 1000 // this is wrong
+				this.afk_timer += delta_time / 1000
 				//console.log(this.afk_timer)
 			} else {
 				this.afk_timer = 0
