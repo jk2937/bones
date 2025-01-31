@@ -1,5 +1,8 @@
 clientId = -1
 isServer = false
+ping_start = Date.now()
+ping_end = Date.now()
+ping = 0
 
 function netplay_init() {
     socket = io();
@@ -55,6 +58,11 @@ function netplay_init() {
 		Bones.World.deserialize(data)
 		Bones.World.load_map()
     });
+	socket.on('server ping response', function(data) {
+		ping_end = data
+		ping = ping_end - ping_start
+		console.log('ping ' + ping)
+    });
 	
 	function networkloop() {
 		for (let i = 0; i < Bones.World.controllers.length; i++) {
@@ -63,5 +71,10 @@ function netplay_init() {
 			}
 		}
 	}
+	function pingloop() {
+		ping_start = Date.now()
+		socket.emit('client ping request', ping_start)
+	}
 	setInterval(networkloop, 40)
+	setInterval(pingloop, 2000)
 }

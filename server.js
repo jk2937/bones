@@ -66,6 +66,9 @@ io.on('connection', (socket) => {
 			}
 		}
 	});
+	socket.on('client ping request', function(data) {
+		socket.emit('server ping response', data)
+    });
 	
 	function sendloop() {
 		for (let i = 0; i < server_network_queue.length; i++) {

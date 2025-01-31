@@ -689,7 +689,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.0!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.1!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -828,9 +828,12 @@ Bones.World = {
 			this.x_interp_calc = this.x
 			this.y_interp_calc = this.y
 			//this.interp_strength = 10
-			let x = Math.ceil(40 / Bones.Timer.delta_time)
-			if (x == Infinity) {
-				x = 1000
+			let x = 1
+			if(!isServer) {
+				x = Math.ceil((40 + ping) / Bones.Timer.delta_time)
+				if (x == Infinity) {
+					x = 1000
+				}
 			}
 			for (let i = 0; i < x; i++) {
 				if(i > this.x_interp.length) {
@@ -1484,9 +1487,12 @@ Bones.World = {
 				this.x_interp_calc = this.x
 				this.y_interp_calc = this.y
 				this.interp_strength = 10
-				let x = Math.ceil(40 / Bones.Timer.delta_time)
-				if (x == Infinity) {
-					x = 1000
+				let x = 1
+				if(!isServer){
+					x = Math.ceil((40 + ping) / Bones.Timer.delta_time)
+					if (x == Infinity) {
+						x = 1000
+					}
 				}
 				for (let i = 0; i < x; i++) {
 					if(i > this.x_interp.length) {
