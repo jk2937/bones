@@ -79,6 +79,10 @@ io.on('connection', (socket) => {
 		for (i = 0; i < Bones.World.players.length; i++) {
 			socket.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
 			socket.broadcast.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
+			if(Bones.World.players[i].afk_timer > 60 * 30 && Bones.World.players[i].id == clientId){
+				console.log('player afk')
+				socket.disconnect()
+			}
 		}
 		for (i = 0; i < Bones.World.bullets.length; i++) {
 			socket.emit('server bullet state', [Bones.World.bullets[i].id, Bones.World.bullets[i].serialize()])

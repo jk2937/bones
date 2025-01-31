@@ -695,7 +695,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.8!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.9!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -1154,6 +1154,8 @@ Bones.World = {
 			this.interp_cooldown = 50;
 			
 			this.change_class('Pistol')
+			
+			this.afk_timer = 0
         }
 		respawn() {
 			this.fire_cooldown = 0;
@@ -1569,6 +1571,17 @@ Bones.World = {
 					}
 					this.just_respawned = true;
 				}
+			}
+			
+			if (this.x == this.old_x && this.y == this.old_y) {
+				let x = delta_time
+				if(x == 0) {
+					x = 1
+				}
+				this.afk_timer += 1000 / x * Bones.Timer.timescale / 1000 // this is wrong
+				//console.log(this.afk_timer)
+			} else {
+				this.afk_timer = 0
 			}
         }
 		calc_interp(){
