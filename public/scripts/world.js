@@ -689,7 +689,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.4!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.5!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -830,7 +830,7 @@ Bones.World = {
 			//this.interp_strength = 10
 			let x = 1
 			if(!isServer) {
-				x = Math.ceil((40/* + ping*/) / Bones.Timer.delta_time)
+				x = Math.ceil((60/* + ping*/) / Bones.Timer.delta_time)
 				if (x == Infinity) {
 					x = 1000
 				}
@@ -1489,7 +1489,7 @@ Bones.World = {
 				this.interp_strength = 10
 				let x = 1
 				if(!isServer){
-					x = Math.ceil((40 /*+ ping*/) / Bones.Timer.delta_time)
+					x = Math.ceil((60 /*+ ping*/) / Bones.Timer.delta_time)
 					if (x == Infinity) {
 						x = 1000
 					}
