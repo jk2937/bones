@@ -689,7 +689,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.1.1!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.0!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -784,7 +784,7 @@ Bones.World = {
             this.x = x
             this.y = y
 			
-			this.interp_strength = 3
+			this.interp_strength = 1000
 			this.x_interp = []
 			this.y_interp = []
 			this.x_interp_calc = this.x
@@ -827,21 +827,30 @@ Bones.World = {
 			this.y_interp = this.y_interp.slice(0-this.interp_strength)
 			this.x_interp_calc = this.x
 			this.y_interp_calc = this.y
-			for (let i = 0; i < this.interp_strength; i++) {
+			//this.interp_strength = 10
+			let x = Math.round(20 / Bones.Timer.delta_time)
+			if (x == Infinity) {
+				x = 1000
+			}
+			for (let i = 0; i < x; i++) {
+				if(i > this.x_interp.length) {
+					console.log('interp time larger than buffer')
+					break
+				}
 				this.x_interp_calc = this.x_interp_calc + this.x_interp[this.x_interp.length-1-i]
 				this.y_interp_calc = this.y_interp_calc + this.y_interp[this.y_interp.length-1-i]
 			}
-			this.x_interp_calc = this.x_interp_calc / (this.interp_strength+1)
-			this.y_interp_calc = this.y_interp_calc / (this.interp_strength+1)
+			this.x_interp_calc = this.x_interp_calc / (x+1)
+			this.y_interp_calc = this.y_interp_calc / (x+1)
 		}
         render() {
 			Bones.Renderer.context.beginPath();
 			Bones.Renderer.context.strokeStyle = Bones.World.colors[this.owner%Bones.World.colors.length]
 			Bones.Renderer.context.lineWidth = 4;
 			//if(this.owner == clientId) {
-				//Bones.Renderer.context.arc(this.x_interp_calc + this.size / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
+				Bones.Renderer.context.arc(this.x_interp_calc + this.size / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
 			//} else {
-				Bones.Renderer.context.arc(this.x + this.size / 2 - Bones.Renderer.camera_x, this.y + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
+				//Bones.Renderer.context.arc(this.x + this.size / 2 - Bones.Renderer.camera_x, this.y + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
 			//}
 			Bones.Renderer.context.stroke();
         }
@@ -1475,7 +1484,7 @@ Bones.World = {
 				this.x_interp_calc = this.x
 				this.y_interp_calc = this.y
 				this.interp_strength = 10
-				let x = Math.round(500 / Bones.Timer.delta_time)
+				let x = Math.round(20 / Bones.Timer.delta_time)
 				if (x == Infinity) {
 					x = 1000
 				}

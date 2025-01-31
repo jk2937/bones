@@ -36,7 +36,7 @@ function netplay_init() {
 				}
 			}
 			if (!bullet_in_world) {
-					let new_bullet = new Bones.World.Bullet(-1000, -1000, 0, 0, 1000, 0, 0, -1, data[0])
+					let new_bullet = new Bones.World.Bullet(data[1][0], data[1][1], 0, 0, 1000, 0, 0, -1, data[0])
 					new_bullet.deserialize(data[1])
 					Bones.World.bullets.push(new_bullet)
 					console.log('new bullet')
@@ -63,5 +63,5 @@ function netplay_init() {
 			}
 		}
 	}
-	setInterval(networkloop, 500)
+	setInterval(networkloop, 20)
 }
