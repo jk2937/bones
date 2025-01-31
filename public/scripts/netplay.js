@@ -5,9 +5,9 @@ ping_end = Date.now()
 ping = 0
 most_recent_timestamp = -1
 
-ping2_start = Date.now()
+/*ping2_start = Date.now()
 ping2_end = Date.now()
-ping2 = 0
+ping2 = 0*/
 
 
 function netplay_init() {
@@ -84,10 +84,10 @@ function netplay_init() {
 			}
 		}
 	}
-	function pingloop() {
+	/*function pingloop() {
 		ping2_start = Date.now()
 		socket.emit('client ping request', [ping2_start])
-	}
+	}*/
 	setInterval(networkloop, 20)
-	setInterval(pingloop, 200)
+	//setInterval(pingloop, 200)
 }
