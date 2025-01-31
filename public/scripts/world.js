@@ -1742,7 +1742,7 @@ Bones.World = {
 			this.angle = state[30]
 			//this.velocity = state[31]
 			this.just_respawned = state[32]
-			//this.tick(ping / 2)
+			this.tick(ping / 2)
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
