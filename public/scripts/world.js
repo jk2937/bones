@@ -1077,7 +1077,7 @@ Bones.World = {
 			
 			this.respawn()
 			
-			this.interp_strength = 1
+			this.interp_strength = 10
 			this.x_interp = []
 			this.y_interp = []
 			this.x_interp_calc = this.x
@@ -1107,7 +1107,7 @@ Bones.World = {
 			this.move_aim = 90;
 			this.move_aim_interp = []
 			this.aim_interp_calc = this.move_aim
-			for (let i = 0; i < this.interp_strength; i++) {
+			for (let i = 0; i < 1000; i++) {
 				this.move_aim_interp.push(this.move_aim)
 			}
 			this.move_Shotgun = false;
@@ -1470,12 +1470,12 @@ Bones.World = {
 				
 				this.x_interp.push(this.x)
 				this.y_interp.push(this.y)
-				this.x_interp = this.x_interp.slice(0-this.interp_strength)
-				this.y_interp = this.y_interp.slice(0-this.interp_strength)
+				this.x_interp = this.x_interp.slice(0-1000)
+				this.y_interp = this.y_interp.slice(0-1000)
 				this.x_interp_calc = this.x
 				this.y_interp_calc = this.y
-				this.interp_strength = 1
-				let x = 1//Math.round(200 / Bones.Timer.delta_time)
+				this.interp_strength = 10
+				let x = Math.round(500 / Bones.Timer.delta_time)
 				if (x == Infinity) {
 					x = 1000
 				}
@@ -1493,9 +1493,13 @@ Bones.World = {
 				//let aim = (this.move_aim - 90) / 360
 				
 				this.move_aim_interp.push(this.move_aim)
-				this.move_aim_interp = this.move_aim_interp.slice(0-this.interp_strength)
+				this.move_aim_interp = this.move_aim_interp.slice(0-1000)
 				this.aim_interp_calc = this.move_aim
-				for (let i = 0; i < this.interp_strength; i++) {
+				for (let i = 0; i < x; i++) {
+					if(i > this.move_aim_interp.length) {
+						console.log('interp time larger than buffer')
+						break
+					}
 					if (this.move_aim - this.move_aim_interp[this.move_aim_interp.length-1-i] > 0.5) {
 						this.move_aim_interp[this.move_aim_interp.length-1-i] += 1
 					}
@@ -1504,7 +1508,7 @@ Bones.World = {
 					}
 					this.aim_interp_calc = this.aim_interp_calc + this.move_aim_interp[this.move_aim_interp.length-1-i]
 				}
-				this.aim_interp_calc = this.aim_interp_calc / (this.interp_strength+1)
+				this.aim_interp_calc = this.aim_interp_calc / (x+1)
 				
 				if (this.move_Shotgun && this.fire_cooldown <= 0) {
 					console.log('player fired')
@@ -1618,7 +1622,7 @@ Bones.World = {
 					Bones.Renderer.context.fillText(Math.round(this.fire_cooldown), Bones.Renderer.width / 2, Bones.Renderer.height - 20)
 				}
 				
-				/*if (this.id != clientId) {
+				//if (this.id != clientId) {
 					//reticle
 					Bones.Renderer.context.beginPath();
 					//Bones.Renderer.context.strokeStyle = "#495664";
@@ -1626,7 +1630,7 @@ Bones.World = {
 					let reticle_width = 15
 					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 					Bones.Renderer.context.stroke();
-				} else {*/
+				/*} else {
 					//reticle
 					Bones.Renderer.context.beginPath();
 					//Bones.Renderer.context.strokeStyle = "#495664";
@@ -1634,7 +1638,7 @@ Bones.World = {
 					let reticle_width = 15
 					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 					Bones.Renderer.context.stroke();
-				//}
+				//}*/
 			} else {
 				if(this.id == clientId){
 					Bones.Renderer.context.font = "bold 24px Monospace";
