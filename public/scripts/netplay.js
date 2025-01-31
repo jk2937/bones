@@ -3,6 +3,7 @@ isServer = false
 ping_start = Date.now()
 ping_end = Date.now()
 ping = 0
+most_recent_timestamp = -1
 
 ping2_start = Date.now()
 ping2_end = Date.now()
@@ -27,8 +28,12 @@ function netplay_init() {
 				Bones.World.players[i].deserialize(data[1])
 			}
 		}
-		ping_end = Date.now()
-		ping = ping_end - ping_start
+		if(data[2] > most_recent_timestamp) {
+			most_recent_timestamp = data[2]
+			ping_end = Date.now()
+			ping_start = most_recent_timestamp
+			ping = ping_end - ping_start
+		}
     });
 	socket.on('server bullet state', function(data) {
 		let state = JSON.parse(data[1]);
@@ -81,8 +86,8 @@ function netplay_init() {
 	}
 	function pingloop() {
 		ping2_start = Date.now()
-		socket.emit('client ping request', [ping2_start, Bones.World.players[clientId].deserialize])
+		socket.emit('client ping request', [ping2_start])
 	}
 	setInterval(networkloop, 20)
-	setInterval(pingloop, 20)
+	setInterval(pingloop, 200)
 }

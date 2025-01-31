@@ -672,8 +672,8 @@ Bones.World = {
 				Bones.Renderer.context.font = "bold 24px Monospace";
 				Bones.Renderer.context.fillStyle = "#495664";
 				Bones.Renderer.context.textAlign = "left";
-				Bones.Renderer.context.fillText("Ping1 " + ping, Bones.Renderer.width - 130, 50)
-				Bones.Renderer.context.fillText("Ping2 " + ping2, Bones.Renderer.width - 130, 80)
+				Bones.Renderer.context.fillText("Ping1 " + ping, Bones.Renderer.width - 230, 50)
+				Bones.Renderer.context.fillText("Ping2 " + ping2, Bones.Renderer.width - 230, 80)
 
 				Bones.Renderer.context.stroke();
 				
@@ -701,7 +701,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.12!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.13!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";

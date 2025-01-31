@@ -63,10 +63,10 @@ io.on('connection', (socket) => {
 	socket.on('client controller state', (data) => {
 		if(data[1] > most_recent_timestamp) {
 			most_recent_timestamp = data[1]
-		}
-		for (let i = 0; i < Bones.World.controllers.length; i++) {
-			if (Bones.World.controllers[i].id == clientId) {
-				Bones.World.controllers[i].deserialize(data[0])
+			for (let i = 0; i < Bones.World.controllers.length; i++) {
+				if (Bones.World.controllers[i].id == clientId) {
+					Bones.World.controllers[i].deserialize(data[0])
+				}
 			}
 		}
 	});
