@@ -88,6 +88,6 @@ function netplay_init() {
 		ping2_start = Date.now()
 		socket.emit('client ping request', [ping2_start])
 	}*/
-	setInterval(networkloop, 20)
+	setInterval(networkloop, 200)
 	//setInterval(pingloop, 200)
 }

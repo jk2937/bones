@@ -625,8 +625,8 @@ Bones.World = {
 					for (let i = 0; i < this.players.length; i++){
 						if (this.players[i].id == clientId) {
 							this.players[i].calc_interp()
-							Bones.Renderer.camera_x = this.players[i].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
-							Bones.Renderer.camera_y = this.players[i].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
+							Bones.Renderer.camera_x = this.players[i].x + this.players[i].width / 2 - Bones.Renderer.width / 2
+							Bones.Renderer.camera_y = this.players[i].y + this.players[i].height / 2 - Bones.Renderer.height / 2
 							this.players[i].render()
 						}
 					}
@@ -701,7 +701,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.14!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.15!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
@@ -1639,22 +1639,6 @@ Bones.World = {
 			if(this.respawning == false) {
 				
 				//
-				Bones.Renderer.context.beginPath();
-				Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
-				Bones.Renderer.context.lineWidth = 4;
-				Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 - Bones.Renderer.camera_y, this.height / 2, 0, 2 * Math.PI);
-				Bones.Renderer.context.stroke();
-				
-				
-				Bones.Renderer.context.font = "bold 24px Monospace";
-				Bones.Renderer.context.fillStyle = Bones.World.colors[this.id%Bones.World.colors.length];
-				Bones.Renderer.context.textAlign = "center";
-				Bones.Renderer.context.fillText(this.health, this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 40)
-				
-				Bones.Renderer.context.font = "bold 24px Monospace";
-				//Bones.Renderer.context.fillStyle = "#495664";
-				Bones.Renderer.context.textAlign = "center";
-				Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
 				
 				if(this.id == clientId){
 					Bones.Renderer.context.font = "bold 40px Monospace";
@@ -1668,7 +1652,26 @@ Bones.World = {
 					Bones.Renderer.context.fillText(Math.round(this.fire_cooldown), Bones.Renderer.width / 2, Bones.Renderer.height - 20)
 				}
 				
-				//if (this.id != clientId) {
+				if (this.id != clientId) {
+				
+				
+					Bones.Renderer.context.font = "bold 24px Monospace";
+					Bones.Renderer.context.fillStyle = Bones.World.colors[this.id%Bones.World.colors.length];
+					Bones.Renderer.context.textAlign = "center";
+					Bones.Renderer.context.fillText(this.health, this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 40)
+					
+					Bones.Renderer.context.font = "bold 24px Monospace";
+					//Bones.Renderer.context.fillStyle = "#495664";
+					Bones.Renderer.context.textAlign = "center";
+					Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
+						
+					Bones.Renderer.context.beginPath();
+					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
+					Bones.Renderer.context.lineWidth = 4;
+					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 - Bones.Renderer.camera_y, this.height / 2, 0, 2 * Math.PI);
+					Bones.Renderer.context.stroke();
+					
+					
 					//reticle
 					Bones.Renderer.context.beginPath();
 					//Bones.Renderer.context.strokeStyle = "#495664";
@@ -1676,15 +1679,32 @@ Bones.World = {
 					let reticle_width = 15
 					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 					Bones.Renderer.context.stroke();
-				/*} else {
+				} else {
+					Bones.Renderer.context.font = "bold 24px Monospace";
+					Bones.Renderer.context.fillStyle = Bones.World.colors[this.id%Bones.World.colors.length];
+					Bones.Renderer.context.textAlign = "center";
+					Bones.Renderer.context.fillText(this.health, this.x + this.width / 2 - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y - 40)
+					
+					Bones.Renderer.context.font = "bold 24px Monospace";
+					//Bones.Renderer.context.fillStyle = "#495664";
+					Bones.Renderer.context.textAlign = "center";
+					Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x+ this.width / 2 - Bones.Renderer.camera_x, this.y - Bones.Renderer.camera_y - 65)
+						
+					Bones.Renderer.context.beginPath();
+					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
+					Bones.Renderer.context.lineWidth = 4;
+					Bones.Renderer.context.arc(this.x + this.width / 2 - Bones.Renderer.camera_x, this.y + this.height / 2 - Bones.Renderer.camera_y, this.height / 2, 0, 2 * Math.PI);
+					Bones.Renderer.context.stroke();
+				
+				
 					//reticle
 					Bones.Renderer.context.beginPath();
 					//Bones.Renderer.context.strokeStyle = "#495664";
 					Bones.Renderer.context.lineWidth = 4;
 					let reticle_width = 15
-					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
+					Bones.Renderer.context.arc(this.x + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 					Bones.Renderer.context.stroke();
-				//}*/
+				}
 			} else {
 				if(this.id == clientId){
 					Bones.Renderer.context.font = "bold 24px Monospace";
