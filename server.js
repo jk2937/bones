@@ -91,7 +91,7 @@ io.on('connection', (socket) => {
 		}
 	}
 	
-	setInterval(sendloop, 40);
+	setInterval(sendloop, 20);
 
 	socket.on('disconnect', () => {
 		for (let i = 0; i < Bones.World.players.length; i++) {

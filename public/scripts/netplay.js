@@ -59,8 +59,9 @@ function netplay_init() {
 		Bones.World.load_map()
     });
 	socket.on('server ping response', function(data) {
-		ping_end = data
-		ping = ping_end - ping_start
+		ping_end = Date.now()
+		pint_start = data
+		ping = ping_end - data
 		console.log('ping ' + ping)
     });
 	
@@ -75,6 +76,6 @@ function netplay_init() {
 		ping_start = Date.now()
 		socket.emit('client ping request', ping_start)
 	}
-	setInterval(networkloop, 40)
+	setInterval(networkloop, 20)
 	setInterval(pingloop, 2000)
 }
