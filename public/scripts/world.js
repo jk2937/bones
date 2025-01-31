@@ -830,7 +830,7 @@ Bones.World = {
 			//this.interp_strength = 10
 			let x = 1
 			if(!isServer) {
-				x = Math.ceil((20 + ping) / Bones.Timer.delta_time)
+				x = Math.ceil((40/* + ping*/) / Bones.Timer.delta_time)
 				if (x == Infinity) {
 					x = 1000
 				}
@@ -1489,7 +1489,7 @@ Bones.World = {
 				this.interp_strength = 10
 				let x = 1
 				if(!isServer){
-					x = Math.ceil((20 + ping) / Bones.Timer.delta_time)
+					x = Math.ceil((40 /*+ ping*/) / Bones.Timer.delta_time)
 					if (x == Infinity) {
 						x = 1000
 					}
