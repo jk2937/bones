@@ -668,6 +668,12 @@ Bones.World = {
 				Bones.Renderer.context.fillText("2. Flamethrower", 30, Bones.Renderer.height - 75)
 				Bones.Renderer.context.fillText("3. Shotgun", 30, Bones.Renderer.height - 50)
 				Bones.Renderer.context.fillText("4. Pistol", 30, Bones.Renderer.height - 25)
+				
+				Bones.Renderer.context.font = "bold 24px Monospace";
+				Bones.Renderer.context.fillStyle = "#495664";
+				Bones.Renderer.context.textAlign = "left";
+				Bones.Renderer.context.fillText("Ping1 " + ping, Bones.Renderer.width - 130, 50)
+				Bones.Renderer.context.fillText("Ping2 " + ping2, Bones.Renderer.width - 130, 80)
 
 				Bones.Renderer.context.stroke();
 				
@@ -695,7 +701,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.11!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.12!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
