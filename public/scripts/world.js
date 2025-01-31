@@ -828,7 +828,7 @@ Bones.World = {
 			this.x_interp_calc = this.x
 			this.y_interp_calc = this.y
 			//this.interp_strength = 10
-			let x = Math.round(20 / Bones.Timer.delta_time)
+			let x = Math.ceil(40 / Bones.Timer.delta_time)
 			if (x == Infinity) {
 				x = 1000
 			}
@@ -1484,7 +1484,7 @@ Bones.World = {
 				this.x_interp_calc = this.x
 				this.y_interp_calc = this.y
 				this.interp_strength = 10
-				let x = Math.round(20 / Bones.Timer.delta_time)
+				let x = Math.ceil(40 / Bones.Timer.delta_time)
 				if (x == Infinity) {
 					x = 1000
 				}
