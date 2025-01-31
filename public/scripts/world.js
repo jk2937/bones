@@ -611,10 +611,25 @@ Bones.World = {
 					this.walls[i].render()
 				}
 				for (let i = 0; i < this.bullets.length; i++) {
+					this.bullets[i].calc_interp()
 					this.bullets[i].render()
 				}
 				for (let i = 0; i < this.players.length; i++){
-					this.players[i].render()
+					if(this.players[i].id != clientId) {
+						this.players[i].calc_interp()
+						this.players[i].render()
+					}
+				}
+				
+				if(!isServer) {
+					for (let i = 0; i < this.players.length; i++){
+						if (this.players[i].id == clientId) {
+							this.players[i].calc_interp()
+							Bones.Renderer.camera_x = this.players[i].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
+							Bones.Renderer.camera_y = this.players[i].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
+							this.players[i].render()
+						}
+					}
 				}
 			
 				Bones.Renderer.context.beginPath();
@@ -680,7 +695,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.6!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.7!", Bones.Renderer.canvas.width / 2, 25)
 			
 			
 			
@@ -812,7 +827,7 @@ Bones.World = {
 				}	
 			}
 		}
-        render() {
+		calc_interp(){
 				
 			this.x_interp.push(this.x)
 			this.y_interp.push(this.y)
@@ -838,6 +853,8 @@ Bones.World = {
 			}
 			this.x_interp_calc = this.x_interp_calc / (x+1)
 			this.y_interp_calc = this.y_interp_calc / (x+1)
+		}
+        render() {
 			
 			Bones.Renderer.context.beginPath();
 			Bones.Renderer.context.strokeStyle = Bones.World.colors[this.owner%Bones.World.colors.length]
@@ -1554,7 +1571,7 @@ Bones.World = {
 				}
 			}
         }
-        render() {
+		calc_interp(){
 			this.x_interp.push(this.x)
 			this.y_interp.push(this.y)
 			this.x_interp = this.x_interp.slice(0-1000)
@@ -1599,13 +1616,8 @@ Bones.World = {
 				this.aim_interp_calc = this.aim_interp_calc + this.move_aim_interp[this.move_aim_interp.length-1-i]
 			}
 			this.aim_interp_calc = this.aim_interp_calc / (x+1)
-			
-			if(!isServer) {
-				if (this.id == clientId) {
-					Bones.Renderer.camera_x = this.x_interp_calc + this.width / 2 - Bones.Renderer.width / 2
-					Bones.Renderer.camera_y = this.y_interp_calc + this.height / 2 - Bones.Renderer.height / 2
-				}
-			}
+		}
+        render() {
 			
 			if(this.respawning == false) {
 				
