@@ -695,10 +695,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.10!", Bones.Renderer.canvas.width / 2, 25)
-			
-			
-			
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.11!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
@@ -1768,7 +1765,7 @@ Bones.World = {
 			this.angle = state[30]
 			//this.velocity = state[31]
 			this.just_respawned = state[32]
-			this.tick(ping / 2, true) //this doesn't do anything
+			this.tick(ping / 2, true) 
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World

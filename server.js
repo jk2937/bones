@@ -40,6 +40,7 @@ function getId(){
 io.on('connection', (socket) => {
 	console.log('A user connected');
 	const clientId = getId();
+	let most_recent_timestamp = -1;
 	socket.emit('set client id', clientId);
 	socket.emit('make controller', clientId);
 	Bones.World.controllers.push(new Bones.World.Controller(clientId))
@@ -60,9 +61,12 @@ io.on('connection', (socket) => {
 	}
 	
 	socket.on('client controller state', (data) => {
+		if(data[1] > most_recent_timestamp) {
+			most_recent_timestamp = data[1]
+		}
 		for (let i = 0; i < Bones.World.controllers.length; i++) {
 			if (Bones.World.controllers[i].id == clientId) {
-				Bones.World.controllers[i].deserialize(data)
+				Bones.World.controllers[i].deserialize(data[0])
 			}
 		}
 	});
@@ -77,8 +81,8 @@ io.on('connection', (socket) => {
 		}
 		server_network_queue = []
 		for (i = 0; i < Bones.World.players.length; i++) {
-			socket.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
-			socket.broadcast.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize()])
+			socket.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize(), most_recent_timestamp])
+			socket.broadcast.emit('server player state', [Bones.World.players[i].id, Bones.World.players[i].serialize(), most_recent_timestamp])
 			if(Bones.World.players[i].afk_timer > 60 * 30 && Bones.World.players[i].id == clientId){
 				console.log('player afk')
 				socket.disconnect()

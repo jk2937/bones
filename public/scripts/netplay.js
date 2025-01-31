@@ -22,6 +22,9 @@ function netplay_init() {
 				Bones.World.players[i].deserialize(data[1])
 			}
 		}
+		ping_end = Date.now()
+		ping = ping_end - ping_start
+		console.log("ping " + ping)
     });
 	socket.on('server bullet state', function(data) {
 		let state = JSON.parse(data[1]);
@@ -68,14 +71,15 @@ function netplay_init() {
 	function networkloop() {
 		for (let i = 0; i < Bones.World.controllers.length; i++) {
 			if (clientId == Bones.World.controllers[i].id) {
-				socket.emit('client controller state', Bones.World.controllers[i].serialize())
+				ping_start = Date.now()
+				socket.emit('client controller state', [Bones.World.controllers[i].serialize(), ping_start])
 			}
 		}
 	}
-	function pingloop() {
+	/*function pingloop() {
 		ping_start = Date.now()
 		socket.emit('client ping request', ping_start)
-	}
+	}*/
 	setInterval(networkloop, 20)
-	setInterval(pingloop, 2000)
+	//setInterval(pingloop, 0)
 }
