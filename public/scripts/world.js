@@ -502,7 +502,7 @@ Bones.World = {
 		}
 		if(this.winner == -1){
 			
-			if(isServer) {
+			//if(isServer) {
 				for (let j = 0; j < this.bullets.length; j++) {
 					for (let i = 0; i < Bones.World.walls.length; i++){
 						if(isServer) {
@@ -537,7 +537,7 @@ Bones.World = {
 						}
 					}*/
 				}
-			}
+			//}
 			
 			for (let i = 0; i < this.players.length; i++) {
 				for (let j = 0; j < this.bullets.length; j++) {
@@ -745,7 +745,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.16!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.2.17!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
