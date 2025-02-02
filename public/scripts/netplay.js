@@ -43,7 +43,7 @@ function netplay_init() {
 				//console.log('deserialized server bullet state ' + data[0])
 			}
 		}
-		if(state[8] != clientId) {
+		/*if(state[8] != clientId) {
 			let bullet_in_world = false
 			for (let i = 0; i < Bones.World.bullets.length; i++){
 				if (Bones.World.bullets[i].id == data[0]) {
@@ -56,15 +56,15 @@ function netplay_init() {
 					Bones.World.bullets.push(new_bullet)
 					console.log('new bullet')
 			}
-		}
+		}*/
     });
 	socket.on('server bullet deactivate', function(data) {
-		/*for(i = 0; i < Bones.World.bullets.length; i++) {
+		for(i = 0; i < Bones.World.bullets.length; i++) {
 			if(Bones.World.bullets[i].id == data) {
 				Bones.World.bullets[i].deactivate()
 				console.log('deactivated bulled')
 			}
-		}*/
+		}
     });
 	socket.on('server world state', function(data) {
 		Bones.World.deserialize(data)

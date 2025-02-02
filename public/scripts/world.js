@@ -513,18 +513,10 @@ Bones.World = {
 							}
 						}
 						else {
-							if(this.bullets[j].owner == clientId) {
-								if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x_interp_calc + this.bullets[j].size / 2, this.bullets[j].y_interp_calc + this.bullets[j].size / 2, this.bullets[j].size / 2)
-									|| this.bullets[j].x_interp_calc + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x_interp_calc + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
-						this.bullets[j].y_interp_calc + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y_interp_calc + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
-									this.bullets[j].deactivate()
-								}
-							} else {
-								if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x + this.bullets[j].size / 2, this.bullets[j].y + this.bullets[j].size / 2, this.bullets[j].size / 2)
-								|| this.bullets[j].x + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
-						this.bullets[j].y + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
-									this.bullets[j].deactivate()
-								}
+							if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.bullets[j].x_interp_calc + this.bullets[j].size / 2, this.bullets[j].y_interp_calc + this.bullets[j].size / 2, this.bullets[j].size / 2)
+								|| this.bullets[j].x_interp_calc + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].x_interp_calc + this.bullets[j].size / 2 > this.width - this.bullets[j].size / 2 ||
+					this.bullets[j].y_interp_calc + this.bullets[j].size / 2 < this.bullets[j].size / 2 || this.bullets[j].y_interp_calc + this.bullets[j].size / 2 > this.height - this.bullets[j].size / 2){
+								this.bullets[j].deactivate()
 							}
 						}
 					}
@@ -568,54 +560,28 @@ Bones.World = {
 								this.bullets[j].deactivate()
 							}
 						} else {
-							if(this.bullets[j].owner == clientId) {
-								if (circle_collision(
-								this.players[i].x + this.players[i].width / 2, 
-								this.players[i].y + this.players[i].height / 2,
-								this.players[i].width / 2,
-								this.bullets[j].x_interp_calc + this.bullets[j].size / 2,
-								this.bullets[j].y_interp_calc + this.bullets[j].size / 2,
-								this.bullets[j].size / 2
-								) && this.players[i].respawning == false) {
-									/*this.players[i].health -= this.bullets[j].damage
-									if (this.players[i].health <= 0) {
-										this.players[i].health = 0
-										for (let k = 0; k < this.players.length; k++) {
-											if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
-												this.players[k].score ++
-												if (this.players[i].health <= 0) {
-													this.players[i].respawn_timer = 175;
-													this.players[i].respawning = true;
-												}
+							if (circle_collision(
+							this.players[i].x + this.players[i].width / 2, 
+							this.players[i].y + this.players[i].height / 2,
+							this.players[i].width / 2,
+							this.bullets[j].x_interp_calc + this.bullets[j].size / 2,
+							this.bullets[j].y_interp_calc + this.bullets[j].size / 2,
+							this.bullets[j].size / 2
+							) && this.players[i].respawning == false) {
+								/*this.players[i].health -= this.bullets[j].damage
+								if (this.players[i].health <= 0) {
+									this.players[i].health = 0
+									for (let k = 0; k < this.players.length; k++) {
+										if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
+											this.players[k].score ++
+											if (this.players[i].health <= 0) {
+												this.players[i].respawn_timer = 175;
+												this.players[i].respawning = true;
 											}
 										}
-									}*/
-									this.bullets[j].deactivate()
-								}
-							} else {
-								if (circle_collision(
-								this.players[i].x + this.players[i].width / 2, 
-								this.players[i].y + this.players[i].height / 2,
-								this.players[i].width / 2,
-								this.bullets[j].x + this.bullets[j].size / 2,
-								this.bullets[j].y + this.bullets[j].size / 2,
-								this.bullets[j].size / 2
-								) && this.players[i].respawning == false) {
-									/*this.players[i].health -= this.bullets[j].damage
-									if (this.players[i].health <= 0) {
-										this.players[i].health = 0
-										for (let k = 0; k < this.players.length; k++) {
-											if (this.players[k].id == this.bullets[j].owner && this.players[i].respawning == false) {
-												this.players[k].score ++
-												if (this.players[i].health <= 0) {
-													this.players[i].respawn_timer = 175;
-													this.players[i].respawning = true;
-												}
-											}
-										}
-									}*/
-									this.bullets[j].deactivate()
-								}
+									}
+								}*/
+								this.bullets[j].deactivate()
 							}
 						}
 					}
@@ -1612,7 +1578,7 @@ Bones.World = {
 						damage = 20
 						this.fire_cooldown = 40
 						let spread = 90
-						if((isServer || this.id == clientId) && physics == false){
+						if(/*(isServer || this.id == clientId) && */physics == false){
 							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim - 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
 							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim - 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
 							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size, damage, this.id, Bones.World.getBulletId()))
@@ -1620,7 +1586,7 @@ Bones.World = {
 							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim + 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
 						}
 					}
-					if((isServer || this.id == clientId) && physics == false){
+					if(/*(isServer || this.id == clientId) && */physics == false){
 						angle = this.move_aim
 						//new_vec = addVelocity(angle, speed, this.angle * Math.PI / 180, this.velocity)
 						//angle = new_vec[0]
@@ -1849,7 +1815,7 @@ Bones.World = {
 			if(this.id != clientId){
 				this.move_aim = state[17];
 				this.move_Shotgun = state[18];
-				this.fire_cooldown = state[23]
+				//this.fire_cooldown = state[23]
 			}
             this.move_jump = state[19];
 
