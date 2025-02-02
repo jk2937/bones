@@ -532,7 +532,7 @@ Bones.World = {
 						this.bullets[j].x_interp_calc + this.bullets[j].size / 2,
 						this.bullets[j].y_interp_calc + this.bullets[j].size / 2,
 						this.bullets[j].size / 2
-						) && this.players[i].respawning == false) {
+						) && (this.players[i].respawning == false || (this.players[i].respawning && this.players[i].respawn_timer > 150))) {
 							if(isServer) {
 								this.players[i].health -= this.bullets[j].damage
 								if (this.players[i].health <= 0) {
@@ -677,7 +677,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.3.5!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.3.6!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
