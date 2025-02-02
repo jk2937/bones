@@ -1179,8 +1179,8 @@ Bones.World = {
 						this.x + this.width / 2, 
 						this.y + this.height / 2,
 						this.width / 2,
-						Bones.World.bullets[j].x + Bones.World.bullets[j].size / 2,
-						Bones.World.bullets[j].y + Bones.World.bullets[j].size / 2,
+						Bones.World.bullets[j].x_interp_calc + Bones.World.bullets[j].size / 2,
+						Bones.World.bullets[j].y_interp_calc + Bones.World.bullets[j].size / 2,
 						Bones.World.bullets[j].size / 2
 					)) {
 						collide_with_wall_or_bullet = true;
