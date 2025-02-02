@@ -415,10 +415,12 @@ Bones.World = {
 							this.controllers[i].update()
 						}
 					}
-				} else {
-					for (let i = 0; i < this.players.length; i++){
-						for (let j = 0; j < this.controllers.length; j++) {
-							if (this.controllers[j].id == this.players[i].id) {
+				} 
+				for (let i = 0; i < this.players.length; i++){
+					for (let j = 0; j < this.controllers.length; j++) {
+						if (this.controllers[j].id == this.players[i].id) {
+							
+							if (isServer || this.players[i].id == clientId) {
 								this.players[i].read_keyboard_controls(
 									this.controllers[j].left,
 									this.controllers[j].right,
@@ -841,7 +843,7 @@ Bones.World = {
 			//this.interp_strength = 10
 			let x = 1
 			if(!isServer) {
-				x = Math.ceil((60/* + ping*/) / Bones.Timer.delta_time)
+				x = Math.ceil((200/* + ping*/) / Bones.Timer.delta_time)
 				if (x == Infinity) {
 					x = 1000
 				}
@@ -884,7 +886,9 @@ Bones.World = {
 			this.damage = state[7];
 			this.owner = state[8];
 			this.id = state[9];
-			this.tick(ping / 2, true) //this doesn't do anything
+			if(!isServer){
+				this.tick(ping / 2, true)
+			}
 		}
     }, // END CLASS BoxProp
 
@@ -994,6 +998,9 @@ Bones.World = {
 			this.jump = false;
 			this._select = 3;
 			this.id = id
+			this.timestamp = Date.now()
+			this.delta_time = Bones.Timer.delta_time
+			this._history = []
 		}
 		update() {
 			if(Bones.Input.Keyboard.ControlStates["up"].pressed || Bones.Input.Keyboard.ControlStates["up"].pressed_this_frame) {
@@ -1056,8 +1063,8 @@ Bones.World = {
 					let mx = Bones.Input.Mouse.ControlStates.x + Bones.Renderer.camera_x
 					let my = Bones.Input.Mouse.ControlStates.y + Bones.Renderer.camera_y
 					
-					let x = mx - Bones.World.players[i].x_interp_calc - Bones.World.players[i].width / 2 
-					let y = my - Bones.World.players[i].y_interp_calc - Bones.World.players[i].height / 2 
+					let x = mx - Bones.World.players[i].x - Bones.World.players[i].width / 2 
+					let y = my - Bones.World.players[i].y - Bones.World.players[i].height / 2 
 					
 					var dAx = x;
 					var dAy = y;
@@ -1069,6 +1076,24 @@ Bones.World = {
 					this.aim = (degree_angle - 90) / 360
 				}
 			}
+			this.timestamp = Date.now()
+			this.delta_time = Bones.Timer.delta_time
+			let history_object = new Bones.World.Controller()
+			history_object.left = this.left;
+			history_object.right = this.right;
+			history_object.up = this.up;
+			history_object.down = this.down;
+			history_object.aim = this.aim;
+			history_object.Shotgun = this.Shotgun;
+			history_object.jump = this.jump;
+			history_object._select = this._select;
+			history_object.id = this.id
+			history_object.timestamp = this.timestamp
+			history_object.delta_time = this.delta_time
+			this._history.push(history_object)
+			//console.log(this._history)
+			//this._history.slice(-1000)
+			
 		}
 		serialize() {
 			return JSON.stringify([this.left, this.right, this.up, this.down, this.aim, this.Shotgun, this.jump, this._select])
@@ -1120,7 +1145,7 @@ Bones.World = {
             this.x_acc = 1.5
 			this.max_x_vel_aim = 3
             this.y_acc = 10 // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
-            this.ground_friction = 0.55
+            this.ground_friction = 0.2 //0.55
             this.air_friction = 0.05
             this.gravity = 0.25
             this.facing_right = true
@@ -1197,7 +1222,7 @@ Bones.World = {
 			}
 			
 			if (this._class == 'Pistol') {
-				this.x_acc = 1.5
+				this.x_acc = 0.2 //1.5
 				this.max_x_vel = 7;
 				this.max_x_vel_aim = 3.5;
 			}
@@ -1430,7 +1455,7 @@ Bones.World = {
 				/*this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
 				this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;*/
 				
-				if(isServer || physics){
+				if(isServer || physics || this.id == clientId){
 					this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
 					this.y += this.velocity * Math.sin(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
 				}
@@ -1598,7 +1623,7 @@ Bones.World = {
 			this.interp_strength = 10
 			let x = 1
 			if(!isServer){
-				x = Math.ceil((60 /*+ ping*/) / Bones.Timer.delta_time)
+				x = Math.ceil((200 /*+ ping*/) / Bones.Timer.delta_time)
 				if (x == Infinity) {
 					x = 1000
 				}
@@ -1789,9 +1814,48 @@ Bones.World = {
 			this.respawning = state[28]
 			this.score = state[29]
 			this.angle = state[30]
-			//this.velocity = state[31]
+			this.velocity = state[31]
 			this.just_respawned = state[32]
-			this.tick(ping / 2, true) 
+			if(!isServer && this.id == clientId){
+				let controller_object = null
+				for (let i = 0; i < Bones.World.controllers.length; i++) {
+					if (Bones.World.controllers[i].id == this.id) {
+						controller_object = Bones.World.controllers[i]
+					}
+				}
+				/*this.read_keyboard_controls(
+					controller_object.left,
+					controller_object.right,
+					controller_object.up,
+					controller_object.down,
+					controller_object.aim,
+					controller_object.Shotgun,
+					controller_object.jump,
+					controller_object._select,
+								);
+				this.tick(ping / 2, true)*/
+				let total_calc_hist_time_delta = 0
+				for (let i = 0; i < controller_object._history.length; i++){
+					//Math.ceil(ping / 2 / Bones.Timer.delta_time)
+					if (total_calc_hist_time_delta > ping) {
+						this.tick(total_calc_hist_time_delta - ping, true)
+						break;
+					}
+					this.read_keyboard_controls(
+						controller_object._history[controller_object._history.length-1-i].left,
+						controller_object._history[controller_object._history.length-1-i].right,
+						controller_object._history[controller_object._history.length-1-i].up,
+						controller_object._history[controller_object._history.length-1-i].down,
+						controller_object._history[controller_object._history.length-1-i].aim,
+						controller_object._history[controller_object._history.length-1-i].Shotgun,
+						controller_object._history[controller_object._history.length-1-i].jump,
+						controller_object._history[controller_object._history.length-1-i]._select,
+					)
+					this.tick(controller_object._history[controller_object._history.length-1-i].delta_time, true)
+					total_calc_hist_time_delta += controller_object._history[controller_object._history.length-1-i].delta_time
+				}
+				//replay inputs from last ping / 2 * delta_time
+			}
 		}
     }, // END CLASS Player
 } // END OBJECT Bones.World
