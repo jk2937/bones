@@ -677,7 +677,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.3.6!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.3.7!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
