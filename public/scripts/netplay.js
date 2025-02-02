@@ -38,12 +38,12 @@ function netplay_init() {
 	socket.on('server bullet state', function(data) {
 		let state = JSON.parse(data[1]);
 		for (let i = 0; i < Bones.World.bullets.length; i++){
-			if (Bones.World.bullets[i].id == data[0]) {
+			if (Bones.World.bullets[i].id == data[0] && /**/Bones.World.bullets[i]._type == data[10]/*This is a hack to fix ids being desynced*/) {
 				Bones.World.bullets[i].deserialize(data[1])
 				//console.log('deserialized server bullet state ' + data[0])
 			}
 		}
-		if(state[8] != clientId) {
+		//if(state[8] != clientId) {
 			let bullet_in_world = false
 			for (let i = 0; i < Bones.World.bullets.length; i++){
 				if (Bones.World.bullets[i].id == data[0]) {
@@ -56,7 +56,7 @@ function netplay_init() {
 					Bones.World.bullets.push(new_bullet)
 					console.log('new bullet')
 			}
-		}
+		//}
     });
 	socket.on('server bullet deactivate', function(data) {
 		for(i = 0; i < Bones.World.bullets.length; i++) {

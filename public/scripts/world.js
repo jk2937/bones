@@ -677,7 +677,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.3.8!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.3.9!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
@@ -847,7 +847,7 @@ Bones.World = {
 			Bones.Renderer.context.stroke();
         }
 		serialize() {
-			return JSON.stringify([this.x, this.y, this.velocity, this.angle, this.ttl, this.size, this.active, this.damage, this.owner, this.id])
+			return JSON.stringify([this.x, this.y, this.velocity, this.angle, this.ttl, this.size, this.active, this.damage, this.owner, this.id, this.type])
 		}
 		deserialize(dumps) {
 			if(this._type != 'Flamethrower'){
@@ -862,6 +862,7 @@ Bones.World = {
 				this.damage = state[7];
 				this.owner = state[8];
 				this.id = state[9];
+				this._type = state[10];
 				if(!isServer){
 					this.tick(ping / 2, true)
 				}
