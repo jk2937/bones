@@ -847,7 +847,7 @@ Bones.World = {
 			Bones.Renderer.context.stroke();
         }
 		serialize() {
-			return JSON.stringify([this.x, this.y, this.velocity, this.angle, this.ttl, this.size, this.active, this.damage, this.owner, this.id, this.type])
+			return JSON.stringify([this.x, this.y, this.velocity, this.angle, this.ttl, this.size, this.active, this.damage, this.owner, this.id, this._type])
 		}
 		deserialize(dumps) {
 			if(this._type != 'Flamethrower'){
