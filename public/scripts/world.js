@@ -765,7 +765,7 @@ Bones.World = {
 		return ret_bullet_id
 	},
     Bullet: class {
-        constructor(x, y, velocity, angle, ttl, size, damage, owner, id) {
+        constructor(x, y, velocity, angle, ttl, size, damage, owner, id, _type) {
             this.x = x
             this.y = y
 			
@@ -787,6 +787,7 @@ Bones.World = {
 			this.damage = damage;
 			this.owner = owner
 			this.id = id
+			this._type = _type
         }
 		deactivate() {
 			this.active = false
@@ -849,19 +850,21 @@ Bones.World = {
 			return JSON.stringify([this.x, this.y, this.velocity, this.angle, this.ttl, this.size, this.active, this.damage, this.owner, this.id])
 		}
 		deserialize(dumps) {
-			const state = JSON.parse(dumps);
-			this.x = state[0];
-			this.y = state[1];
-			this.velocity = state[2];
-			this.angle = state[3];
-			this.ttl = state[4];
-			this.size = state[5];
-			this.active = state[6];
-			this.damage = state[7];
-			this.owner = state[8];
-			this.id = state[9];
-			if(!isServer){
-				this.tick(ping / 2, true)
+			if(this._type != 'Flamethrower'){
+				const state = JSON.parse(dumps);
+				this.x = state[0];
+				this.y = state[1];
+				this.velocity = state[2];
+				this.angle = state[3];
+				this.ttl = state[4];
+				this.size = state[5];
+				this.active = state[6];
+				this.damage = state[7];
+				this.owner = state[8];
+				this.id = state[9];
+				if(!isServer){
+					this.tick(ping / 2, true)
+				}
 			}
 		}
     }, // END CLASS BoxProp
@@ -1545,11 +1548,11 @@ Bones.World = {
 						this.fire_cooldown = 40
 						let spread = 90
 						if(/*(isServer || this.id == clientId) && */physics == false){
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim - 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim - 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim + 0.025, ttl, size, damage, this.id, Bones.World.getBulletId()))
-							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim + 0.05, ttl, size, damage, this.id, Bones.World.getBulletId()))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim - 0.05, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim - 0.025, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, this.move_aim, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 1, this.move_aim + 0.025, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class))
+							Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed - 4, this.move_aim + 0.05, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class))
 						}
 					}
 					if(/*(isServer || this.id == clientId) && */physics == false){
@@ -1557,7 +1560,7 @@ Bones.World = {
 						//new_vec = addVelocity(angle, speed, this.angle * Math.PI / 180, this.velocity)
 						//angle = new_vec[0]
 						//speed = new_vec[1]
-						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId()))
+						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class))
 					}
 				}
 				if(!physics){
