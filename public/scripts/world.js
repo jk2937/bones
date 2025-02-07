@@ -70,6 +70,25 @@ function removeYComponent(angle, magnitude) {
     // Return the new angle and magnitude
     return [newAngle, newMagnitude];
 }
+function applyGravity(angle, velocity, gravity) {
+    // Convert angle to radians
+    const angleInRadians = (angle * Math.PI) / 180;
+
+    // Calculate the vertical and horizontal components of velocity
+    const verticalVelocity = velocity * Math.cos(angleInRadians);
+    const horizontalVelocity = velocity * Math.sin(angleInRadians);
+
+    // Apply gravity to the vertical velocity
+    const newVerticalVelocity = verticalVelocity + gravity;
+
+    // Calculate the new angle based on the new vertical and horizontal velocities
+    const newAngle = Math.atan2(newVerticalVelocity, horizontalVelocity) * 180 / Math.PI;
+
+    // Calculate the new velocity magnitude
+    const newVelocity = Math.sqrt(newVerticalVelocity * newVerticalVelocity + horizontalVelocity * horizontalVelocity);
+
+    return [newAngle, newVelocity];
+}
 function circleBoxCollision(x1, y1, w, h, x2, y2, r) {
   // Find the closest point to the circle within the box
   let closestX = Math.max(x1, Math.min(x2, x1 + w));
@@ -85,6 +104,20 @@ function circleBoxCollision(x1, y1, w, h, x2, y2, r) {
   }
 
   return false;
+}
+function boxBoxCollision(x1, y1, w1, h1, x2, y2, w2, h2) {
+    // Check if one rectangle is on the left side of the other
+    if (x1 + w1 <= x2 || x2 + w2 <= x1) {
+        return false;
+    }
+
+    // Check if one rectangle is above the other
+    if (y1 + h1 <= y2 || y2 + h2 <= y1) {
+        return false;
+    }
+
+    // If none of the above conditions are met, there's a collision
+    return true;
 }
 function addForceToVector(angle, magnitude, targetAngle, targetMagnitude, rotationSpeed = 0.1, acceleration = 0.1) {
     // Convert the angles to radians
@@ -308,29 +341,25 @@ Bones.World = {
     }, // END FUNCTION init
 	load_map() {
 		if(this.map_select == 0){
-			this.width = 2000
-			this.height = 2000
+			this.width = 1000
+			this.height = 640
 			this.tilemap = [
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-				[0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
 			]
 			this.walls = []
 			for (let y = 0; y < this.tilemap.length; y++) {
@@ -340,6 +369,8 @@ Bones.World = {
 					}
 				}
 			}
+			Bones.Renderer.camera_x = 0 - (Bones.Renderer.width - this.width) / 2
+			Bones.Renderer.camera_y = 0 - (Bones.Renderer.height - this.height) / 2
 		} else {
 			this.width = 3000
 			this.height = 800
@@ -454,8 +485,8 @@ Bones.World = {
 							let current_ping = ping / 2
 							for (let j = 0; j < controller_object._history.length; j++){
 								//Math.ceil(ping / 2 / Bones.Timer.delta_time)
-								if (total_calc_hist_time_delta > ping) {
-									this.players[i].tick(total_calc_hist_time_delta - ping, true)
+								if (total_calc_hist_time_delta > current_ping) {
+									this.players[i].tick(total_calc_hist_time_delta - current_ping, true)
 									break;
 								}
 								this.players[i].read_keyboard_controls(
@@ -474,30 +505,6 @@ Bones.World = {
 						}
 					}
 				}
-			}
-
-			/*if(!isServer) {
-				if(Bones.Input.Mouse.ControlStates.click_this_frame) {
-					for (let i = 0; i < this.players.length; i++){
-						if (this.players[i].id == clientId) {
-							size = 100
-							offset = 30 + size / 2
-							this.bullets.push(new this.Bullet(this.players[i].x + this.players[i].width / 2 + Math.cos(this.players[i].move_aim * 2 * Math.PI) * (this.players[i].width / 2 + offset) - size / 2, this.players[i].y + this.players[i].height / 2 + Math.sin(this.players[i].move_aim * 2 * Math.PI) * (this.players[i].height / 2 + offset) - size / 2, 10, this.players[i].move_aim, 5000, size))
-						}
-					}
-				}
-			}*/
-		}
-		if(!isServer){
-			let size = 35
-			let cols = Math.floor( Bones.Renderer.width / size ) + 2
-			let grids = Math.floor( Bones.Renderer.height / size ) * cols + 3 * cols
-			for (let i = 0; i < grids; i++){
-				Bones.Renderer.context.beginPath();
-				Bones.Renderer.context.strokeStyle = "#8c97a2";
-				Bones.Renderer.context.lineWidth = 1;
-				Bones.Renderer.context.rect((0 - Bones.Renderer.camera_x % size + i * size) % (size * cols) - size, 0 - Bones.Renderer.camera_y % size + (Math.floor(i / cols) * size ) - size, size, size);
-				Bones.Renderer.context.stroke();
 			}
 		}
 		if(this.winner == -1){
@@ -599,8 +606,6 @@ Bones.World = {
 						if (this.players[i].id == clientId) {
 							this.players[i].calc_interp()
 							if (isServer == false) {
-								Bones.Renderer.camera_x = this.players[i].x_interp_calc + this.players[i].width / 2 - Bones.Renderer.width / 2
-								Bones.Renderer.camera_y = this.players[i].y_interp_calc + this.players[i].height / 2 - Bones.Renderer.height / 2
 								this.players[i].render()
 							}
 						}
@@ -677,7 +682,7 @@ Bones.World = {
 			Bones.Renderer.context.font = "bold 24px Monospace";
 			Bones.Renderer.context.fillStyle = "#495664";
 			Bones.Renderer.context.textAlign = "center";
-			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha branch-network_testing-0.3.10!", Bones.Renderer.canvas.width / 2, 25)
+			Bones.Renderer.context.fillText("Welcome to Project Bones Alpha v0.4.0!", Bones.Renderer.canvas.width / 2, 25)
 			
 			for (let i = 0; i < this.players.length; i++) {
 				Bones.Renderer.context.font = "bold 24px Monospace";
@@ -1098,8 +1103,8 @@ Bones.World = {
 			this.old_x = this.x
 			this.old_y = this.y
 			
-			this.width = 65;
-			this.height = 65;
+			this.width = 40;
+			this.height = 80;
 			
 			
 			
@@ -1116,13 +1121,13 @@ Bones.World = {
 			}
             this.x_vel = 0;
             this.y_vel = 0;
-			this.velocity = 7;
+			this.velocity = 3;
 			this.angle = 90;
-            this.max_x_vel = 7
-            this.max_y_vel = 70
-            this.x_acc = 1.5
+            this.max_x_vel = 3
+            this.max_y_vel = 30
+            this.x_acc = 0.75
 			this.max_x_vel_aim = 3
-            this.y_acc = 10 // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
+            this.y_acc = 9 // Todo: Pistol acceleration, Pistol max vel, run speed, bunny hopping
             this.ground_friction = 99 //0.55
             this.air_friction = 0.05
             this.gravity = 0.25
@@ -1159,8 +1164,6 @@ Bones.World = {
 			
 			this.interp_cooldown = 50;
 			
-			this.change_class('Pistol')
-			
 			this.afk_timer = 0
 			
 			this.process_history = false
@@ -1174,19 +1177,7 @@ Bones.World = {
 				this.x = Math.random() * Bones.World.width;
 				this.y = Math.random() * Bones.World.height;
 				for (let i = 0; i < Bones.World.walls.length; i++){
-					if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
-						collide_with_wall_or_bullet = true;
-					}
-				}
-				for (let j = 0; j < Bones.World.bullets.length; j++) {
-					if (circle_collision(
-						this.x + this.width / 2, 
-						this.y + this.height / 2,
-						this.width / 2,
-						Bones.World.bullets[j].x_interp_calc + Bones.World.bullets[j].size / 2,
-						Bones.World.bullets[j].y_interp_calc + Bones.World.bullets[j].size / 2,
-						Bones.World.bullets[j].size / 2
-					)) {
+					if(boxBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x, this.y, this.width, this.height)) {
 						collide_with_wall_or_bullet = true;
 					}
 				}
@@ -1270,92 +1261,29 @@ Bones.World = {
 			}
 			if(this.respawning == false){
 				// Control
-				let new_vec = []
-				if (this.move_up && this.move_right) {
-					//this.angle = 315 / 360
-					//this.velocity = this.max_x_vel
-					new_vec = addForceToVector(this.angle, this.velocity, 315 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
+
+				if (this.move_left) {
+					this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
 				}
-				else if (this.move_right && this.move_down) {
-					//this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
-					new_vec = addForceToVector(this.angle, this.velocity, 45 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
+				if (this.move_right) {
+					this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
 				}
-				else if (this.move_down && this.move_left) {
-					new_vec = addForceToVector(this.angle, this.velocity, 135 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
-				}
-				else if (this.move_left && this.move_up) {
-					//this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
-					new_vec = addForceToVector(this.angle, this.velocity, 225 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
-				}
-				else if (this.move_up) {
-					new_vec = addForceToVector(this.angle, this.velocity, 270 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
-				}
-				else if (this.move_right) {
-					//this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
-					new_vec = addForceToVector(this.angle, this.velocity, 360 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
-				}
-				else if (this.move_down) {
-					new_vec = addForceToVector(this.angle, this.velocity, 90 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
-				}
-				else if (this.move_left) {
-					//this.x_vel -= this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
-					new_vec = addForceToVector(this.angle, this.velocity, 180 / 360, this.max_x_vel, this.x_acc * delta_time * Bones.Timer.timescale, this.x_acc * delta_time * Bones.Timer.timescale)
-					this.angle = new_vec[0]
-					this.velocity = new_vec[1]
-				}
-				
-				if(this.fire_cooldown <= 0){
-					if (this._select == 0) {
-						this.change_class('Mine')
-					}
-					if (this._select == 1) {
-						this.change_class('Flamethrower')
-					}
-					if (this._select == 2) {
-						this.change_class('Shotgun')
-					}
-					if (this._select == 3) {
-						this.change_class('Pistol')
-					}
-				}
-				/*if (this.move_jump && !this.jump_lock && this.on_ground) {
+				if (this.move_jump && !this.jump_lock && this.on_ground) {
 					this.y_vel -= this.y_acc
 					this.on_ground = false
 					this.jump_lock = true
-				}*/
-				/*this.on_ground = true;
-				if (!this.move_jump) {
+				}
+				if (!this.move_jump && this.on_ground) {
 					this.jump_lock = false
-				}*/
+				}
 
 				// Gravity
 
-				//this.y_vel += this.gravity * Bones.Timer.delta_time * Bones.Timer.timescale
+				this.y_vel += this.gravity * Bones.Timer.delta_time * Bones.Timer.timescale
 
 				// Friction
 
-				if(!this.move_left && !this.move_right && !this.move_up && !this.move_down && this.velocity > 0) {
-					if (this.velocity <= this.ground_friction * delta_time * Bones.Timer.timescale) {
-						this.velocity = 0; // player_ground_friction;
-					} else {
-						this.velocity -= this.ground_friction * delta_time * Bones.Timer.timescale;
-					}
-				}
-				/*if (!this.move_left && !this.move_right) {
+				if (!this.move_left && !this.move_right) {
 					if (this.x_vel > 0) {
 						if (this.on_ground == true) {
 							if (this.x_vel <= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
@@ -1389,94 +1317,65 @@ Bones.World = {
 						}
 					}
 				}
-				if (!this.move_up && !this.move_down) {
-					if (this.y_vel > 0) {
-						if (this.y_vel <= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
-							this.y_vel = 0; // player_ground_friction;
-						} else {
-							this.y_vel -= this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
-						}
-					}
-					if (this.y_vel < 0) {
-						if (this.y_vel >= -this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale) {
-							this.y_vel = 0; // -player_ground_friction
-						} else {
-							this.y_vel += this.ground_friction * Bones.Timer.delta_time * Bones.Timer.timescale;
-						}
-					}
-				}*/
 
 
 				// Maximum Velocities
 
-				/*if (this.x_vel > this.max_x_vel) {
+				if (this.x_vel > this.max_x_vel) {
 					this.x_vel = this.max_x_vel
 				}
 				if (this.x_vel < -this.max_x_vel) {
 					this.x_vel = -this.max_x_vel
 				}
-				if (this.y_vel > this.max_x_vel) {
-					this.y_vel = this.max_x_vel
+				if (this.y_vel > this.max_y_vel) {
+					this.y_vel = this.max_y_vel
 				}
-				if (this.y_vel < -this.max_x_vel) {
-					this.y_vel = -this.max_x_vel
-				}*/
-				
-				if(this.fire_cooldown > 0) {
-					if (this.velocity > this.max_x_vel_aim) {
-							this.velocity = this.max_x_vel_aim
-					}
-				} else {
-					if (this.velocity > this.max_x_vel) {
-							this.velocity = this.max_x_vel
-					}
+				if (this.y_vel < -this.max_y_vel) {
+					this.y_vel = -this.max_y_vel
 				}
 
 				// Commit x and y Velocities
 
-				/*this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
-				this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;*/
-				
-				if(isServer || physics || this.id == clientId){
-					this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
-					this.y += this.velocity * Math.sin(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
-				}
-				
-				//this.angle += 0.01 * Bones.Timer.delta_time * Bones.Timer.timescale
+				this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
+				this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
 
 
 				// Movement Bounderies
 
 				if (this.x < 0) {
-					this.x = 2
+					this.x = 0
 					//this.velocity = 0
 				}
 				if (this.x > Bones.World.width - this.width) {
-					this.x = Bones.World.width - this.width - 2
+					this.x = Bones.World.width - this.width
 					//this.velocity = 0
 				}
 				if (this.y < 0) {
-					this.y = 2
+					this.y = 0
 					//this.y_vel = 0 - this.y_vel
 					//this.velocity = 0
 				}
 				if (this.y > Bones.World.height - this.height) {
-					this.y = Bones.World.height - this.height - 2
-					//this.velocity = 0
+					this.y = Bones.World.height - this.height
+					this.y_vel = 0
+					this.on_ground = true
 				}
 				
 				for (let i = 0; i < Bones.World.walls.length; i++){
 					let j = 0
-					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.old_x + this.width / 2, this.y + this.height / 2, this.width / 2)) {
-						if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.old_x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+					while(boxBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.old_x, this.y, this.width, this.height)) {
+						if(boxBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, 1, this.old_x, this.y, this.width, this.height)){
 							// collide top
-							this.y--
+							this.y = Bones.World.walls[i].y - this.height
 							//this.velocity = 0
+							this.y_vel = 0
+							this.on_ground = true
 						}
-						else if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.old_x + this.width / 2, this.y + this.height / 2, this.width / 2)){
+						else if(boxBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y + Bones.World.walls[i].height, Bones.World.walls[i].width, 1, this.old_x, this.y, this.width, this.height)){
 							// collide bottom
-							this.y++
+							this.y = Bones.World.walls[i].y + Bones.World.walls[i].height
 							//this.velocity = 0
+							this.y_vel = 0
 						}
 						if (j > 1000){
 							break
@@ -1484,16 +1383,18 @@ Bones.World = {
 						j++
 					}
 					j = 0
-					while(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x + this.width / 2, this.old_y + this.height / 2, this.width / 2)) {
-						if(circleBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.old_y + this.height / 2, this.width / 2)){
+					while(boxBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, Bones.World.walls[i].width, Bones.World.walls[i].height, this.x, this.old_y, this.width, this.height)) {
+						if(boxBoxCollision(Bones.World.walls[i].x, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x, this.old_y, this.width, this.height)){
 							// collide right
-							this.x--
+							this.x = Bones.World.walls[i].x - this.width
 							//this.velocity = 0
+							this.x_vel = 0
 						}
-						else if(circleBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x + this.width / 2, this.old_y + this.height / 2, this.width / 2)){
+						else if(boxBoxCollision(Bones.World.walls[i].x + Bones.World.walls[i].width, Bones.World.walls[i].y, 1, Bones.World.walls[i].height, this.x, this.old_y, this.width, this.height)){
 							// collide left
-							this.x++
+							this.x = Bones.World.walls[i].x + Bones.World.walls[i].width
 							//this.velocity = 0
+							this.x_vel = 0
 						}
 						if (j > 1000){
 							break
@@ -1607,7 +1508,7 @@ Bones.World = {
 			this.interp_strength = 10
 			let x = 1
 			if(!isServer){
-				x = Math.ceil((200 /*+ ping*/) / Bones.Timer.delta_time)
+				x = Math.ceil(5)
 				if (x == Infinity) {
 					x = 1000
 				}
@@ -1677,7 +1578,7 @@ Bones.World = {
 					Bones.Renderer.context.beginPath();
 					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
 					Bones.Renderer.context.lineWidth = 4;
-					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 - Bones.Renderer.camera_y, this.height / 2, 0, 2 * Math.PI);
+					Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
 					Bones.Renderer.context.stroke();
 					
 					
@@ -1702,7 +1603,7 @@ Bones.World = {
 					Bones.Renderer.context.beginPath();
 					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
 					Bones.Renderer.context.lineWidth = 4;
-					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 - Bones.Renderer.camera_y, this.height / 2, 0, 2 * Math.PI);
+					Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
 					Bones.Renderer.context.stroke();
 				
 				
@@ -1766,8 +1667,8 @@ Bones.World = {
             this.movement_speed = state[0];
             this.x = state[1];
             this.y = state[2];
-            //this.x_vel = state[3];
-            //this.y_vel = state[4];
+            this.x_vel = state[3];
+            this.y_vel = state[4];
             this.max_x_vel = state[5]
             this.max_y_vel = state[6]
             this.x_acc = state[7]
