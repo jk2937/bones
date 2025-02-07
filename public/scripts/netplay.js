@@ -89,5 +89,5 @@ function netplay_init() {
 		socket.emit('client ping request', [ping2_start])
 	}
 	setInterval(networkloop, 20)
-	setInterval(pingloop, 200)
+	//setInterval(pingloop, 200)
 }
