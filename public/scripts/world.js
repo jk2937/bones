@@ -11,14 +11,14 @@ Bones.Assets = {
         this.gfx_player_walk6 = new Image();
         this.gfx_player_walk7 = new Image();
 
-        this.gfx_player_walk0.src = "../assets/supertux/creatures/tux/big/walk-0.png";
-        this.gfx_player_walk1.src = "../assets/supertux/creatures/tux/big/walk-1.png";
-        this.gfx_player_walk2.src = "../assets/supertux/creatures/tux/big/walk-2.png";
-        this.gfx_player_walk3.src = "../assets/supertux/creatures/tux/big/walk-3.png";
-        this.gfx_player_walk4.src = "../assets/supertux/creatures/tux/big/walk-4.png";
-        this.gfx_player_walk5.src = "../assets/supertux/creatures/tux/big/walk-5.png";
-        this.gfx_player_walk6.src = "../assets/supertux/creatures/tux/big/walk-6.png";
-        this.gfx_player_walk7.src = "../assets/supertux/creatures/tux/big/walk-7.png";
+        this.gfx_player_walk0.src = "../assets/supertux/images/creatures/tux/big/walk-0.png";
+        this.gfx_player_walk1.src = "../assets/supertux/images/creatures/tux/big/walk-1.png";
+        this.gfx_player_walk2.src = "../assets/supertux/images/creatures/tux/big/walk-2.png";
+        this.gfx_player_walk3.src = "../assets/supertux/images/creatures/tux/big/walk-3.png";
+        this.gfx_player_walk4.src = "../assets/supertux/images/creatures/tux/big/walk-4.png";
+        this.gfx_player_walk5.src = "../assets/supertux/images/creatures/tux/big/walk-5.png";
+        this.gfx_player_walk6.src = "../assets/supertux/images/creatures/tux/big/walk-6.png";
+        this.gfx_player_walk7.src = "../assets/supertux/images/creatures/tux/big/walk-7.png";
 
         this.gfx_player_stand0 = new Image();
         this.gfx_player_stand1 = new Image();
@@ -30,15 +30,15 @@ Bones.Assets = {
         this.gfx_player_stand7 = new Image();
         this.gfx_player_stand8 = new Image();
 
-        this.gfx_player_stand0.src = "../assets/supertux/creatures/tux/big/stand-0.png";
-        this.gfx_player_stand1.src = "../assets/supertux/creatures/tux/big/stand-1.png";
-        this.gfx_player_stand2.src = "../assets/supertux/creatures/tux/big/stand-2.png";
-        this.gfx_player_stand3.src = "../assets/supertux/creatures/tux/big/stand-3.png";
-        this.gfx_player_stand4.src = "../assets/supertux/creatures/tux/big/stand-4.png";
-        this.gfx_player_stand5.src = "../assets/supertux/creatures/tux/big/stand-5.png";
-        this.gfx_player_stand6.src = "../assets/supertux/creatures/tux/big/stand-6.png";
-        this.gfx_player_stand7.src = "../assets/supertux/creatures/tux/big/stand-7.png";
-        this.gfx_player_stand8.src = "../assets/supertux/creatures/tux/big/stand-8.png";
+        this.gfx_player_stand0.src = "../assets/supertux/images/creatures/tux/big/stand-0.png";
+        this.gfx_player_stand1.src = "../assets/supertux/images/creatures/tux/big/stand-1.png";
+        this.gfx_player_stand2.src = "../assets/supertux/images/creatures/tux/big/stand-2.png";
+        this.gfx_player_stand3.src = "../assets/supertux/images/creatures/tux/big/stand-3.png";
+        this.gfx_player_stand4.src = "../assets/supertux/images/creatures/tux/big/stand-4.png";
+        this.gfx_player_stand5.src = "../assets/supertux/images/creatures/tux/big/stand-5.png";
+        this.gfx_player_stand6.src = "../assets/supertux/images/creatures/tux/big/stand-6.png";
+        this.gfx_player_stand7.src = "../assets/supertux/images/creatures/tux/big/stand-7.png";
+        this.gfx_player_stand8.src = "../assets/supertux/images/creatures/tux/big/stand-8.png";
 
 
         this.gfx_player_jump0 = new Image();
@@ -50,14 +50,17 @@ Bones.Assets = {
         this.gfx_player_jump6 = new Image();
         this.gfx_player_jump7 = new Image();
 
-        this.gfx_player_jump0.src = "../assets/supertux/creatures/tux/big/jump-0.png";
-        this.gfx_player_jump1.src = "../assets/supertux/creatures/tux/big/jump-1.png";
-        this.gfx_player_jump2.src = "../assets/supertux/creatures/tux/big/jump-2.png";
-        this.gfx_player_jump3.src = "../assets/supertux/creatures/tux/big/jump-3.png";
-        this.gfx_player_jump4.src = "../assets/supertux/creatures/tux/big/jump-4.png";
-        this.gfx_player_jump5.src = "../assets/supertux/creatures/tux/big/jump-5.png";
-        this.gfx_player_jump6.src = "../assets/supertux/creatures/tux/big/jump-6.png";
-        this.gfx_player_jump7.src = "../assets/supertux/creatures/tux/big/jump-7.png";
+        this.gfx_player_jump0.src = "../assets/supertux/images/creatures/tux/big/jump-0.png";
+        this.gfx_player_jump1.src = "../assets/supertux/images/creatures/tux/big/jump-1.png";
+        this.gfx_player_jump2.src = "../assets/supertux/images/creatures/tux/big/jump-2.png";
+        this.gfx_player_jump3.src = "../assets/supertux/images/creatures/tux/big/jump-3.png";
+        this.gfx_player_jump4.src = "../assets/supertux/images/creatures/tux/big/jump-4.png";
+        this.gfx_player_jump5.src = "../assets/supertux/images/creatures/tux/big/jump-5.png";
+        this.gfx_player_jump6.src = "../assets/supertux/images/creatures/tux/big/jump-6.png";
+        this.gfx_player_jump7.src = "../assets/supertux/images/creatures/tux/big/jump-7.png";
+
+        this.gfx_snowball = new Image();
+        this.gfx_snowball.src = "../assets/supertux/images/objects/big_snowball/big_snowball_particle.png";
 
         }
 }
@@ -909,7 +912,7 @@ Bones.World = {
 		return ret_bullet_id
 	},
     Bullet: class {
-        constructor(x, y, velocity, angle, ttl, size, damage, owner, id, _type) {
+        constructor(x, y, velocity, angle, ttl, size, damage, owner, id, _type, image) {
             this.x = x
             this.y = y
 			
@@ -932,6 +935,8 @@ Bones.World = {
 			this.owner = owner
 			this.id = id
 			this._type = _type
+
+            this.image = image
         }
 		deactivate() {
 			this.active = false
@@ -989,6 +994,8 @@ Bones.World = {
 				//Bones.Renderer.context.arc(this.x + this.size / 2 - Bones.Renderer.camera_x, this.y + this.size / 2 - Bones.Renderer.camera_y, this.size / 2, 0, 2 * Math.PI);
 			//}
 			Bones.Renderer.context.stroke();
+
+			Bones.Renderer.context.drawImage(this.image, this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.size, this.size)
         }
 		serialize() {
 			return JSON.stringify([this.x, this.y, this.velocity, this.angle, this.ttl, this.size, this.active, this.damage, this.owner, this.id, this._type])
@@ -1285,7 +1292,7 @@ Bones.World = {
             this.move_jump = false;
             this.jump_lock = false;
 			
-			this._class = 'Shotgun'
+			this._class = 'pistol'
 			
 			this._select = 2
 			
@@ -1656,7 +1663,7 @@ Bones.World = {
 						//new_vec = addVelocity(angle, speed, this.angle * Math.PI / 180, this.velocity)
 						//angle = new_vec[0]
 						//speed = new_vec[1]
-						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class))
+						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class, Bones.Assets.gfx_snowball))
 					}
 				}
 				if(!physics){
