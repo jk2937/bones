@@ -57,8 +57,8 @@ class Animation {
         this.x = 0
         this.y = 0
     }
-    tick() {
-        this.timer += Bones.Timer.delta_time * Bones.Timer.timescale
+    tick(delta_time=Bones.Timer.delta_time * Bones.Timer.timescale) {
+        this.timer += delta_time
         if(this.loop == true && this.timer > this.skins.length * this.frame_delay) {
             this.timer -= this.skins.length * this.frame_delay
         }
@@ -264,19 +264,6 @@ Bones.World = {
         //npc init
 
         this.npcs = []
-
-        this.test_animation = new Animation()
-        this.test_animation.skins = [
-            new Skin(Bones.Assets.gfx_player_walk0, 0, 0, 64, 80, 0, 0, 64, 80),
-            new Skin(Bones.Assets.gfx_player_walk1, 0, 0, 64, 80, 0, 0, 64, 80),
-            new Skin(Bones.Assets.gfx_player_walk2, 0, 0, 64, 80, 0, 0, 64, 80),
-            new Skin(Bones.Assets.gfx_player_walk3, 0, 0, 64, 80, 0, 0, 64, 80),
-            new Skin(Bones.Assets.gfx_player_walk4, 0, 0, 64, 80, 0, 0, 64, 80),
-            new Skin(Bones.Assets.gfx_player_walk5, 0, 0, 64, 80, 0, 0, 64, 80),
-            new Skin(Bones.Assets.gfx_player_walk6, 0, 0, 64, 80, 0, 0, 64, 80),
-            new Skin(Bones.Assets.gfx_player_walk7, 0, 0, 64, 80, 0, 0, 64, 80),
-        ]
-		
 		this.map_select = 0
 		this.num_maps = 2
 		
@@ -789,8 +776,8 @@ Bones.World = {
 				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 50)
 			}
 
-            this.test_animation.tick()
-            this.test_animation.render(0, 0, 64, 80, 0, 0)
+            //this.test_animation.tick()
+            //this.test_animation.render(0, 0, 64, 80, 0, 0)
 
             //Bones.Renderer.context.drawImage(Bones.Assets.gfx_player_walk7, 0, 0)
 
@@ -1207,10 +1194,8 @@ Bones.World = {
 			this.old_x = this.x
 			this.old_y = this.y
 			
-			this.width = 40;
-			this.height = 80;
-			
-			
+			this.width = 35;
+			this.height = 60;
 			
 			this.respawn()
 			
@@ -1271,6 +1256,20 @@ Bones.World = {
 			this.afk_timer = 0
 			
 			this.process_history = false
+
+            this.animation = new Animation()
+            this.animation.skins = [
+                new Skin(Bones.Assets.gfx_player_walk0, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_walk1, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_walk2, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_walk3, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_walk4, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_walk5, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_walk6, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_walk7, 0, 0, 64, 80, 0, 0, 64, 80),
+            ]
+            
+
         }
 		respawn() {
 			this.fire_cooldown = 0;
@@ -1601,6 +1600,8 @@ Bones.World = {
 			} else {
 				this.afk_timer = 0
 			}
+
+            this.animation.tick(Math.abs(this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale) / 4)
         }
 		calc_interp(){
 			this.x_interp.push(this.x)
@@ -1655,11 +1656,13 @@ Bones.World = {
 				//
 				
 				if(this.id == clientId){
+                    // Class Text At Bottom Of Screen
 					Bones.Renderer.context.font = "bold 40px Monospace";
 					Bones.Renderer.context.fillStyle = "#495664";
 					Bones.Renderer.context.textAlign = "center";
 					Bones.Renderer.context.fillText(this._class, Bones.Renderer.width / 2, Bones.Renderer.height - 80)
 					
+                    // Fire Cooldown Text Below That
 					Bones.Renderer.context.font = "bold 50px Monospace";
 					Bones.Renderer.context.fillStyle = "#495664";
 					Bones.Renderer.context.textAlign = "center";
@@ -1668,25 +1671,35 @@ Bones.World = {
 				
 				if (this.id != clientId) {
 				
-				
+			        // Player Health	
+
 					Bones.Renderer.context.font = "bold 24px Monospace";
 					Bones.Renderer.context.fillStyle = Bones.World.colors[this.id%Bones.World.colors.length];
 					Bones.Renderer.context.textAlign = "center";
 					Bones.Renderer.context.fillText(this.health, this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 40)
+
 					
+                    // Player ID
+
 					Bones.Renderer.context.font = "bold 24px Monospace";
 					//Bones.Renderer.context.fillStyle = "#495664";
 					Bones.Renderer.context.textAlign = "center";
 					Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
+
 						
-					Bones.Renderer.context.beginPath();
+                    // Player
+
+					/* Bones.Renderer.context.beginPath();
 					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
 					Bones.Renderer.context.lineWidth = 4;
 					Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
 					Bones.Renderer.context.stroke();
+                    */
+                    this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height, 0, 0)
+
 					
-					
-					//reticle
+					// Reticle
+
 					Bones.Renderer.context.beginPath();
 					//Bones.Renderer.context.strokeStyle = "#495664";
 					Bones.Renderer.context.lineWidth = 4;
@@ -1694,15 +1707,24 @@ Bones.World = {
 					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.aim_interp_calc * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 					Bones.Renderer.context.stroke();
 				} else {
+
+                    // Player Health
+
 					Bones.Renderer.context.font = "bold 24px Monospace";
 					Bones.Renderer.context.fillStyle = Bones.World.colors[this.id%Bones.World.colors.length];
 					Bones.Renderer.context.textAlign = "center";
 					Bones.Renderer.context.fillText(this.health, this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 40)
 					
+
+                    // Player ID
+
 					Bones.Renderer.context.font = "bold 24px Monospace";
 					//Bones.Renderer.context.fillStyle = "#495664";
 					Bones.Renderer.context.textAlign = "center";
 					Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc+ this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
+
+
+                    // Player
 						
 					Bones.Renderer.context.beginPath();
 					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
@@ -1710,8 +1732,11 @@ Bones.World = {
 					Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
 					Bones.Renderer.context.stroke();
 				
+                    this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
+                    
 				
-					//reticle
+					// Reticle
+
 					Bones.Renderer.context.beginPath();
 					//Bones.Renderer.context.strokeStyle = "#495664";
 					Bones.Renderer.context.lineWidth = 4;
@@ -1719,7 +1744,7 @@ Bones.World = {
 					Bones.Renderer.context.arc(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_x, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + reticle_width) - Bones.Renderer.camera_y, reticle_width, 0, 2 * Math.PI);
 					Bones.Renderer.context.stroke();
 				}
-			} else {
+			} else { // ENDIF RESPAWNING FALSE
 				if(this.id == clientId){
 					Bones.Renderer.context.font = "bold 24px Monospace";
 					Bones.Renderer.context.fillStyle = "#495664";
