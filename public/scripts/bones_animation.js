@@ -18,12 +18,7 @@ class Animation {
             this.timer -= this.skins.length * this.frame_delay
         }
     }
-    render(prop, is_circle=true) {
-        let x = prop.x
-        let y = prop.y
-        let angle = prop.angle
-
-        this.tick()
+    render(x, y, angle, is_circle=true) {
         /* console.log(this.timer)
         console.log(this.frame_delay)
         console.log(this.skins.length)
@@ -33,7 +28,7 @@ class Animation {
         skin = skin % this.skins.length
         Bones.Renderer.context.save()
         Bones.Renderer.context.translate(this.x + x - Bones.Renderer.camera_x, this.y + y - Bones.Renderer.camera_y)
-        Bones.Renderer.context.rotate(angle)
+        //Bones.Renderer.context.rotate(angle)
         if (is_circle == true) {
             this.skins[skin].render(-prop.radius, -prop.radius)
 

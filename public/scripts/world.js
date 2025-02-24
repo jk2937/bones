@@ -1,3 +1,89 @@
+Bones.Assets = {
+    init: function(){
+	// Player Walking
+
+        this.gfx_player_walk0 = new Image();
+        this.gfx_player_walk1 = new Image();
+        this.gfx_player_walk2 = new Image();
+        this.gfx_player_walk3 = new Image();
+        this.gfx_player_walk4 = new Image();
+        this.gfx_player_walk5 = new Image();
+        this.gfx_player_walk6 = new Image();
+        this.gfx_player_walk7 = new Image();
+
+        this.gfx_player_walk0.src = "../assets/supertux/creatures/tux/big/walk-0.png";
+        this.gfx_player_walk1.src = "../assets/supertux/creatures/tux/big/walk-1.png";
+        this.gfx_player_walk2.src = "../assets/supertux/creatures/tux/big/walk-2.png";
+        this.gfx_player_walk3.src = "../assets/supertux/creatures/tux/big/walk-3.png";
+        this.gfx_player_walk4.src = "../assets/supertux/creatures/tux/big/walk-4.png";
+        this.gfx_player_walk5.src = "../assets/supertux/creatures/tux/big/walk-5.png";
+        this.gfx_player_walk6.src = "../assets/supertux/creatures/tux/big/walk-6.png";
+        this.gfx_player_walk7.src = "../assets/supertux/creatures/tux/big/walk-7.png";
+
+        }
+}
+if(!isServer){
+    Bones.Assets.init()
+}
+
+class Skin {
+    constructor(static_image, sx, sy, sw, sh, dx, dy, dw, dh) {
+        this.sx = sx
+        this.sy = sy
+        this.sw = sw
+        this.sh = sh
+
+        this.dx = dx
+        this.dy = dy
+        this.dw = dw
+        this.dh = dh
+
+        this.static_image = static_image
+
+    }
+    render(x, y) {
+        Bones.Renderer.context.drawImage(this.static_image, this.sx, this.sy, this.sw, this.sh, this.dx + x, this.dy + y, this.dw, this.dh)
+
+    }
+}
+
+class Animation {
+    constructor() {
+        this.skins = [
+        ]
+        this.timer = 0
+        this.frame_delay = 100
+        this.loop = true
+        this.x = 0
+        this.y = 0
+    }
+    tick() {
+        this.timer += Bones.Timer.delta_time * Bones.Timer.timescale
+        if(this.loop == true && this.timer > this.skins.length * this.frame_delay) {
+            this.timer -= this.skins.length * this.frame_delay
+        }
+    }
+    render(x, y, w, h, angle, radius, is_circle=false) {
+        /* console.log(this.timer)
+        console.log(this.frame_delay)
+        console.log(this.skins.length)
+        console.log(Math.floor(this.timer / this.frame_delay * this.skins.length)) */
+        let skin = Math.floor(this.timer / this.frame_delay * this.skins.length)
+        // console.log(this.skins.length)
+        skin = skin % this.skins.length
+        Bones.Renderer.context.save()
+        Bones.Renderer.context.translate(this.x + x - Bones.Renderer.camera_x, this.y + y - Bones.Renderer.camera_y)
+        //Bones.Renderer.context.rotate(angle)
+        if (is_circle == true) {
+            this.skins[skin].render(-radius, -radius)
+
+        } else {
+            this.skins[skin].render(-w / 2, -h / 2)
+        }
+        Bones.Renderer.context.restore()
+    }
+}
+
 function circle_collision(p1x, p1y, r1, p2x, p2y, r2) {
   var a;
   var x;
@@ -178,6 +264,18 @@ Bones.World = {
         //npc init
 
         this.npcs = []
+
+        this.test_animation = new Animation()
+        this.test_animation.skins = [
+            new Skin(Bones.Assets.gfx_player_walk0, 0, 0, 64, 80, 0, 0, 64, 80),
+            new Skin(Bones.Assets.gfx_player_walk1, 0, 0, 64, 80, 0, 0, 64, 80),
+            new Skin(Bones.Assets.gfx_player_walk2, 0, 0, 64, 80, 0, 0, 64, 80),
+            new Skin(Bones.Assets.gfx_player_walk3, 0, 0, 64, 80, 0, 0, 64, 80),
+            new Skin(Bones.Assets.gfx_player_walk4, 0, 0, 64, 80, 0, 0, 64, 80),
+            new Skin(Bones.Assets.gfx_player_walk5, 0, 0, 64, 80, 0, 0, 64, 80),
+            new Skin(Bones.Assets.gfx_player_walk6, 0, 0, 64, 80, 0, 0, 64, 80),
+            new Skin(Bones.Assets.gfx_player_walk7, 0, 0, 64, 80, 0, 0, 64, 80),
+        ]
 		
 		this.map_select = 0
 		this.num_maps = 2
@@ -690,6 +788,12 @@ Bones.World = {
 				Bones.Renderer.context.textAlign = "left";
 				Bones.Renderer.context.fillText("Player " + (this.players[i].id + 1) + ": " + this.players[i].score, 30, i* 30 + 50)
 			}
+
+            this.test_animation.tick()
+            this.test_animation.render(0, 0, 64, 80, 0, 0)
+
+            //Bones.Renderer.context.drawImage(Bones.Assets.gfx_player_walk7, 0, 0)
+
 		}
 				
 		if(this.winner != -1) {

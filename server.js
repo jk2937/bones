@@ -21,6 +21,7 @@ function _import(file) {
 _import('./public/scripts/box.js')
 _import('./public/scripts/skin.js')
 _import('./public/scripts/bones_animation.js')
+_import('./public/scripts/test_animation.js')
 _import('./public/scripts/menu_item.js')
 _import('./public/scripts/bones_object.js')
 _import('./public/scripts/renderer.js')
