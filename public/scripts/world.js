@@ -1445,9 +1445,9 @@ Bones.World = {
 				if (this.move_right) {
 					this.x_vel += this.x_acc * Bones.Timer.delta_time * Bones.Timer.timescale;
 				}
+
 				if (this.move_jump && !this.jump_lock && this.on_ground) {
 					this.y_vel -= this.y_acc
-					this.on_ground = false
 					this.jump_lock = true
 				}
 				if (!this.move_jump && this.on_ground) {
@@ -1533,6 +1533,8 @@ Bones.World = {
 
 
 				// Movement Bounderies
+
+                this.on_ground = false
 
 				if (this.x < 0) {
 					this.x = 0
@@ -1767,7 +1769,11 @@ Bones.World = {
 
                 this.animation.tick(Math.abs(this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale))
                 this.animation_idle.tick(Bones.Timer.delta_time * Bones.Timer.timescale)
-                this.animation_jump.tick(Bones.Timer.delta_time * Bones.Timer.timescale * 2)
+                //this.animation_jump.tick(Bones.Timer.delta_time * Bones.Timer.timescale * 2)
+                this.animation_jump.timer = this.y_vel * 5 + 60;
+                if (this.animation_jump.timer < 0) {
+                    this.animation_jump.timer = 0
+                }
         
                 if(this.facing_right) {
                     if(this.on_ground) {
