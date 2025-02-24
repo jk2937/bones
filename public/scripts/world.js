@@ -63,7 +63,7 @@ class Animation {
             this.timer -= this.skins.length * this.frame_delay
         }
     }
-    render(x, y, w, h, angle, radius, is_circle=false) {
+    render(x, y, w, h, angle, radius, is_flipped=false, is_circle=false) {
         /* console.log(this.timer)
         console.log(this.frame_delay)
         console.log(this.skins.length)
@@ -73,6 +73,9 @@ class Animation {
         skin = skin % this.skins.length
         Bones.Renderer.context.save()
         Bones.Renderer.context.translate(this.x + x - Bones.Renderer.camera_x, this.y + y - Bones.Renderer.camera_y)
+        if(is_flipped) {
+            Bones.Renderer.context.scale(-1, 1);
+        }
         //Bones.Renderer.context.rotate(angle)
         if (is_circle == true) {
             this.skins[skin].render(-radius, -radius)
@@ -1442,6 +1445,21 @@ Bones.World = {
 				this.x += this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
 				this.y += this.y_vel * Bones.Timer.delta_time * Bones.Timer.timescale;
 
+                
+                // Player Direction
+                
+                if(this.on_ground) {
+                    if(this.x_vel > 0) {
+                        this.facing_right = true;
+
+                    } 
+                    if(this.x_vel < 0) {
+                        this.facing_right = false;
+
+                    }
+                }
+                    
+
 
 				// Movement Bounderies
 
@@ -1731,8 +1749,12 @@ Bones.World = {
 					Bones.Renderer.context.lineWidth = 4;
 					Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
 					Bones.Renderer.context.stroke();
-				
-                    this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
+			
+                    if(this.facing_right){
+                        this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
+                    } else {
+                        this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 109, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0, true)
+                    }
                     
 				
 					// Reticle
