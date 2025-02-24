@@ -1,6 +1,6 @@
 Bones.Assets = {
     init: function(){
-	// Player Walking
+        // Player Walking
 
         this.gfx_player_walk0 = new Image();
         this.gfx_player_walk1 = new Image();
@@ -19,6 +19,45 @@ Bones.Assets = {
         this.gfx_player_walk5.src = "../assets/supertux/creatures/tux/big/walk-5.png";
         this.gfx_player_walk6.src = "../assets/supertux/creatures/tux/big/walk-6.png";
         this.gfx_player_walk7.src = "../assets/supertux/creatures/tux/big/walk-7.png";
+
+        this.gfx_player_stand0 = new Image();
+        this.gfx_player_stand1 = new Image();
+        this.gfx_player_stand2 = new Image();
+        this.gfx_player_stand3 = new Image();
+        this.gfx_player_stand4 = new Image();
+        this.gfx_player_stand5 = new Image();
+        this.gfx_player_stand6 = new Image();
+        this.gfx_player_stand7 = new Image();
+        this.gfx_player_stand8 = new Image();
+
+        this.gfx_player_stand0.src = "../assets/supertux/creatures/tux/big/stand-0.png";
+        this.gfx_player_stand1.src = "../assets/supertux/creatures/tux/big/stand-1.png";
+        this.gfx_player_stand2.src = "../assets/supertux/creatures/tux/big/stand-2.png";
+        this.gfx_player_stand3.src = "../assets/supertux/creatures/tux/big/stand-3.png";
+        this.gfx_player_stand4.src = "../assets/supertux/creatures/tux/big/stand-4.png";
+        this.gfx_player_stand5.src = "../assets/supertux/creatures/tux/big/stand-5.png";
+        this.gfx_player_stand6.src = "../assets/supertux/creatures/tux/big/stand-6.png";
+        this.gfx_player_stand7.src = "../assets/supertux/creatures/tux/big/stand-7.png";
+        this.gfx_player_stand8.src = "../assets/supertux/creatures/tux/big/stand-8.png";
+
+
+        this.gfx_player_jump0 = new Image();
+        this.gfx_player_jump1 = new Image();
+        this.gfx_player_jump2 = new Image();
+        this.gfx_player_jump3 = new Image();
+        this.gfx_player_jump4 = new Image();
+        this.gfx_player_jump5 = new Image();
+        this.gfx_player_jump6 = new Image();
+        this.gfx_player_jump7 = new Image();
+
+        this.gfx_player_jump0.src = "../assets/supertux/creatures/tux/big/jump-0.png";
+        this.gfx_player_jump1.src = "../assets/supertux/creatures/tux/big/jump-1.png";
+        this.gfx_player_jump2.src = "../assets/supertux/creatures/tux/big/jump-2.png";
+        this.gfx_player_jump3.src = "../assets/supertux/creatures/tux/big/jump-3.png";
+        this.gfx_player_jump4.src = "../assets/supertux/creatures/tux/big/jump-4.png";
+        this.gfx_player_jump5.src = "../assets/supertux/creatures/tux/big/jump-5.png";
+        this.gfx_player_jump6.src = "../assets/supertux/creatures/tux/big/jump-6.png";
+        this.gfx_player_jump7.src = "../assets/supertux/creatures/tux/big/jump-7.png";
 
         }
 }
@@ -70,7 +109,13 @@ class Animation {
         console.log(Math.floor(this.timer / this.frame_delay * this.skins.length)) */
         let skin = Math.floor(this.timer / this.frame_delay * this.skins.length)
         // console.log(this.skins.length)
-        skin = skin % this.skins.length
+        if(this.loop == false) {
+            if(skin > this.skins.length - 1) {
+                skin = this.skins.length - 1
+            }
+        } else {
+            skin = skin % this.skins.length
+        }
         Bones.Renderer.context.save()
         Bones.Renderer.context.translate(this.x + x - Bones.Renderer.camera_x, this.y + y - Bones.Renderer.camera_y)
         if(is_flipped) {
@@ -1271,7 +1316,33 @@ Bones.World = {
                 new Skin(Bones.Assets.gfx_player_walk6, 0, 0, 64, 80, 0, 0, 64, 80),
                 new Skin(Bones.Assets.gfx_player_walk7, 0, 0, 64, 80, 0, 0, 64, 80),
             ]
-            
+
+            this.animation_idle = new Animation()
+            this.animation_idle.skins = [
+                new Skin(Bones.Assets.gfx_player_stand0, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand1, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand2, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand3, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand4, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand5, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand6, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand7, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_stand8, 0, 0, 64, 80, 0, 0, 64, 80),
+            ]
+
+            this.animation_jump = new Animation()
+            this.animation_jump.skins = [
+                new Skin(Bones.Assets.gfx_player_jump0, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_jump1, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_jump2, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_jump3, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_jump4, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_jump5, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_jump6, 0, 0, 64, 80, 0, 0, 64, 80),
+                new Skin(Bones.Assets.gfx_player_jump7, 0, 0, 64, 80, 0, 0, 64, 80),
+            ]
+            this.animation_jump.loop = false
+
 
         }
 		respawn() {
@@ -1685,7 +1756,52 @@ Bones.World = {
 					Bones.Renderer.context.textAlign = "center";
 					Bones.Renderer.context.fillText(Math.round(this.fire_cooldown), Bones.Renderer.width / 2, Bones.Renderer.height - 20)
 				}
-				
+
+                // Player
+                    
+                Bones.Renderer.context.beginPath();
+                Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
+                Bones.Renderer.context.lineWidth = 4;
+                Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
+                Bones.Renderer.context.stroke();
+
+                this.animation.tick(Math.abs(this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale))
+                this.animation_idle.tick(Bones.Timer.delta_time * Bones.Timer.timescale)
+                this.animation_jump.tick(Bones.Timer.delta_time * Bones.Timer.timescale * 2)
+        
+                if(this.facing_right) {
+                    if(this.on_ground) {
+                        this.animation_jump.timer = 0
+                        if(this.x_vel > 0) {
+                            this.animation_idle.timer = 0
+                            this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
+
+                        } else {
+                            this.animation.timer = 0
+                            this.animation_idle.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
+
+
+                        }
+                    } else {
+                        this.animation_jump.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
+                    }
+                } else {
+                    if(this.on_ground) {
+                        this.animation_jump.timer = 0
+                        if(this.x_vel < 0) {
+                            this.animation_idle.timer = 0
+                            this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 109, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0, true)
+
+                        } else {
+                            this.animation.timer = 0
+                            this.animation_idle.render(this.x_interp_calc - Bones.Renderer.camera_x - 109, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0, true)
+                        }
+                    } else {
+                        this.animation_jump.render(this.x_interp_calc - Bones.Renderer.camera_x - 109, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0, true)
+                    }
+                }
+
+
 				if (this.id != clientId) {
 				
 			        // Player Health	
@@ -1704,22 +1820,7 @@ Bones.World = {
 					Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc + this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
 
 						
-                    // Player
-						
-					Bones.Renderer.context.beginPath();
-					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
-					Bones.Renderer.context.lineWidth = 4;
-					Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
-					Bones.Renderer.context.stroke();
-
-                    this.animation.tick(Math.abs(this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale))
 			
-                    if(this.facing_right){
-                        this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
-                    } else {
-                        this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 109, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0, true)
-                    }
-				
 					// Reticle
 
 					Bones.Renderer.context.beginPath();
@@ -1745,24 +1846,7 @@ Bones.World = {
 					Bones.Renderer.context.textAlign = "center";
 					Bones.Renderer.context.fillText("Player " + (this.id + 1), this.x_interp_calc+ this.width / 2 - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y - 65)
 
-
-                    // Player
-						
-					Bones.Renderer.context.beginPath();
-					Bones.Renderer.context.strokeStyle = Bones.World.colors[this.id%Bones.World.colors.length];
-					Bones.Renderer.context.lineWidth = 4;
-					Bones.Renderer.context.rect(this.x_interp_calc - Bones.Renderer.camera_x, this.y_interp_calc - Bones.Renderer.camera_y, this.width, this.height);
-					Bones.Renderer.context.stroke();
-
-                    this.animation.tick(Math.abs(this.x_vel * Bones.Timer.delta_time * Bones.Timer.timescale))
 			
-                    if(this.facing_right){
-                        this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 137, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0)
-                    } else {
-                        this.animation.render(this.x_interp_calc - Bones.Renderer.camera_x - 109, this.y_interp_calc - Bones.Renderer.camera_y - 29, this.width, this.height, 0, 0, true)
-                    }
-                    
-				
 					// Reticle
 
 					Bones.Renderer.context.beginPath();
