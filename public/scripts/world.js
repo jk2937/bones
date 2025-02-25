@@ -209,7 +209,7 @@ function removeYComponent(angle, magnitude) {
 }
 function applyGravity(angle, velocity, gravity) {
     // Convert angle to radians
-    const angleInRadians = (angle * Math.PI) / 180;
+    const angleInRadians = angle
 
     // Calculate the vertical and horizontal components of velocity
     const verticalVelocity = velocity * Math.cos(angleInRadians);
@@ -937,6 +937,8 @@ Bones.World = {
 			this._type = _type
 
             this.image = image
+
+            this.gravity = 0.4
         }
 		deactivate() {
 			this.active = false
@@ -948,8 +950,15 @@ Bones.World = {
 		}
 		tick (delta_time, physics=false) {
 			//if(isServer || this.owner == clientId) {
+				let x_vel = this.velocity * Math.cos(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
+				let y_vel = this.velocity * Math.sin(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
+                y_vel += this.gravity
+                this.angle = Math.atan2(y_vel, x_vel) / 2 / Math.PI
+                this.velocity = Math.sqrt(x_vel * x_vel + y_vel * y_vel)
+                
 				this.x += this.velocity * Math.cos(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
 				this.y += this.velocity * Math.sin(this.angle * 2 * Math.PI) * delta_time * Bones.Timer.timescale
+
 				this.ttl -= 1 * delta_time * Bones.Timer.timescale
 				if (this.ttl <= 0) {
 					this.deactivate()
@@ -1292,9 +1301,9 @@ Bones.World = {
             this.move_jump = false;
             this.jump_lock = false;
 			
-			this._class = 'pistol'
+			this._class = 'Pistol'
 			
-			this._select = 2
+			this._select = 3
 			
 			this.health = 100
 			this.active = true;
@@ -1377,7 +1386,7 @@ Bones.World = {
 			}
 			
 			if (this._class == 'Pistol') {
-				this.x_acc = 99 //1.5
+				this.x_acc = 1.5
 				this.max_x_vel = 7;
 				this.max_x_vel_aim = 1;
 			}
@@ -1634,10 +1643,10 @@ Bones.World = {
 					}
 					
 					if (this._class == 'Pistol') {
-						size = 25
-						offset = 30 + size / 2
-						ttl = 40
-						speed = 25
+						size = 30
+						offset = size / 2
+						ttl = 100
+						speed = 8
 						damage = 50
 						this.fire_cooldown = 60
 					}
@@ -1659,11 +1668,16 @@ Bones.World = {
 						}
 					}
 					if(/*(isServer || this.id == clientId) && */physics == false){
-						angle = this.move_aim
 						//new_vec = addVelocity(angle, speed, this.angle * Math.PI / 180, this.velocity)
 						//angle = new_vec[0]
 						//speed = new_vec[1]
-						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(this.move_aim * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + Math.sin(this.move_aim * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class, Bones.Assets.gfx_snowball))
+                        let angle = 180
+                        if(this.facing_right) {
+                            angle = -0.1
+                        } else {
+                            angle = 0.6
+                        }
+						Bones.World.bullets.push(new Bones.World.Bullet(this.x_interp_calc + this.width / 2 + Math.cos(angle * 2 * Math.PI) * (this.width / 2 + offset) - size / 2, this.y_interp_calc + this.height / 2 + 10 + Math.sin(angle * 2 * Math.PI) * (this.height / 2 + offset) - size / 2, speed, angle, ttl, size, damage, this.id, Bones.World.getBulletId(), this._class, Bones.Assets.gfx_snowball))
 					}
 				}
 				if(!physics){
